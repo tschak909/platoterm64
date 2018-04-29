@@ -94,20 +94,263 @@ void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
    
   a=a+char_to_plot;
 
-  for (i=0;i<6;i++)
-    {
-      nx=scalex[x];
-      b=font[fontptr[a]+i];
-      for (j=0;j<5;j++)
-	{
-	  c=b&0x80;
-	  if (c==0x80)
-	    tgi_setpixel(nx,ny);
-	  nx++;
-	  b <<= 1;
-	}
-      ny++;
-    }
+  nx=scalex[x+margin];
+
+  /////////////////////////////////////////////////////////////////////
+  // Line 1
+  b=font[fontptr[a]];
+
+  // Dot 1
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 2
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 3
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 4
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 5
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx=scalex[x+margin];
+  ny++;
+
+  /////////////////////////////////////////////////////////////////////
+  // Line 2
+  b=font[fontptr[a]+1];
+
+  // Dot 1
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 2
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 3
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 4
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 5
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx=scalex[x+margin];
+  ny++;
+
+  /////////////////////////////////////////////////////////////////////
+  // Line 3
+  b=font[fontptr[a]+2];
+
+  // Dot 1
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 2
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 3
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 4
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 5
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx=scalex[x+margin];
+  ny++;
+
+  /////////////////////////////////////////////////////////////////////
+  // Line 4
+  b=font[fontptr[a]+3];
+
+  // Dot 1
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 2
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 3
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 4
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 5
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx=scalex[x+margin];
+  ny++;
+
+  /////////////////////////////////////////////////////////////////////
+  // Line 5
+  b=font[fontptr[a]+4];
+
+  // Dot 1
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 2
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 3
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 4
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 5
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx=scalex[x+margin];
+  ny++;
+
+  /////////////////////////////////////////////////////////////////////
+  // Line 6
+  b=font[fontptr[a]+5];
+
+  // Dot 1
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 2
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 3
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 4
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx++;
+  
+  // Dot 5
+  c=b&0x80;
+  if (c==0x80)
+    tgi_setpixel(nx,ny);
+  b <<= 1;
+  nx=scalex[x+margin];
+  ny++;
+  
+  /* for (i=0;i<6;i++) */
+  /*   { */
+  /*     nx=scalex[x+margin]; */
+  /*     b=font[fontptr[a]+i]; */
+  /*     for (j=0;j<5;j++) */
+  /* 	{ */
+  /* 	  c=b&0x80; */
+  /* 	  if (c==0x80) */
+  /* 	    tgi_setpixel(nx,ny); */
+  /* 	  nx++; */
+  /* 	  b <<= 1; */
+  /* 	} */
+  /*     ny++; */
+  /*   } */
+
   x=x+deltax;
 }
 
