@@ -1,3 +1,4 @@
+#include <6502.h>
 #include <cbm.h>
 #include <stdio.h>
 #include <tgi.h>
@@ -429,6 +430,7 @@ void main(void)
   // open rs232 channel
   cbm_k_setlfs (2,2,3);
   cbm_k_setnam (name1200);
+  CLI();
   retval = cbm_k_open ();
   
   // And do the terminal
