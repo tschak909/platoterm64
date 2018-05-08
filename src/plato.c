@@ -1,3 +1,4 @@
+#include <6502.h>
 #include <stdio.h>
 #include <tgi.h>
 #include <conio.h>
@@ -72,8 +73,10 @@ const unsigned char welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68
 // The static symbol for the c64 tgi graphics driver.
 extern char c64_hi;
 
-// The static symbol for the  swiftlink232 driver
-extern char c64_swlink;
+// The static symbol for the  up2400 driver
+extern char c64_up2400;
+
+extern void install_nmi_tgi();
 
 void send_byte(unsigned char b)
 {
@@ -421,7 +424,7 @@ void main(void)
     SER_HS_NONE
   };
 
-  c=ser_install(&c64_swlink);
+  c=ser_install(&c64_up2400);
 
   if (c!=SER_ERR_OK)
     {
@@ -429,14 +432,6 @@ void main(void)
       return;
     }
 
-  c=ser_open(&params);
-  if (c!=SER_ERR_OK)
-    {
-      printf("ser_open_returned: %d\n",c);
-      return;
-    }
-  
-  
   y=511-16;
   deltax=8;
   deltay=16;
@@ -445,8 +440,12 @@ void main(void)
   tgi_init();
   tgi_clear();
 
+  install_nmi_tgi();
+  
+  c=ser_open(&params);
+  ser_ioctl(1, NULL);  
+    
   greeting();
-
   
   for(;;)
     {
