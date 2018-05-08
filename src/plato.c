@@ -76,6 +76,8 @@ const unsigned char welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68
 // The static symbol for the c64 tgi graphics driver.
 extern char c64_hi;
 
+extern void install_nmi_tgi();
+
 void send_byte(unsigned char b)
 {
 }
@@ -419,6 +421,9 @@ void main(void)
   dumb_terminal_active=1;
   tgi_install(&c64_hi);
   tgi_init();
+
+  install_nmi_tgi();
+  
   tgi_clear();
 
   greeting();
