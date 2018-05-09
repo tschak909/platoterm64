@@ -73,9 +73,6 @@ const unsigned char welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,
 const unsigned char welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 #define WELCOMEMSG_5_LEN 15
 
-// The static symbol for the c64 tgi graphics driver.
-extern char c64_hi;
-
 extern void install_nmi_tgi();
 
 void send_byte(unsigned char b)
@@ -419,13 +416,15 @@ void main(void)
   deltax=8;
   deltay=16;
   dumb_terminal_active=1;
-  tgi_install(&c64_hi);
+  tgi_install(tgi_static_stddrv);
   tgi_init();
 
-  install_nmi_tgi();
   
   tgi_clear();
 
+  install_nmi_tgi();
+
+  
   greeting();
   
   // set up rs-232 buffers
@@ -435,7 +434,7 @@ void main(void)
   // open rs232 channel
   cbm_k_setlfs (2,2,3);
   cbm_k_setnam (name1200);
-  CLI();
+
   retval = cbm_k_open ();
   
   // And do the terminal
