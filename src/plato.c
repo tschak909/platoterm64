@@ -438,9 +438,8 @@ void main(void)
   dumb_terminal_active=1;
   tgi_install(&c64_hi);
   tgi_init();
-  tgi_clear();
-
   install_nmi_tgi();
+  tgi_clear();
   
   c=ser_open(&params);
   ser_ioctl(1, NULL);  
