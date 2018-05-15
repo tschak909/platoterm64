@@ -73,7 +73,7 @@ const unsigned char welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,
 const unsigned char welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 #define WELCOMEMSG_5_LEN 15
 
-extern void install_nmi_tgi();
+extern void install_nmi_trampoline(void);
 
 void send_byte(unsigned char b)
 {
@@ -419,24 +419,22 @@ void main(void)
   tgi_install(tgi_static_stddrv);
   tgi_init();
 
-  
+  install_nmi_trampoline();
+
   tgi_clear();
 
-  install_nmi_tgi();
-
-  
   greeting();
-  
+
   // set up rs-232 buffers
   *RIBUF = (char*)(((int)rs232_read_buf & 0xff00) + 256);
   *ROBUF = (char*)(((int)rs232_write_buf & 0xff00) + 256);
-  
+
   // open rs232 channel
   cbm_k_setlfs (2,2,3);
   cbm_k_setnam (name1200);
 
   retval = cbm_k_open ();
-  
+
   // And do the terminal
   for (;;)
     {
@@ -448,7 +446,7 @@ void main(void)
 	  cbm_k_ckout(2);
 	  cbm_k_bsout(c);
 	}
-      
+
       // look for input on rs232
       cbm_k_chkin (2);
       c = cbm_k_getin ();
@@ -458,9 +456,8 @@ void main(void)
 	  decode(c);
 	}
     }
-  
-  
+
+
   tgi_done();
   tgi_uninstall();
 }
-
