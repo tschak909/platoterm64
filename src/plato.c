@@ -72,8 +72,7 @@ const unsigned char welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68
 
 // The static symbol for the c64 up2400 driver
 extern char c64_up2400;
-
-extern void install_nmi_tgi();
+extern void install_nmi_trampoline(void);
 
 void send_byte(unsigned char b)
 {
@@ -421,6 +420,8 @@ void main(void)
     SER_HS_NONE
   };
 
+  install_nmi_trampoline();
+  
   c=ser_install(&c64_up2400);
 
   if (c!=SER_ERR_OK)
@@ -435,8 +436,9 @@ void main(void)
   dumb_terminal_active=1;
   tgi_install(tgi_static_stddrv);
   tgi_init();
+
+
   tgi_clear();
-  install_nmi_tgi();
   
   c=ser_open(&params);
   ser_ioctl(1, NULL);  
@@ -444,6 +446,11 @@ void main(void)
   greeting();
   
   for(;;)
+
+  greeting();
+
+  // And do the terminal
+  for (;;)
     {
       if (ser_get(&c)==SER_ERR_OK)
 	{
@@ -454,10 +461,9 @@ void main(void)
 	  ser_put(cgetc());
 	}
     }
-  
+
   tgi_done();
   ser_close();
   ser_uninstall();
   tgi_uninstall();
 }
-
