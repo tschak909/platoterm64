@@ -418,9 +418,7 @@ void main(void)
   dumb_terminal_active=1;
   tgi_install(tgi_static_stddrv);
   tgi_init();
-
   install_nmi_trampoline();
-
   tgi_clear();
 
   greeting();
