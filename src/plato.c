@@ -444,10 +444,6 @@ void main(void)
   ser_ioctl(1, NULL);  
     
   greeting();
-  
-  for(;;)
-
-  greeting();
 
   // And do the terminal
   for (;;)
