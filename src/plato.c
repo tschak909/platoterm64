@@ -8,8 +8,11 @@
 #include "scale.h"
 #include "protocol.h"
 
+#define _optspeed_
+
 unsigned char retval;
 unsigned char c;
+unsigned char lastc;
 
 unsigned char chstr[2];
 unsigned char a;
@@ -420,7 +423,6 @@ void main(void)
     SER_HS_NONE
   };
 
-  install_nmi_trampoline();
   
   c=ser_install(&c64_up2400);
 
@@ -434,8 +436,10 @@ void main(void)
   deltax=8;
   deltay=16;
   dumb_terminal_active=1;
+  install_nmi_trampoline();
   tgi_install(tgi_static_stddrv);
   tgi_init();
+
 
 
   tgi_clear();
@@ -450,7 +454,16 @@ void main(void)
     {
       if (ser_get(&c)==SER_ERR_OK)
 	{
-	  decode(c);
+	  // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
+	  if (c==0xFF && lastc == 0xFF)
+	    {
+	      lastc=0x00;
+	    }
+	  else
+	    {
+	      decode(c&0x7F);
+	      lastc=c;
+	    }
 	}
       if (kbhit())
 	{
