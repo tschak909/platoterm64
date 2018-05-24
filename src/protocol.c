@@ -8,10 +8,11 @@
  */
 
 #include <string.h>
+#include <peekpoke.h>
 #include "protocol.h"
 
-#define TRUE 0
-#define FALSE !TRUE
+#define FALSE 0
+#define TRUE !FALSE
 
 #define ASCII_STATE_NONE 0
 #define ASCII_STATE_PNI_RS 1
@@ -194,7 +195,7 @@ static const unsigned char ascii_mode[] = { 0, 3, 2, 1 };
 void decode(unsigned char b)
 {
   decoded=FALSE;
-  if (dumb_terminal_active)
+  if (dumb_terminal_active==TRUE)
     {
       decode_dumb_terminal(b);
     }
@@ -291,7 +292,7 @@ void decode_plato(unsigned char b)
     {
       process_plato_metadata(b);
     }
-  else if (escape)
+  else if (escape==TRUE)
     {
       escape=FALSE;
       process_escape_sequence(b);
@@ -851,7 +852,7 @@ void send_ext(unsigned int key)
   unsigned char data[3];
   int i;
   
-  if (!connection_active)
+  if (connection_active==FALSE)
     {
       // Connection isn't active, ignore and return.
       return;
@@ -893,8 +894,9 @@ void send_echo_request(unsigned int n)
       n=mar;
       break;
     case 0x52:
-      flow_control=TRUE;
-      n=0x53;
+      /* flow_control=TRUE; */
+      /* n=0x53; */
+      n=0x52;
       break;
     case 0x60:
       n += ASCFEATURES;
@@ -921,12 +923,12 @@ void send_processed_key(unsigned int n)
   unsigned char length;
   unsigned char i;
   
-  if (!connection_active)
-    {
-      // Connection isn't there anymore, don't send.
-      return;
-    }
-
+  /* if (connection_active==FALSE) */
+  /*   { */
+  /*     // Connection isn't there anymore, don't send. */
+  /*     return; */
+  /*   } */
+  
   if (n<0x80)
     {
       // Regular key code
@@ -935,7 +937,7 @@ void send_processed_key(unsigned int n)
 	{
 	  return;
 	}
-      if (flow_control)
+      if (flow_control==TRUE)
 	{
 	  switch(n)
 	    {
@@ -971,24 +973,31 @@ void send_processed_key(unsigned int n)
 	  send_byte(data[i]);
 	}
     }
-  else if (!dumb_terminal_active)
+  else if (dumb_terminal_active==FALSE)
     {
-      if (n == (ASCII_XOFF + 0x80)) {
-	if (!flow_control) {
-	  return; // Ignore it.
+      if (n == (ASCII_XOFF + 0x80))
+	{
+	  if (flow_control==FALSE)
+	    {
+	      /* return; // Ignore it. */
+	    }
+	  data[0] = ASCII_XOFF;
 	}
-	data[0] = ASCII_XOFF;
-      } else if (n == (ASCII_XON + 0x80)) {
-	if (!flow_control) {
-	  return; // Ignore it.
+      else if (n == (ASCII_XON + 0x80))
+	{
+	  if (flow_control==FALSE)
+	    {
+	      /* return; // Ignore it. */
+	    }
+	  data[0] = ASCII_XON + 0x80;
 	}
-	data[0] = ASCII_XON + 0x80;
-      } else {
-	length = 3;
-	data[0] = 0x1B;
-	data[1] = (0x40 + (n & 0x3F));
-	data[2] = (0x60 + (n >> 6));
-      }
+      else
+	{
+	  length = 3;
+	  data[0] = 0x1B;
+	  data[1] = (0x40 + (n & 0x3F));
+	  data[2] = (0x60 + (n >> 6));
+	}
       for (i = 0; i < length; i++) {
 	send_byte(data[i]);
       }

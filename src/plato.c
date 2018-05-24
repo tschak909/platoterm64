@@ -1,18 +1,18 @@
 #include <6502.h>
-#include <cbm.h>
 #include <stdio.h>
 #include <tgi.h>
+#include <conio.h>
+#include <serial.h>
+#include <peekpoke.h>
 #include "font.h"
 #include "scale.h"
 #include "protocol.h"
 
-unsigned char name1200[] = {0x08,0x00,0x00};
-unsigned char rs232_read_buf[512];
-unsigned char rs232_write_buf[512];
+#define _optspeed_
+
 unsigned char retval;
 unsigned char c;
-char** RIBUF = (char**)0x00f7;
-char** ROBUF = (char**)0x00f9;
+unsigned char lastc;
 
 unsigned char chstr[2];
 unsigned char a;
@@ -22,7 +22,7 @@ unsigned char j;
 unsigned char mode;
 unsigned char escape;
 unsigned char decoded;
-unsigned char dumb_terminal_active;
+unsigned char dumb_terminal_active=1;
 unsigned int margin=0;
 unsigned int x=0;
 unsigned int y=0;
@@ -39,7 +39,7 @@ unsigned char ascii_bytes=0;
 unsigned char pmd[64];
 unsigned char font_pmd=0;
 unsigned char font_info=0;
-unsigned char connection_active=0;
+unsigned char connection_active=1;
 unsigned char xor_mode=0;
 unsigned char character_set=0;
 unsigned char vertical_writing_mode=0;
@@ -73,10 +73,13 @@ const unsigned char welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,
 const unsigned char welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 #define WELCOMEMSG_5_LEN 15
 
+// The static symbol for the c64 up2400 driver
+extern char c64_up2400;
 extern void install_nmi_trampoline(void);
 
 void send_byte(unsigned char b)
 {
+  ser_put(b);
 }
 
 void scroll_up(void)
@@ -412,6 +415,24 @@ void greeting(void)
 void main(void)
 {
   int i=0;
+
+  struct ser_params params = {
+    SER_BAUD_2400,
+    SER_BITS_8,
+    SER_STOP_1,
+    SER_PAR_NONE,
+    SER_HS_NONE
+  };
+
+  
+  c=ser_install(&c64_up2400);
+
+  if (c!=SER_ERR_OK)
+    {
+      printf("ser_install returned: %d\n",c);
+      return;
+    }
+
   y=511-16;
   deltax=8;
   deltay=16;
@@ -420,42 +441,36 @@ void main(void)
   tgi_init();
   install_nmi_trampoline();
   tgi_clear();
-
+  
+  c=ser_open(&params);
+  ser_ioctl(1, NULL);  
+    
   greeting();
-
-  // set up rs-232 buffers
-  *RIBUF = (char*)(((int)rs232_read_buf & 0xff00) + 256);
-  *ROBUF = (char*)(((int)rs232_write_buf & 0xff00) + 256);
-
-  // open rs232 channel
-  cbm_k_setlfs (2,2,3);
-  cbm_k_setnam (name1200);
-
-  retval = cbm_k_open ();
 
   // And do the terminal
   for (;;)
     {
-      // look for a keyboard press
-      cbm_k_chkin (0);
-      c = cbm_k_getin();
-      if (c)
+      if (ser_get(&c)==SER_ERR_OK)
 	{
-	  cbm_k_ckout(2);
-	  cbm_k_bsout(c);
+	  // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
+	  if (c==0xFF && lastc == 0xFF)
+	    {
+	      lastc=0x00;
+	    }
+	  else
+	    {
+	      decode(c&0x7F);
+	      lastc=c;
+	    }
 	}
-
-      // look for input on rs232
-      cbm_k_chkin (2);
-      c = cbm_k_getin ();
-      if (c)
+      if (kbhit())
 	{
-	  c=c&0x7F;
-	  decode(c);
+	  send_byte(cgetc());
 	}
     }
 
-
   tgi_done();
+  ser_close();
+  ser_uninstall();
   tgi_uninstall();
 }
