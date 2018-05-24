@@ -22,7 +22,7 @@ unsigned char j;
 unsigned char mode;
 unsigned char escape;
 unsigned char decoded;
-unsigned char dumb_terminal_active;
+unsigned char dumb_terminal_active=1;
 unsigned int margin=0;
 unsigned int x=0;
 unsigned int y=0;
@@ -39,7 +39,7 @@ unsigned char ascii_bytes=0;
 unsigned char pmd[64];
 unsigned char font_pmd=0;
 unsigned char font_info=0;
-unsigned char connection_active=0;
+unsigned char connection_active=1;
 unsigned char xor_mode=0;
 unsigned char character_set=0;
 unsigned char vertical_writing_mode=0;
@@ -79,6 +79,7 @@ extern void install_nmi_trampoline(void);
 
 void send_byte(unsigned char b)
 {
+  ser_put(b);
 }
 
 void scroll_up(void)
@@ -436,10 +437,9 @@ void main(void)
   deltax=8;
   deltay=16;
   dumb_terminal_active=1;
-  install_nmi_trampoline();
   tgi_install(tgi_static_stddrv);
   tgi_init();
-
+  install_nmi_trampoline();
 
 
   tgi_clear();
@@ -467,7 +467,7 @@ void main(void)
 	}
       if (kbhit())
 	{
-	  ser_put(cgetc());
+	  send_byte(cgetc());
 	}
     }
 
