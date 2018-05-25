@@ -226,6 +226,7 @@ void decode_dumb_terminal(char b)
 	{
 	  // Proper STX sequence, set PLATO mode.
 	  dumb_terminal_active=FALSE;
+	  mode=(3<<2)+1;
 	  escape=FALSE;
 	  decoded=TRUE;
 	}
@@ -894,6 +895,7 @@ void send_echo_request(unsigned int n)
       n=mar;
       break;
     case 0x52:
+      flow_control=FALSE;
       /* flow_control=TRUE; */
       /* n=0x53; */
       n=0x52;
@@ -975,29 +977,10 @@ void send_processed_key(unsigned int n)
     }
   else if (dumb_terminal_active==FALSE)
     {
-      if (n == (ASCII_XOFF + 0x80))
-	{
-	  if (flow_control==FALSE)
-	    {
-	      /* return; // Ignore it. */
-	    }
-	  data[0] = ASCII_XOFF;
-	}
-      else if (n == (ASCII_XON + 0x80))
-	{
-	  if (flow_control==FALSE)
-	    {
-	      /* return; // Ignore it. */
-	    }
-	  data[0] = ASCII_XON + 0x80;
-	}
-      else
-	{
-	  length = 3;
-	  data[0] = 0x1B;
-	  data[1] = (0x40 + (n & 0x3F));
-	  data[2] = (0x60 + (n >> 6));
-	}
+      length = 3;
+      data[0] = 0x1B;
+      data[1] = (0x40 + (n & 0x3F));
+      data[2] = (0x60 + (n >> 6));
       for (i = 0; i < length; i++) {
 	send_byte(data[i]);
       }
@@ -1089,7 +1072,17 @@ void process_modes(unsigned int b)
     case 2: // Load Memory (Character sets)
       
     case 3: // Text mode
+      mode3(b);
+      decoded=TRUE;
+      break;
     case 4: // Block Erase mode
+      if (assemble_coordinate(b))
+	{
+	  mode_words++;
+	  mode4((last_x<<9)+last_y);
+	}
+      decoded=TRUE;
+      break;
     case 5: // Micro Tutor mode 5
     case 6: // Micro Tutor mode 6
     case 7: // Micro Tutor mode 7

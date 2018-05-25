@@ -359,6 +359,7 @@ void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
 
 void screen_erase(void)
 {
+  tgi_clear();
 }
 void screen_erase_block(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
 {
