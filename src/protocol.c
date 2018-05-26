@@ -7,6 +7,11 @@
  *
  */
 
+
+#ifdef PROTOCOL_DEBUG
+#include <stdio.h>
+#endif
+
 #include <string.h>
 #include <peekpoke.h>
 #include "protocol.h"
@@ -264,6 +269,9 @@ void decode_dumb_terminal(char b)
   else if (b>=32 && b<127) // Printable char
     {
       unsigned char char_to_plot = asciiM0[b];
+#ifdef PROTOCOL_DEBUG
+      printf("%c",b^0x20); // Silly transform :)
+#endif
       if (char_to_plot != 0xFF)
 	{
 	  unsigned char charset_to_use = (char_to_plot & 0x80) >> 7;
@@ -350,6 +358,8 @@ void process_escape_sequence(unsigned char b)
     case ASCII_ETX:
       // ETX ends PLATO mode and returns to dumb terminal mode.
       dumb_terminal_active=TRUE;
+      x=0;
+      y=496;
       decoded=TRUE;
       break;
     case ASCII_FF:
@@ -746,7 +756,7 @@ unsigned int assemble_coordinate(unsigned char b)
 	{
 	  // High Y coordinate
 	  last_y = (last_y & 037) | (coordinate << 5);
-	  ascii_bytes=0;
+	  ascii_bytes=2;
 	}
       else
 	{
@@ -800,7 +810,7 @@ unsigned int assemble_data(unsigned char b)
       assembler=0;
     }
 
-  assembler |= ((b & 077) << (ascii_bytes & 6));
+  assembler |= ((b & 077) << (ascii_bytes * 6));
 
   if (++ascii_bytes==3)
     {
@@ -874,6 +884,9 @@ void send_ext(unsigned int key)
  */
 void send_echo_request(unsigned int n)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("send_echo_request(0x%02x)\n",n);
+#endif
   switch(n)
     {
     case 0x70:

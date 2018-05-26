@@ -1,3 +1,5 @@
+#define _optspeed_
+
 #include <6502.h>
 #include <stdio.h>
 #include <tgi.h>
@@ -8,7 +10,6 @@
 #include "scale.h"
 #include "protocol.h"
 
-#define _optspeed_
 
 unsigned char retval;
 unsigned char c;
@@ -73,8 +74,8 @@ const unsigned char welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,
 const unsigned char welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 #define WELCOMEMSG_5_LEN 15
 
-// The static symbol for the c64 up2400 driver
-extern char c64_up2400;
+// The static symbol for the c64 swlink driver
+extern char c64_swlink;
 extern void install_nmi_trampoline(void);
 
 void send_byte(unsigned char b)
@@ -88,6 +89,9 @@ void scroll_up(void)
 
 void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
 {
+#ifdef PROTOCOL_DEBUG
+  // don't do draw char.
+#else
   a=0;
   nx=scalex[x+margin];
   ny=scaley[y+16];
@@ -355,51 +359,100 @@ void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
   /*   } */
 
   x=x+deltax;
+#endif
 }
 
 void screen_erase(void)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("screen_erase()\n");
+#else
   tgi_clear();
+#endif
 }
 void screen_erase_block(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("screen_erase_block(%d,%d,%d,%d)\n",x1,y1,x2,y2);
+#else
+  tgi_setcolor(TGI_COLOR_BLACK);
+  tgi_bar(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
+#endif
 }
 void screen_sleep(void)
 {
+#ifdef PROTOCOL_DEBUG
+  // printf("screen_sleep() - 8ms sleep.\n");
+#else
+#endif
 }
 void screen_backspace(void)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("screen_backspace()\n");
+#else
+#endif
 }
 void screen_forwardspace(void)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("screen_forwardspace()\n");
+#else
+#endif
 }
 void beep(void)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("beep()\n");
+#else
+#endif
 }
 
 void draw_string(const char* text,unsigned char len)
 {
+#ifdef PROTOCOL_DEBUG
+  // printf("draw_string(%s,%d)\n",text,len);
+#else
   unsigned char* currChar=NULL;
   unsigned char counter=0;
   for (counter=0;counter<len;counter++)
     {
       decode_dumb_terminal(text[counter]);
     }
+#endif
 }
 
 void draw_point(unsigned int x,unsigned int y)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("draw_point(%d,%d)\n",scalex[x],scaley[y]);
+#else
   tgi_setpixel(scalex[x],scaley[y]);
+#endif
 }
 void draw_line(unsigned int x1, unsigned int y1,unsigned int x2, unsigned int y2)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("draw_line(%d,%d,%d,%d,%d,%d,%d,%d)\n",x1,y1,x2,y2,scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
+#else
   tgi_line(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
+#endif
 }
 void paint(void)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("paint(void)\n");
+#else
+  // TODO: Paint
+#endif
 }
 void enable_touch(int n)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("enable_touch(%d)\n",n);
+#else
+  // TODO: implement touch?
+#endif
 }
 
 void greeting(void)
@@ -417,16 +470,19 @@ void main(void)
 {
   int i=0;
 
+  unsigned int u=0;
+  unsigned int v=0;
+  
   struct ser_params params = {
     SER_BAUD_2400,
-    SER_BITS_8,
+    SER_BITS_7,
     SER_STOP_1,
-    SER_PAR_NONE,
-    SER_HS_NONE
+    SER_PAR_EVEN,
+    SER_HS_HW
   };
 
   
-  c=ser_install(&c64_up2400);
+  c=ser_install(&c64_swlink);
 
   if (c!=SER_ERR_OK)
     {
@@ -438,11 +494,13 @@ void main(void)
   deltax=8;
   deltay=16;
   dumb_terminal_active=1;
+#ifndef PROTOCOL_DEBUG
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
   tgi_clear();
-  
+#endif
+
   c=ser_open(&params);
   ser_ioctl(1, NULL);  
     
@@ -470,8 +528,10 @@ void main(void)
 	}
     }
 
+#ifndef PROTOCOL_DEBUG
   tgi_done();
   ser_close();
   ser_uninstall();
   tgi_uninstall();
+#endif
 }
