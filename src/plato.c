@@ -365,7 +365,7 @@ void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
 void screen_erase(void)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("screen_erase()\n");
+  // Don't do anything
 #else
   tgi_clear();
 #endif
@@ -373,10 +373,11 @@ void screen_erase(void)
 void screen_erase_block(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("screen_erase_block(%d,%d,%d,%d)\n",x1,y1,x2,y2);
+  // Don't do anything
 #else
   tgi_setcolor(TGI_COLOR_BLACK);
   tgi_bar(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
+  tgi_setcolor(TGI_COLOR_ORANGE);
 #endif
 }
 void screen_sleep(void)
@@ -389,21 +390,21 @@ void screen_sleep(void)
 void screen_backspace(void)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("screen_backspace()\n");
+  // Don't do anything
 #else
 #endif
 }
 void screen_forwardspace(void)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("screen_forwardspace()\n");
+  // Don't do anything
 #else
 #endif
 }
 void beep(void)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("beep()\n");
+  // Don't do anything
 #else
 #endif
 }
@@ -425,7 +426,7 @@ void draw_string(const char* text,unsigned char len)
 void draw_point(unsigned int x,unsigned int y)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("draw_point(%d,%d)\n",scalex[x],scaley[y]);
+  // don't do anything
 #else
   tgi_setpixel(scalex[x],scaley[y]);
 #endif
@@ -433,7 +434,7 @@ void draw_point(unsigned int x,unsigned int y)
 void draw_line(unsigned int x1, unsigned int y1,unsigned int x2, unsigned int y2)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("draw_line(%d,%d,%d,%d,%d,%d,%d,%d)\n",x1,y1,x2,y2,scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
+  // don't do anything
 #else
   tgi_line(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
 #endif
@@ -441,7 +442,7 @@ void draw_line(unsigned int x1, unsigned int y1,unsigned int x2, unsigned int y2
 void paint(void)
 {
 #ifdef PROTOCOL_DEBUG
-  printf("paint(void)\n");
+  // Don't do anything
 #else
   // TODO: Paint
 #endif
@@ -469,9 +470,9 @@ void greeting(void)
 void main(void)
 {
   int i=0;
-
   unsigned int u=0;
   unsigned int v=0;
+  static const unsigned char pal[2]={TGI_COLOR_BLACK,TGI_COLOR_ORANGE};
   
   struct ser_params params = {
     SER_BAUD_2400,
@@ -499,6 +500,8 @@ void main(void)
   tgi_init();
   install_nmi_trampoline();
   tgi_clear();
+  POKE(53280,0);
+  tgi_setpalette(pal);
 #endif
 
   c=ser_open(&params);

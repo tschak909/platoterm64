@@ -7,7 +7,6 @@
  *
  */
 
-
 #ifdef PROTOCOL_DEBUG
 #include <stdio.h>
 #endif
@@ -113,8 +112,8 @@ extern unsigned char vertical_writing_mode;
 extern unsigned char reverse_writing_mode;
 extern unsigned char bold_writing_mode;
 extern unsigned char mode_words;
-extern unsigned char assembler; 
-extern unsigned char mar;
+extern unsigned long assembler; 
+extern unsigned short mar;
 extern unsigned char flow_control;
 extern unsigned long platofgcolor;
 extern unsigned long platobgcolor;
@@ -270,7 +269,7 @@ void decode_dumb_terminal(char b)
     {
       unsigned char char_to_plot = asciiM0[b];
 #ifdef PROTOCOL_DEBUG
-      printf("%c",b^0x20); // Silly transform :)
+      printf("%c",b); // Silly transform :)
 #endif
       if (char_to_plot != 0xFF)
 	{
@@ -611,13 +610,21 @@ void process_other_states(unsigned char b)
 	    {
 	      x=last_x;
 	      y=last_y;
+#ifdef PROTOCOL_DEBUG
+	      printf("New coords: %d,%d\n",x,y);
+#endif
 	    }
 	  decoded=TRUE;
 	  break;
 	case ASCII_STATE_PAINT:
 	  n=assemble_paint(b);
 	  if (n != -1)
-	    paint();
+	    {
+#ifdef PROTOCOL_DEBUG
+	      printf("Calling paint() with X: %d Y: %d\n",x,y);
+#endif
+	      paint();
+	    }
 	  decoded=TRUE;
 	  break;
 	case ASCII_STATE_LOAD_ECHO:
@@ -634,10 +641,16 @@ void process_other_states(unsigned char b)
 	  if (n!=1)
 	    {
 	      mar=n&0x7FFF;
+#ifdef PROTOCOL_DEBUG
+	      printf("Load new PC: $%04x\n",mar);
+#endif
 	    }
 	  decoded=TRUE;
 	case ASCII_STATE_LOAD_EXTERNAL:
 	  n=assemble_data(b);
+#ifdef PROTOCOL_DEBUG
+	  printf("External key: %0x02x\n",n);
+#endif
 	  process_ext(n);
 	  decoded=TRUE;
 	case ASCII_STATE_SSF:
@@ -749,31 +762,49 @@ unsigned int assemble_ascii_plato_metadata(unsigned char b)
 unsigned int assemble_coordinate(unsigned char b)
 {
   int coordinate = b & 037;  // Mask off top 3 bits.
+#ifdef PROTOCOL_DEBUG
+  printf("assemble_coordinate(%d)\n",b);
+#endif
   switch(b >> 5) // get control bits 6 and 7 to determine what part of coordinate to parse
     {
     case 1:   // High X or High Y
       if (ascii_bytes==0)
 	{
 	  // High Y coordinate
-	  last_y = (last_y & 037) | (coordinate << 5);
+	  last_y = (last_y & 0x1F) | (coordinate << 5);
+#ifdef PROTOCOL_DEBUG
+	  printf("High Y - Y now %d\n",last_y);
+#endif
 	  ascii_bytes=2;
 	}
       else
 	{
 	  // High X coordinate
 	  last_x = (last_x & 0x1F) | (coordinate << 5);
+#ifdef PROTOCOL_DEBUG
+	  printf("High X - X now %d\n",last_x);
+#endif
 	}
       break;
     case 2:  // Low X
       last_x = (last_x & 0740) | coordinate;
+#ifdef PROTOCOL_DEBUG
+      printf("Low X - X now %d\n",last_x);
+#endif
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
       return TRUE;
     case 3:  // Low Y
+#ifdef PROTOCOL_DEBUG
+      printf("Low Y - Y now %d\n",last_y);
+#endif
       last_y = (last_y & 0x1E0) | coordinate;
       ascii_bytes = 2;
       break;
     }
+#ifdef PROTOCOL_DEBUG
+  printf("Fell through to bottom of assemble_coordinate()\n");
+#endif
   return FALSE;
 }
 
@@ -783,10 +814,16 @@ unsigned int assemble_coordinate(unsigned char b)
  */
 unsigned int assemble_paint(unsigned char b)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("assemble_paint(%d)\n",b);
+#endif
   if (ascii_bytes == 0)
     assembler=0;
 
   assembler |= ((b & 0x3F) << (ascii_bytes * 6));
+#ifdef PROTOCOL_DEBUG
+  printf("assembler now: %d\n",assembler);
+#endif
   if (++ascii_bytes==2)
     {
       ascii_bytes=0;
@@ -797,6 +834,9 @@ unsigned int assemble_paint(unsigned char b)
     {
       // Still assembling the paint request.
     }
+#ifdef PROTOCOL_DEBUG
+  printf("not done assembling paint.\n");
+#endif
   return -1;
 }
 
@@ -805,17 +845,28 @@ unsigned int assemble_paint(unsigned char b)
  */
 unsigned int assemble_data(unsigned char b)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("assemble_data(%d)\n",b);
+#endif
   if (ascii_bytes==0)
     {
+#ifdef PROTOCOL_DEBUG
+      printf("setting assembler to 0\n");
+#endif
       assembler=0;
     }
 
   assembler |= ((b & 077) << (ascii_bytes * 6));
-
+#ifdef PROTOCOL_DEBUG
+  printf("assembler now: %d\n",assembler);
+#endif
   if (++ascii_bytes==3)
     {
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
+#ifdef PROTOCOL_DEBUG
+      printf("assembler done: %d\n",assembler);
+#endif
       return assembler;
     }
   else
@@ -830,11 +881,23 @@ unsigned int assemble_data(unsigned char b)
  */
 unsigned int assemble_color(unsigned char b)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("assemble_color(%d)\n",b);
+#endif
   if (ascii_bytes == 0) {
+#ifdef PROTOCOL_DEBUG
+    printf("Clearing assembler\n");
+#endif
     assembler = 0;
   }
   assembler |= ((b & 077) << (ascii_bytes * 6));
+#ifdef PROTOCOL_DEBUG
+  printf("Assembler is now %d",assembler);
+#endif
   if (++ascii_bytes == 4) {
+#ifdef PROTOCOL_DEBUG
+    printf("Returning assembler: %d\n",assembler);
+#endif
     return assembler;
   } 
   return -1;
@@ -845,11 +908,23 @@ unsigned int assemble_color(unsigned char b)
  */
 unsigned int assemble_grayscale(unsigned char b)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("assemble_grayscale(%d)\n",b);
+#endif
   if (ascii_bytes == 0) {
+#ifdef PROTOCOL_DEBUG
+    printf("clearing assembler\n");
+#endif
     assembler = 0;
   }
   assembler = (b & 0x3F) << 2;
+#ifdef PROTOCOL_DEBUG
+  printf("assembler now: %d\n",assembler);
+#endif
   if (++ascii_bytes == 1) {
+#ifdef PROTOCOL_DEBUG
+    printf("assembler returning: %d\n",assembler);
+#endif
     return assembler;
   } 
   return -1;
@@ -862,6 +937,9 @@ void send_ext(unsigned int key)
 {
   unsigned char data[3];
   int i;
+#ifdef PROTOCOL_DEBUG
+  printf("send_ext(%d)\n",key);
+#endif
   
   if (connection_active==FALSE)
     {
@@ -891,30 +969,51 @@ void send_echo_request(unsigned int n)
     {
     case 0x70:
       n = 0x70 + ASCTYPE;
+#ifdef PROTOCOL_DEBUG
+      printf("Sending Termtype: %d\n",ASCTYPE);
+#endif
       break;
     case 0x71:
       n = 1;
+#ifdef PROTOCOL_DEBUG
+      printf("Sending subtype: %d\n",1);
+#endif
       break;
     case 0x72:
       n=0;
+#ifdef PROTOCOL_DEBUG
+      printf("sending load length: %x\n",n);
+#endif
       break;
     case 0x73:
       n=0x40;
+#ifdef PROTOCOL_DEBUG
+      printf("sending termdata: %x\n",n);
+#endif
       break;
     case 0x7b:
       beep();
       break;
     case 0x7d:
       n=mar;
+#ifdef PROTOCOL_DEBUG
+      printf("sending MAR: %x\n",n);
+#endif
       break;
     case 0x52:
       flow_control=FALSE;
       /* flow_control=TRUE; */
       /* n=0x53; */
       n=0x52;
+#ifdef PROTOCOL_DEBUG
+      printf("Sending no flow control reply %x\n",n);
+#endif
       break;
     case 0x60:
       n += ASCFEATURES;
+#ifdef PROTOCOL_DEBUG
+      printf("Sending terminal feature set: %x\n",n);
+#endif
       break;
     }
 
@@ -1109,8 +1208,14 @@ void process_modes(unsigned int b)
 void mode0(unsigned int n)
 {
   int nx, ny;
+#ifdef PROTOCOL_DEBUG
+  printf("mode0(n)\n",n);
+#endif
   nx = (n >> 9) & 0x1FF;
   ny = n & 0x1FF;
+#ifdef PROTOCOL_DEBUG
+  printf("mode0(%d,%d\n",nx,ny);
+#endif
   draw_point(nx,ny);
   x=nx;
   y=ny;
@@ -1122,12 +1227,18 @@ void mode0(unsigned int n)
 void mode1(unsigned int n)
 {
   int nx, ny;
-  
+#ifdef PROTOCOL_DEBUG
+  printf("mode1(%d)\n",n);
+#endif
   nx = (n >> 9) & 0x1FF;
   ny = n & 0x1FF;
   draw_line(x,y,nx,ny);
   x=nx;
   y=ny;
+#ifdef PROTOCOL_DEBUG
+  printf("mode1(%d,%d,%d,%d)\n",x,y,nx,ny);
+#endif
+  
 }
 
 /**
@@ -1144,6 +1255,9 @@ void mode2(unsigned int n)
  */
 void mode3(unsigned char b)
 {
+#ifdef PROTOCOL_DEBUG
+  printf("mode3(%d)\n",b);
+#endif
   ascii_state=ASCII_STATE_NONE;
   ascii_bytes=0;
   if (character_set == 0)
@@ -1164,6 +1278,9 @@ void mode3(unsigned char b)
     {
       b &= 0x7F;
       draw_char(character_set, b);
+#ifdef PROTOCOL_DEBUG
+      printf("draw_char(%d,%d)\n",character_set,b);
+#endif
     }
 }
 
@@ -1180,6 +1297,9 @@ void mode4(int n)
   
   if ((mode_words & 1) > 0)
     {
+#ifdef PROTOCOL_DEBUG
+      printf("mode4(%d) - start\n",n);
+#endif
       mode4start=n;
       return;
     }
@@ -1188,6 +1308,10 @@ void mode4(int n)
   y1 = mode4start & 0x1FF;
   x2 = (n >> 9) & 0x1FF;
   y2 = n & 0x1FF;
+
+#ifdef PROTOCOL_DEBUG
+  printf("mode4(%d,%d,%d,%d)\n",x1,y1,x2,y2);
+#endif
   
   screen_erase_block(x1, y1, x2, y2);
   x=x1;
