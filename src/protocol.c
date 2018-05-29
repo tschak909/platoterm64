@@ -16,7 +16,7 @@
 #include "protocol.h"
 
 #define FALSE 0
-#define TRUE !FALSE
+#define TRUE 1
 
 #define ASCII_STATE_NONE 0
 #define ASCII_STATE_PNI_RS 1
@@ -91,7 +91,6 @@
 
 extern unsigned char mode;
 extern unsigned char escape;
-extern unsigned char decoded;
 extern unsigned char dumb_terminal_active;
 extern unsigned int margin;
 extern unsigned int x;
@@ -118,6 +117,9 @@ extern unsigned char flow_control;
 extern unsigned long platofgcolor;
 extern unsigned long platobgcolor;
 extern unsigned int mode4start;
+extern unsigned short plato_m23[128*8];
+extern unsigned char special_mode;
+extern unsigned char special_mode_param;
 
 extern void send_byte(unsigned char b);
 extern void scroll_up(void);
@@ -149,8 +151,10 @@ static const unsigned char asciiM0[] =
   0x9f, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
   0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
   0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-  0x18, 0x19, 0x1a, 0xa9, 0xae, 0xaa, 0xa4, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0x18, 0x19, 0x1a, 0xa9, 0xae, 0xaa, 0xa4, 0xff
+};
+static const unsigned char asciiM1[] = 
+{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -198,7 +202,6 @@ static const unsigned char ascii_mode[] = { 0, 3, 2, 1 };
  */
 void decode(unsigned char b)
 {
-  decoded=FALSE;
   if (dumb_terminal_active==TRUE)
     {
       decode_dumb_terminal(b);
@@ -217,14 +220,14 @@ void decode_dumb_terminal(char b)
   if (b==ASCII_ESCAPE)
     {
       escape=TRUE;
-      decoded=TRUE;
+      
     }
   else if (b==ASCII_STX)
     {
       if (escape==FALSE)
 	{
 	  // STX found without corresponding escape, ignore.
-	  decoded=TRUE;
+	  
 	}
       else
 	{
@@ -232,7 +235,7 @@ void decode_dumb_terminal(char b)
 	  dumb_terminal_active=FALSE;
 	  mode=(3<<2)+1;
 	  escape=FALSE;
-	  decoded=TRUE;
+	  
 	}
     }
   else if (b==ASCII_ETX)
@@ -240,18 +243,17 @@ void decode_dumb_terminal(char b)
       if (escape==FALSE)
 	{
 	  // Improper ETX without corresponding esc, ignore.
-	  decoded=FALSE;
 	}
       else
 	{
 	  // ETX detected in dumb terminal mode, ignore.
-	  decoded=TRUE;
+	  
 	}
     }
   else if (b==ASCII_CR)
     {
       x=margin;
-      decoded=TRUE;
+      
     }
   else if (b==ASCII_LF)
     {
@@ -263,19 +265,16 @@ void decode_dumb_terminal(char b)
 	{
 	  scroll_up();
 	}
-      decoded=TRUE;
+      
     }
   else if (b>=32 && b<127) // Printable char
     {
       unsigned char char_to_plot = asciiM0[b];
-#ifdef PROTOCOL_DEBUG
-      printf("%c",b); // Silly transform :)
-#endif
       if (char_to_plot != 0xFF)
 	{
 	  unsigned char charset_to_use = (char_to_plot & 0x80) >> 7;
 	  char_to_plot &= 0x7F; // Lower 7 bits.
-	  decoded=TRUE;
+	  
 	  draw_char(charset_to_use,char_to_plot);
 	}
     }
@@ -290,7 +289,7 @@ void decode_plato(unsigned char b)
   if (b==ASCII_ESCAPE)
     {
       escape=TRUE;
-      decoded=TRUE;
+      
     }
   else if (ascii_state == ASCII_STATE_PNI_RS)
     {
@@ -324,7 +323,7 @@ void process_pni_rs(void)
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
     }
-  decoded=TRUE;
+  
 }
 
 /**
@@ -333,12 +332,12 @@ void process_pni_rs(void)
  */
 void process_plato_metadata(unsigned char b)
 {
-  unsigned int n = assemble_ascii_plato_metadata(b);
+  unsigned long n = assemble_ascii_plato_metadata(b);
   if (n==0)
     {
       // Completed metadata, but just ignore it.
     }
-  decoded=TRUE;
+  
 }
 
 /**
@@ -352,14 +351,14 @@ void process_escape_sequence(unsigned char b)
     case ASCII_STX:
       // STX called while still in PLATO mode. Ignore.
       dumb_terminal_active=FALSE;
-      decoded=TRUE;
+      
       break;
     case ASCII_ETX:
       // ETX ends PLATO mode and returns to dumb terminal mode.
       dumb_terminal_active=TRUE;
       x=0;
       y=496;
-      decoded=TRUE;
+      
       break;
     case ASCII_FF:
       // Erase screen
@@ -376,23 +375,23 @@ void process_escape_sequence(unsigned char b)
       // Inverse, write, erase, rewrite
       xor_mode=FALSE;
       mode=(mode & ~3)+ascii_mode[b-ASCII_DC1];
-      decoded=TRUE;
+      
       break;
     case ASCII_2:
       // Load coordinate
       ascii_state=ASCII_STATE_LOAD_COORDINATES;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_AT:
       // Superscript
       // TODO: IMPLEMENT SUPERSCRIPT
-      decoded=TRUE;
+      
       break;
     case ASCII_A:
       // Subscript
       // TODO: IMPLEMENT SUBSCRIPT
-      decoded=TRUE;
+      
       break;
     case ASCII_B:
     case ASCII_C:
@@ -404,96 +403,96 @@ void process_escape_sequence(unsigned char b)
     case ASCII_I:
       // Select current character set memory
       character_set=b-ASCII_B;
-      decoded=TRUE;
+      
       break;
     case ASCII_J:
       // Enable Horizontal Writing Mode
       vertical_writing_mode=FALSE;
-      decoded=TRUE;
+      
       break;
     case ASCII_K:
       // Enable Vertical Writing Mode
       vertical_writing_mode=TRUE;
-      decoded=TRUE;
+      
       break;
     case ASCII_L:
       // Forward writing mode (LTR)
       reverse_writing_mode=FALSE;
-      decoded=TRUE;
+      
       break;
     case ASCII_M:
       // Reverse writing mode (RTL)
       reverse_writing_mode=TRUE;
-      decoded=TRUE;
+      
       break;
     case ASCII_N:
       // Normal Size Writing Mode
       bold_writing_mode=FALSE;
-      decoded=TRUE;
+      
       break;
     case ASCII_O:
       // Bold size writing mode
       bold_writing_mode=TRUE;
-      decoded=TRUE;
+      
       break;
     case ASCII_P:
       // Load Character memory
       xor_mode=FALSE;
       mode=(mode & 3)+(2 << 2);
-      decoded=TRUE;
+      
       break;
     case ASCII_Q:
       // SSF
       ascii_state=ASCII_STATE_SSF;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_R:
       // Load EXTERNAL
       ascii_state=ASCII_STATE_LOAD_EXTERNAL;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_S:
       // LOAD Memory (Mode 2 data)
       xor_mode=FALSE;
       mode=(mode & 3)+(2 << 2);
-      decoded=TRUE;
+      
       break;
     case ASCII_T:
       // MODE 5 (not used, but must be decoded)
       xor_mode=FALSE;
       mode=(mode & 3)+(5 << 2);
-      decoded=TRUE;
+      
       break;
     case ASCII_U:
       // MODE 6 (not used, but must be decoded)
       xor_mode=FALSE;
       mode=(mode & 3)+(6 << 2);
-      decoded=TRUE;
+      
       break;
     case ASCII_V:
       // Mode 7 (not used, but must be decoded)
       xor_mode=FALSE;
       mode=(mode & 3)+(7 << 2);
-      decoded=TRUE;
+      
       break;
     case ASCII_W:
       // Load memory Address
       ascii_state=ASCII_STATE_LOAD_ADDRESS;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_X:
       // Start PLATO Metadata
       ascii_state=ASCII_STATE_PLATO_META_DATA;
       ascii_bytes=0;
-      decoded=TRUE;
+      
     case ASCII_Y:
       // Start LOAD ECHO
       ascii_state=ASCII_STATE_LOAD_ECHO;
       ascii_bytes=0;
-      decoded=TRUE;
+      
     case ASCII_Z:
       // Set X margin
       margin=x;
@@ -502,25 +501,25 @@ void process_escape_sequence(unsigned char b)
       // Start Foreground color
       ascii_state=ASCII_STATE_FG;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_b:
       // Start Background color
       ascii_state=ASCII_STATE_BG;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_c:
       // Start Paint
       ascii_state=ASCII_STATE_PAINT;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_g:
       // Start greyscale foreground color
       ascii_state=ASCII_STATE_GSFG;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     }
 }
@@ -535,62 +534,62 @@ void process_control_characters(unsigned char b)
     case ASCII_NUL:
       // Sleep for 8 milliseconds
       screen_sleep();
-      decoded=TRUE;
+      
       break;
     case ASCII_BACKSPACE:
       // Go back one character
       x=x-delta_x;
-      decoded=TRUE;
+      
       break;
     case ASCII_TAB:
       x=x+delta_x;
-      decoded=TRUE;
+      
       break;
     case ASCII_LF:
       y=y-delta_y;
-      decoded=TRUE;
+      
       break;
     case ASCII_VT:
       y=y+delta_y;
-      decoded=TRUE;
+      
       break;
     case ASCII_FF:
       x=0;
       y=511;
-      decoded=TRUE;
+      
       break;
     case ASCII_CR:
       x=margin;
       y=y-delta_y&0777;
-      decoded=TRUE;
+      
       break;
     case ASCII_EM:
       // Block erase
       mode=(mode&3)+(4<<2);
       mode_words=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_FS:
       // Point plot
       mode=(mode&3);
-      decoded=TRUE;
+      
       break;
     case ASCII_GS:
       // Draw Line
       mode=(mode&3)+(1<<2);
       ascii_state=ASCII_STATE_LOAD_COORDINATES;
       ascii_bytes=0;
-      decoded=TRUE;
+      
       break;
     case ASCII_RS:
       // PNI_RS START DOWNLOAD. IGNORE NEXT THREE COMMANDS.
       ascii_state=ASCII_STATE_PNI_RS;
-      decoded=TRUE;
+      
       break;
     case ASCII_US:
       // alpha mode (text)
       mode=(mode&3)+(3<<2);
-      decoded=TRUE;
+      
       break;
     }
 }
@@ -600,7 +599,7 @@ void process_control_characters(unsigned char b)
  */
 void process_other_states(unsigned char b)
 {
-  int n;
+  unsigned long n;
   if (b >= ASCII_SPACE)
     {
       switch(ascii_state)
@@ -610,22 +609,16 @@ void process_other_states(unsigned char b)
 	    {
 	      x=last_x;
 	      y=last_y;
-#ifdef PROTOCOL_DEBUG
-	      printf("New coords: %d,%d\n",x,y);
-#endif
 	    }
-	  decoded=TRUE;
+	  
 	  break;
 	case ASCII_STATE_PAINT:
 	  n=assemble_paint(b);
 	  if (n != -1)
 	    {
-#ifdef PROTOCOL_DEBUG
-	      printf("Calling paint() with X: %d Y: %d\n",x,y);
-#endif
 	      paint();
 	    }
-	  decoded=TRUE;
+	  
 	  break;
 	case ASCII_STATE_LOAD_ECHO:
 	  n=assemble_data(b);
@@ -634,49 +627,43 @@ void process_other_states(unsigned char b)
 	      n &= 0x7F;
 	      send_echo_request(n);
 	    }
-	  decoded=TRUE;
+	  
 	  break;
 	case ASCII_STATE_LOAD_ADDRESS:
 	  n=assemble_data(b);
 	  if (n!=1)
 	    {
 	      mar=n&0x7FFF;
-#ifdef PROTOCOL_DEBUG
-	      printf("Load new PC: $%04x\n",mar);
-#endif
 	    }
-	  decoded=TRUE;
+	  
 	case ASCII_STATE_LOAD_EXTERNAL:
 	  n=assemble_data(b);
-#ifdef PROTOCOL_DEBUG
-	  printf("External key: %0x02x\n",n);
-#endif
 	  process_ext(n);
-	  decoded=TRUE;
+	  
 	case ASCII_STATE_SSF:
 	  n=assemble_data(b);
 	  if (n != -1)
 	    {
 	      enable_touch((n & 0x20) != 0);
 	    }
-	  decoded=TRUE;
+	  
 	  break;
 	case ASCII_STATE_FG:
 	case ASCII_STATE_BG:
 	  n = assemble_color(b);
 	  process_color((long)n);
-	  decoded=TRUE;
+	  
 	  break;
 	case ASCII_STATE_GSFG:
 	  n= assemble_grayscale(b);
 	  process_grayscale(n);
-	  decoded=TRUE;
+	  
 	  break;
 	case ASCII_STATE_PLATO_META_DATA:
-	  decoded=TRUE; // Handled above.
+	   // Handled above.
 	  break;
 	case ASCII_STATE_PNI_RS:
-	  decoded=TRUE; // Ignored.
+	   // Ignored.
 	  break;
 	case ASCII_STATE_NONE:
 	  process_modes(b);
@@ -762,9 +749,6 @@ unsigned int assemble_ascii_plato_metadata(unsigned char b)
 unsigned int assemble_coordinate(unsigned char b)
 {
   int coordinate = b & 037;  // Mask off top 3 bits.
-#ifdef PROTOCOL_DEBUG
-  printf("assemble_coordinate(%d)\n",b);
-#endif
   switch(b >> 5) // get control bits 6 and 7 to determine what part of coordinate to parse
     {
     case 1:   // High X or High Y
@@ -772,39 +756,24 @@ unsigned int assemble_coordinate(unsigned char b)
 	{
 	  // High Y coordinate
 	  last_y = (last_y & 0x1F) | (coordinate << 5);
-#ifdef PROTOCOL_DEBUG
-	  printf("High Y - Y now %d\n",last_y);
-#endif
 	  ascii_bytes=2;
 	}
       else
 	{
 	  // High X coordinate
 	  last_x = (last_x & 0x1F) | (coordinate << 5);
-#ifdef PROTOCOL_DEBUG
-	  printf("High X - X now %d\n",last_x);
-#endif
 	}
       break;
     case 2:  // Low X
       last_x = (last_x & 0740) | coordinate;
-#ifdef PROTOCOL_DEBUG
-      printf("Low X - X now %d\n",last_x);
-#endif
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
       return TRUE;
     case 3:  // Low Y
-#ifdef PROTOCOL_DEBUG
-      printf("Low Y - Y now %d\n",last_y);
-#endif
       last_y = (last_y & 0x1E0) | coordinate;
       ascii_bytes = 2;
       break;
     }
-#ifdef PROTOCOL_DEBUG
-  printf("Fell through to bottom of assemble_coordinate()\n");
-#endif
   return FALSE;
 }
 
@@ -814,16 +783,10 @@ unsigned int assemble_coordinate(unsigned char b)
  */
 unsigned int assemble_paint(unsigned char b)
 {
-#ifdef PROTOCOL_DEBUG
-  printf("assemble_paint(%d)\n",b);
-#endif
   if (ascii_bytes == 0)
     assembler=0;
 
   assembler |= ((b & 0x3F) << (ascii_bytes * 6));
-#ifdef PROTOCOL_DEBUG
-  printf("assembler now: %d\n",assembler);
-#endif
   if (++ascii_bytes==2)
     {
       ascii_bytes=0;
@@ -834,39 +797,24 @@ unsigned int assemble_paint(unsigned char b)
     {
       // Still assembling the paint request.
     }
-#ifdef PROTOCOL_DEBUG
-  printf("not done assembling paint.\n");
-#endif
   return -1;
 }
 
 /**
  * assemble_data(unsigned char b) - Assemble the body of a data packet.
  */
-unsigned int assemble_data(unsigned char b)
+unsigned long assemble_data(unsigned char b)
 {
-#ifdef PROTOCOL_DEBUG
-  printf("assemble_data(%d)\n",b);
-#endif
   if (ascii_bytes==0)
     {
-#ifdef PROTOCOL_DEBUG
-      printf("setting assembler to 0\n");
-#endif
       assembler=0;
     }
 
   assembler |= ((b & 077) << (ascii_bytes * 6));
-#ifdef PROTOCOL_DEBUG
-  printf("assembler now: %d\n",assembler);
-#endif
   if (++ascii_bytes==3)
     {
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
-#ifdef PROTOCOL_DEBUG
-      printf("assembler done: %d\n",assembler);
-#endif
       return assembler;
     }
   else
@@ -879,25 +827,13 @@ unsigned int assemble_data(unsigned char b)
 /**
  * assemble_color(unsigned char b) - Assemble the next color byte
  */
-unsigned int assemble_color(unsigned char b)
+unsigned long assemble_color(unsigned char b)
 {
-#ifdef PROTOCOL_DEBUG
-  printf("assemble_color(%d)\n",b);
-#endif
   if (ascii_bytes == 0) {
-#ifdef PROTOCOL_DEBUG
-    printf("Clearing assembler\n");
-#endif
     assembler = 0;
   }
   assembler |= ((b & 077) << (ascii_bytes * 6));
-#ifdef PROTOCOL_DEBUG
-  printf("Assembler is now %d",assembler);
-#endif
   if (++ascii_bytes == 4) {
-#ifdef PROTOCOL_DEBUG
-    printf("Returning assembler: %d\n",assembler);
-#endif
     return assembler;
   } 
   return -1;
@@ -906,25 +842,13 @@ unsigned int assemble_color(unsigned char b)
 /**
  * assemble_grayscale(unsigned char b)
  */
-unsigned int assemble_grayscale(unsigned char b)
+unsigned long assemble_grayscale(unsigned char b)
 {
-#ifdef PROTOCOL_DEBUG
-  printf("assemble_grayscale(%d)\n",b);
-#endif
   if (ascii_bytes == 0) {
-#ifdef PROTOCOL_DEBUG
-    printf("clearing assembler\n");
-#endif
     assembler = 0;
   }
   assembler = (b & 0x3F) << 2;
-#ifdef PROTOCOL_DEBUG
-  printf("assembler now: %d\n",assembler);
-#endif
   if (++ascii_bytes == 1) {
-#ifdef PROTOCOL_DEBUG
-    printf("assembler returning: %d\n",assembler);
-#endif
     return assembler;
   } 
   return -1;
@@ -937,9 +861,6 @@ void send_ext(unsigned int key)
 {
   unsigned char data[3];
   int i;
-#ifdef PROTOCOL_DEBUG
-  printf("send_ext(%d)\n",key);
-#endif
   
   if (connection_active==FALSE)
     {
@@ -962,58 +883,34 @@ void send_ext(unsigned int key)
  */
 void send_echo_request(unsigned int n)
 {
-#ifdef PROTOCOL_DEBUG
-  printf("send_echo_request(0x%02x)\n",n);
-#endif
   switch(n)
     {
     case 0x70:
       n = 0x70 + ASCTYPE;
-#ifdef PROTOCOL_DEBUG
-      printf("Sending Termtype: %d\n",ASCTYPE);
-#endif
       break;
     case 0x71:
       n = 1;
-#ifdef PROTOCOL_DEBUG
-      printf("Sending subtype: %d\n",1);
-#endif
       break;
     case 0x72:
       n=0;
-#ifdef PROTOCOL_DEBUG
-      printf("sending load length: %x\n",n);
-#endif
       break;
     case 0x73:
       n=0x40;
-#ifdef PROTOCOL_DEBUG
-      printf("sending termdata: %x\n",n);
-#endif
       break;
     case 0x7b:
       beep();
       break;
     case 0x7d:
       n=mar;
-#ifdef PROTOCOL_DEBUG
-      printf("sending MAR: %x\n",n);
-#endif
       break;
     case 0x52:
       flow_control=FALSE;
       /* flow_control=TRUE; */
       /* n=0x53; */
       n=0x52;
-#ifdef PROTOCOL_DEBUG
-      printf("Sending no flow control reply %x\n",n);
-#endif
       break;
     case 0x60:
       n += ASCFEATURES;
-#ifdef PROTOCOL_DEBUG
-      printf("Sending terminal feature set: %x\n",n);
-#endif
       break;
     }
 
@@ -1114,16 +1011,16 @@ void send_processed_key(unsigned int n)
  */
 void process_color(unsigned long n)
 {
-  unsigned long r;
-  unsigned long g;
-  unsigned long b;
+  unsigned short r;
+  unsigned short g;
+  unsigned short b;
   unsigned long c;
   if (n != 1)
     {
       r = (n >> 16) & 0xff;
       g = (n >> 8) & 0xff;
       b = n & 0xff;
-      c = (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
+      c = 1; // for now.
       if (ascii_state == ASCII_STATE_FG)
 	{
 	  platofgcolor=c;
@@ -1148,11 +1045,11 @@ void process_grayscale(unsigned long n)
 {
   if (n != 1)
     {
-      unsigned long a = 0xFF;
-      unsigned long r = (n & 0xFF);
-      unsigned long g = (n & 0xFF);
-      unsigned long b = (n & 0xFF);
-      unsigned long c = (a & 0xff) << 24 | (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
+      unsigned short a = 0xFF;
+      unsigned short r = (n & 0xFF);
+      unsigned short g = (n & 0xFF);
+      unsigned short b = (n & 0xFF);
+      unsigned long c = 1; // for now.
       if (ascii_state == ASCII_STATE_GSFG)
 	{
 	  platofgcolor=c;
@@ -1171,21 +1068,21 @@ void process_modes(unsigned int b)
       if (assemble_coordinate(b))
 	{
 	  mode0((last_x << 9)+last_y);
-	  decoded=TRUE;
+	  
 	}
       break;
     case 1: // Line mode
       if (assemble_coordinate(b))
 	{
 	  mode1((last_x << 9)+last_y);
-	  decoded=TRUE;
+	  
 	}
       break;
     case 2: // Load Memory (Character sets)
       
     case 3: // Text mode
       mode3(b);
-      decoded=TRUE;
+      
       break;
     case 4: // Block Erase mode
       if (assemble_coordinate(b))
@@ -1193,7 +1090,7 @@ void process_modes(unsigned int b)
 	  mode_words++;
 	  mode4((last_x<<9)+last_y);
 	}
-      decoded=TRUE;
+      
       break;
     case 5: // Micro Tutor mode 5
     case 6: // Micro Tutor mode 6
@@ -1205,89 +1102,87 @@ void process_modes(unsigned int b)
 /**
  * mode0(unsigned int n) - Mode 0, dot mode.
  */
-void mode0(unsigned int n)
+void mode0(unsigned long n)
 {
   int nx, ny;
-#ifdef PROTOCOL_DEBUG
-  printf("mode0(n)\n",n);
-#endif
   nx = (n >> 9) & 0x1FF;
   ny = n & 0x1FF;
-#ifdef PROTOCOL_DEBUG
-  printf("mode0(%d,%d\n",nx,ny);
-#endif
   draw_point(nx,ny);
   x=nx;
   y=ny;
 }
 
 /**
- * mode1(unsigned int n) - Mode 1, line mode
+ * mode1(unsigned long n) - Mode 1, line mode
  */
-void mode1(unsigned int n)
+void mode1(unsigned long n)
 {
   int nx, ny;
-#ifdef PROTOCOL_DEBUG
-  printf("mode1(%d)\n",n);
-#endif
   nx = (n >> 9) & 0x1FF;
   ny = n & 0x1FF;
   draw_line(x,y,nx,ny);
   x=nx;
-  y=ny;
-#ifdef PROTOCOL_DEBUG
-  printf("mode1(%d,%d,%d,%d)\n",x,y,nx,ny);
-#endif
-  
+  y=ny;  
 }
 
 /**
  * mode2(unsigned int n) - Mode 2 - Memory load
  */
-void mode2(unsigned int n)
+void mode2(unsigned long n)
 {
-  // TODO: this one will need some serious rethinking, as we can't just
-  // blindly map in a 48K ram segment to write to here, not practical.  
+  int chaddr;
+
+  chaddr = mar - 0x3800;
+
+  if (chaddr < 0 || chaddr > 127*16)
+    {
+      // Out of bounds. Ignore.
+    }
+  else
+    {
+      chaddr /= 2;
+      if (((n >> 16) & 3) == 0)
+	{
+	  // Load character data
+	  plato_m23[chaddr] = n & 0xffff;
+	  ++chaddr;
+	}
+    }
+  mar += 2;
 }
 
 /**
  * mode3(unsigned int n) - Mode 3 - alpha data word.
  */
-void mode3(unsigned char b)
+void mode3(unsigned char n)
 {
-#ifdef PROTOCOL_DEBUG
-  printf("mode3(%d)\n",b);
-#endif
   ascii_state=ASCII_STATE_NONE;
   ascii_bytes=0;
   if (character_set == 0)
     {
-      b = asciiM0[b];
-      character_set = (b & 0x80) >> 7;
+      n = asciiM0[n];
+      character_set = (n & 0x80) >> 7;
     }
   else if (character_set == 1)
     {
-      b = asciiM0[b+64];
-      character_set = (b & 0x80) >> 7;
+      n = asciiM1[n];
+      character_set = (n & 0x80) >> 7;
     }
   else
     {
-      b = ((b - 0x20) & 0x3F);
+      n = ((n - 0x20) & 0x3F);
     }
-  if (b != 0xff)
+  if (n != 0xff)
     {
-      b &= 0x7F;
-      draw_char(character_set, b);
-#ifdef PROTOCOL_DEBUG
-      printf("draw_char(%d,%d)\n",character_set,b);
-#endif
+      n &= 0x7F;
+      draw_char(character_set, n);
     }
 }
 
 /**
  * Process mode 4 (block erase) data word.
  */
-void mode4(int n)
+void mode4(unsigned long n)
 {
 
   unsigned int x1;
@@ -1297,9 +1192,6 @@ void mode4(int n)
   
   if ((mode_words & 1) > 0)
     {
-#ifdef PROTOCOL_DEBUG
-      printf("mode4(%d) - start\n",n);
-#endif
       mode4start=n;
       return;
     }
@@ -1308,10 +1200,6 @@ void mode4(int n)
   y1 = mode4start & 0x1FF;
   x2 = (n >> 9) & 0x1FF;
   y2 = n & 0x1FF;
-
-#ifdef PROTOCOL_DEBUG
-  printf("mode4(%d,%d,%d,%d)\n",x1,y1,x2,y2);
-#endif
   
   screen_erase_block(x1, y1, x2, y2);
   x=x1;
@@ -1321,14 +1209,20 @@ void mode4(int n)
 /**
  * Mode 5,6,7 stubbed and ignored.
  */
-void mode5(int n)
+void mode5(unsigned long n)
 {
+  special_mode=5;
+  special_mode_param=n;
 }
 
-void mode6(int n)
+void mode6(unsigned long n)
 {
+  special_mode=6;
+  special_mode_param=n;
 }
 
-void mode7(int n)
+void mode7(unsigned long n)
 {
+  special_mode=7;
+  special_mode_param=n;
 }

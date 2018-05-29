@@ -12,14 +12,10 @@
 
 
 unsigned char retval;
-unsigned char c;
-unsigned char lastc;
+unsigned char c=0;
+unsigned char lastc=0;
 
 unsigned char chstr[2];
-unsigned char a;
-unsigned char b;
-unsigned char i;
-unsigned char j;
 unsigned char mode;
 unsigned char escape;
 unsigned char decoded;
@@ -27,8 +23,6 @@ unsigned char dumb_terminal_active=1;
 unsigned int margin=0;
 unsigned int x=0;
 unsigned int y=0;
-unsigned int nx=0;
-unsigned int ny=0;
 unsigned int deltax=0;
 unsigned int deltay=0;
 unsigned int last_x=0;
@@ -47,12 +41,16 @@ unsigned char vertical_writing_mode=0;
 unsigned char reverse_writing_mode=0;
 unsigned char bold_writing_mode=0;
 unsigned char mode_words=0;
-unsigned char assembler=0; 
+unsigned long int assembler=0; 
 unsigned char mar=0;
 unsigned char flow_control=0;
-unsigned long platofgcolor=0;
-unsigned long platobgcolor=0;
+unsigned long int platofgcolor=0;
+unsigned long int platobgcolor=0;
 unsigned int mode4start=0;
+unsigned char touch=0;
+unsigned short plato_m23[128*8];
+unsigned char special_mode=0;
+unsigned char special_mode_param=0;
 
 // PLATOTerm for Commodore 64
 const unsigned char welcomemsg_1[]={80,76,65,84,79,84,101,114,109,32,102,111,114,32,67,111,109,109,111,100,111,114,101,32,54,52};
@@ -89,9 +87,10 @@ void scroll_up(void)
 
 void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
 {
-#ifdef PROTOCOL_DEBUG
-  // don't do draw char.
-#else
+  unsigned int a;
+  unsigned int nx;
+  unsigned int ny;
+  unsigned int b;
   a=0;
   nx=scalex[x+margin];
   ny=scaley[y+16];
@@ -359,101 +358,65 @@ void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
   /*   } */
 
   x=x+deltax;
-#endif
 }
 
 void screen_erase(void)
 {
-#ifdef PROTOCOL_DEBUG
-  // Don't do anything
-#else
   tgi_clear();
-#endif
 }
+
 void screen_erase_block(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
 {
-#ifdef PROTOCOL_DEBUG
-  // Don't do anything
-#else
   tgi_setcolor(TGI_COLOR_BLACK);
   tgi_bar(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
   tgi_setcolor(TGI_COLOR_ORANGE);
-#endif
 }
 void screen_sleep(void)
 {
-#ifdef PROTOCOL_DEBUG
-  // printf("screen_sleep() - 8ms sleep.\n");
-#else
-#endif
 }
+
 void screen_backspace(void)
 {
-#ifdef PROTOCOL_DEBUG
-  // Don't do anything
-#else
-#endif
+
 }
+
 void screen_forwardspace(void)
 {
-#ifdef PROTOCOL_DEBUG
-  // Don't do anything
-#else
-#endif
+
 }
+
 void beep(void)
 {
-#ifdef PROTOCOL_DEBUG
-  // Don't do anything
-#else
-#endif
+
 }
 
 void draw_string(const char* text,unsigned char len)
 {
-#ifdef PROTOCOL_DEBUG
-  // printf("draw_string(%s,%d)\n",text,len);
-#else
   unsigned char* currChar=NULL;
   unsigned char counter=0;
   for (counter=0;counter<len;counter++)
     {
       decode_dumb_terminal(text[counter]);
     }
-#endif
 }
 
 void draw_point(unsigned int x,unsigned int y)
 {
-#ifdef PROTOCOL_DEBUG
-  // don't do anything
-#else
   tgi_setpixel(scalex[x],scaley[y]);
-#endif
 }
+
 void draw_line(unsigned int x1, unsigned int y1,unsigned int x2, unsigned int y2)
 {
-#ifdef PROTOCOL_DEBUG
-  // don't do anything
-#else
   tgi_line(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
-#endif
 }
+
 void paint(void)
 {
-#ifdef PROTOCOL_DEBUG
-  // Don't do anything
-#else
-  // TODO: Paint
-#endif
 }
+
 void enable_touch(int n)
 {
-#ifdef PROTOCOL_DEBUG
-  printf("enable_touch(%d)\n",n);
-#else
-  // TODO: implement touch?
-#endif
+  touch=n;
 }
 
 void greeting(void)
@@ -469,16 +432,12 @@ void greeting(void)
 
 void main(void)
 {
-  int i=0;
-  unsigned int u=0;
-  unsigned int v=0;
-  static const unsigned char pal[2]={TGI_COLOR_BLACK,TGI_COLOR_ORANGE};
-  
+  static const unsigned char pal[2]={TGI_COLOR_BLACK,TGI_COLOR_ORANGE};  
   struct ser_params params = {
-    SER_BAUD_2400,
-    SER_BITS_7,
+    SER_BAUD_19200,
+    SER_BITS_8,
     SER_STOP_1,
-    SER_PAR_EVEN,
+    SER_PAR_NONE,
     SER_HS_HW
   };
 
@@ -495,14 +454,12 @@ void main(void)
   deltax=8;
   deltay=16;
   dumb_terminal_active=1;
-#ifndef PROTOCOL_DEBUG
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
   tgi_clear();
-  POKE(53280,0);
+  POKE(0xD020,0);
   tgi_setpalette(pal);
-#endif
 
   c=ser_open(&params);
   ser_ioctl(1, NULL);  
@@ -521,8 +478,8 @@ void main(void)
 	    }
 	  else
 	    {
-	      decode(c&0x7F);
 	      lastc=c;
+	      decode(c&0x7F);
 	    }
 	}
       if (kbhit())
@@ -531,10 +488,9 @@ void main(void)
 	}
     }
 
-#ifndef PROTOCOL_DEBUG
   tgi_done();
   ser_close();
   ser_uninstall();
   tgi_uninstall();
-#endif
+
 }

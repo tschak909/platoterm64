@@ -78,17 +78,17 @@ unsigned int assemble_paint(unsigned char b);
 /**
  * assemble_data(unsigned char b) - Assemble the body of a data packet.
  */
-unsigned int assemble_data(unsigned char b);
+unsigned long assemble_data(unsigned char b);
 
 /**
  * assemble_color(unsigned char b) - Assemble the next color byte
  */
-unsigned int assemble_color(unsigned char b);
+unsigned long assemble_color(unsigned char b);
 
 /**
  * assemble_grayscale(unsigned char b)
  */
-unsigned int assemble_grayscale(unsigned char b);
+unsigned long assemble_grayscale(unsigned char b);
 
 /**
  * send_ext(unsigned int key) - Send EXT sequence
@@ -123,17 +123,17 @@ void process_modes(unsigned int b);
 /**
  * mode0(unsigned int n) - Mode 0, dot mode.
  */
-void mode0(unsigned int n);
+void mode0(unsigned long n);
 
 /**
  * mode1(unsigned int n) - Mode 1, line mode
  */
-void mode1(unsigned int n);
+void mode1(unsigned long n);
 
 /**
  * mode2(unsigned int n) - Mode 2 - Memory load
  */
-void mode2(unsigned int n);
+void mode2(unsigned long n);
 
 /**
  * mode3(unsigned int n) - Mode 3 - alpha data word.
@@ -143,13 +143,13 @@ void mode3(unsigned char b);
 /**
  * Process mode 4 (block erase) data word.
  */
-void mode4(int n);
+void mode4(unsigned long n);
 
 /**
  * Mode 5,6,7 stubbed and ignored.
  */
-void mode5(int n);
+void mode5(unsigned long n);
 
-void mode6(int n);
+void mode6(unsigned long n);
 
-void mode7(int n);
+void mode7(unsigned long n);
