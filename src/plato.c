@@ -474,10 +474,12 @@ void main(void)
 	  // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
 	  if (c==0xFF && lastc == 0xFF)
 	    {
+	      POKE(0xD020,8);
 	      lastc=0x00;
 	    }
 	  else
 	    {
+	      POKE(0xD020,0);
 	      lastc=c;
 	      decode(c&0x7F);
 	    }

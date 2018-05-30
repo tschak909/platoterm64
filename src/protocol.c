@@ -89,7 +89,7 @@
 #define ASCII_XOFF ASCII_DC1
 #define ASCII_XON ASCII_DC3
 
-extern unsigned char mode;
+extern unsigned short mode;
 extern unsigned char escape;
 extern unsigned char dumb_terminal_active;
 extern unsigned int margin;
@@ -351,14 +351,12 @@ void process_escape_sequence(unsigned char b)
     case ASCII_STX:
       // STX called while still in PLATO mode. Ignore.
       dumb_terminal_active=FALSE;
-      
       break;
     case ASCII_ETX:
       // ETX ends PLATO mode and returns to dumb terminal mode.
       dumb_terminal_active=TRUE;
       x=0;
       y=496;
-      
       break;
     case ASCII_FF:
       // Erase screen
@@ -375,7 +373,6 @@ void process_escape_sequence(unsigned char b)
       // Inverse, write, erase, rewrite
       xor_mode=FALSE;
       mode=(mode & ~3)+ascii_mode[b-ASCII_DC1];
-      
       break;
     case ASCII_2:
       // Load coordinate
@@ -538,19 +535,19 @@ void process_control_characters(unsigned char b)
       break;
     case ASCII_BACKSPACE:
       // Go back one character
-      x=x-delta_x;
+      x=(x-delta_x)&0x1FF;
       
       break;
     case ASCII_TAB:
-      x=x+delta_x;
+      x=(x+delta_x)&0x1FF;
       
       break;
     case ASCII_LF:
-      y=y-delta_y;
+      y=(y-delta_y)&0x1FF;
       
       break;
     case ASCII_VT:
-      y=y+delta_y;
+      y=(y+delta_y)&0x1FF;
       
       break;
     case ASCII_FF:
@@ -560,7 +557,7 @@ void process_control_characters(unsigned char b)
       break;
     case ASCII_CR:
       x=margin;
-      y=y-delta_y&0777;
+      y=(y-delta_y)&0x1FF;
       
       break;
     case ASCII_EM:
@@ -571,7 +568,7 @@ void process_control_characters(unsigned char b)
       break;
     case ASCII_FS:
       // Point plot
-      mode=(mode&3);
+      mode=(mode&3)+(0 << 2);
       
       break;
     case ASCII_GS:
@@ -589,7 +586,6 @@ void process_control_characters(unsigned char b)
     case ASCII_US:
       // alpha mode (text)
       mode=(mode&3)+(3<<2);
-      
       break;
     }
 }
@@ -635,11 +631,12 @@ void process_other_states(unsigned char b)
 	    {
 	      mar=n&0x7FFF;
 	    }
+	  break;
 	  
 	case ASCII_STATE_LOAD_EXTERNAL:
 	  n=assemble_data(b);
 	  process_ext(n);
-	  
+	  break;
 	case ASCII_STATE_SSF:
 	  n=assemble_data(b);
 	  if (n != -1)
