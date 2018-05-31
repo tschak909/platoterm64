@@ -7,6 +7,8 @@
  *
  */
 
+#define PROTOCOL_DEBUG 1
+
 #ifdef PROTOCOL_DEBUG
 #include <stdio.h>
 #endif
@@ -93,10 +95,10 @@ extern unsigned short mode;
 extern unsigned char escape;
 extern unsigned char dumb_terminal_active;
 extern unsigned int margin;
-extern unsigned int x;
-extern unsigned int y;
-extern unsigned int last_x;
-extern unsigned int last_y;
+extern unsigned short x;
+extern unsigned short y;
+extern unsigned short last_x;
+extern unsigned short last_y;
 extern unsigned char delta_x;
 extern unsigned char delta_y;
 extern unsigned char ascii_state;
@@ -134,6 +136,8 @@ extern void draw_point(unsigned int x,unsigned int y);
 extern void draw_line(unsigned int x1, unsigned int y1,unsigned int x2, unsigned int y2);
 extern void paint(void);
 extern void enable_touch(int n);
+
+short lastMode=0xFF;
 
 static const unsigned char asciiM0[] = 
 { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -309,6 +313,8 @@ void decode_plato(unsigned char b)
       process_control_characters(b);
       process_other_states(b);
     }
+  
+  lastMode=mode;
 }
 
 /**
@@ -322,8 +328,7 @@ void process_pni_rs(void)
     {
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
-    }
-  
+    }  
 }
 
 /**
@@ -372,6 +377,7 @@ void process_escape_sequence(unsigned char b)
     case ASCII_DC4:
       // Inverse, write, erase, rewrite
       xor_mode=FALSE;
+
       mode=(mode & ~3)+ascii_mode[b-ASCII_DC1];
       break;
     case ASCII_2:
@@ -436,7 +442,6 @@ void process_escape_sequence(unsigned char b)
       // Load Character memory
       xor_mode=FALSE;
       mode=(mode & 3)+(2 << 2);
-      
       break;
     case ASCII_Q:
       // SSF
@@ -569,7 +574,6 @@ void process_control_characters(unsigned char b)
     case ASCII_FS:
       // Point plot
       mode=(mode&3)+(0 << 2);
-      
       break;
     case ASCII_GS:
       // Draw Line
@@ -585,6 +589,7 @@ void process_control_characters(unsigned char b)
       break;
     case ASCII_US:
       // alpha mode (text)
+
       mode=(mode&3)+(3<<2);
       break;
     }
@@ -1008,23 +1013,25 @@ void send_processed_key(unsigned int n)
  */
 void process_color(unsigned long n)
 {
-  unsigned short r;
-  unsigned short g;
-  unsigned short b;
-  unsigned long c;
+  unsigned char r;
+  unsigned char g;
+  unsigned char b;
   if (n != 1)
     {
-      r = (n >> 16) & 0xff;
-      g = (n >> 8) & 0xff;
-      b = n & 0xff;
-      c = 1; // for now.
+      r = (long)(n >> 16) & 0xff;
+      g = (long)(n >> 8) & 0xff;
+      b = (long)n & 0xff;
       if (ascii_state == ASCII_STATE_FG)
 	{
-	  platofgcolor=c;
+#ifdef PROTOCOL_DEBUG
+	  printf("fg: %u %u %u\n",r,g,b);
+#endif
 	}
       else if (ascii_state == ASCII_STATE_BG)
 	{
-	  platobgcolor=c;
+#ifdef PROTOCOL_DEBUG
+	  printf("bg: %u %u %u\n",r,g,b);
+#endif
 	}
     }
   

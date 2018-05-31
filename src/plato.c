@@ -1,4 +1,5 @@
 #define _optspeed_
+#define PROTOCOL_DEBUG 1
 
 #include <6502.h>
 #include <stdio.h>
@@ -10,23 +11,18 @@
 #include "scale.h"
 #include "protocol.h"
 
-
 unsigned char retval;
 unsigned char c=0;
 unsigned char lastc=0;
 
-unsigned char chstr[2];
-unsigned char mode;
+unsigned char mode=017;
 unsigned char escape;
-unsigned char decoded;
 unsigned char dumb_terminal_active=1;
 unsigned int margin=0;
-unsigned int x=0;
-unsigned int y=0;
-unsigned int deltax=0;
-unsigned int deltay=0;
-unsigned int last_x=0;
-unsigned int last_y=0;
+unsigned short x=0;
+unsigned short y=0;
+unsigned short last_x=0;
+unsigned short last_y=0;
 unsigned char delta_x=0;
 unsigned char delta_y=0;
 unsigned char ascii_state=0;
@@ -87,6 +83,7 @@ void scroll_up(void)
 
 void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
 {
+#ifndef PROTOCOL_DEBUG
   unsigned int a;
   unsigned int nx;
   unsigned int ny;
@@ -357,19 +354,24 @@ void draw_char(unsigned char charset_to_use, unsigned char char_to_plot)
   /*     ny++; */
   /*   } */
 
-  x=x+deltax;
+  x=x+delta_x;
+#endif
 }
 
 void screen_erase(void)
 {
+#ifndef PROTOCOL_DEBUG
   tgi_clear();
+#endif
 }
 
 void screen_erase_block(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
 {
+#ifndef PROTOCOL_DEBUG
   tgi_setcolor(TGI_COLOR_BLACK);
   tgi_bar(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
   tgi_setcolor(TGI_COLOR_ORANGE);
+#endif
 }
 void screen_sleep(void)
 {
@@ -377,27 +379,26 @@ void screen_sleep(void)
 
 void screen_backspace(void)
 {
-
 }
 
 void screen_forwardspace(void)
 {
-
 }
 
 void beep(void)
 {
-
 }
 
 void draw_string(const char* text,unsigned char len)
 {
+#ifndef PROTOCOL_DEBUG
   unsigned char* currChar=NULL;
   unsigned char counter=0;
   for (counter=0;counter<len;counter++)
     {
       decode_dumb_terminal(text[counter]);
     }
+#endif
 }
 
 void draw_point(unsigned int x,unsigned int y)
@@ -407,7 +408,9 @@ void draw_point(unsigned int x,unsigned int y)
 
 void draw_line(unsigned int x1, unsigned int y1,unsigned int x2, unsigned int y2)
 {
+#ifndef PROTOCOL_DEBUG
   tgi_line(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
+#endif
 }
 
 void paint(void)
@@ -450,17 +453,18 @@ void main(void)
       return;
     }
 
-  y=511-16;
-  deltax=8;
-  deltay=16;
+  y=496;
+  delta_x=8;
+  delta_y=16;
   dumb_terminal_active=1;
+#ifndef PROTOCOL_DEBUG
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
   tgi_clear();
   POKE(0xD020,0);
   tgi_setpalette(pal);
-
+#endif
   c=ser_open(&params);
   ser_ioctl(1, NULL);  
     
@@ -489,10 +493,11 @@ void main(void)
 	  send_byte(cgetc());
 	}
     }
-
+#ifndef PROTOCOL_DEBUG
   tgi_done();
   ser_close();
   ser_uninstall();
   tgi_uninstall();
-
+#endif
+  
 }
