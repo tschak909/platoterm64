@@ -86,7 +86,7 @@
 #define ASCII_XOFF ASCII_DC1
 #define ASCII_XON ASCII_DC3
 
-extern uint16_t mode;
+extern uint8_t mode;
 extern uint8_t escape;
 extern uint8_t dumb_terminal_active;
 extern unsigned int margin;
@@ -215,7 +215,7 @@ void decode(uint8_t b)
 /**
  * decode_dumb_terminal(uint8_t b) - When terminal is in dumb terminal mode, go here.
  */
-void decode_dumb_terminal(char b)
+void decode_dumb_terminal(uint8_t b)
 {
   if (b==ASCII_ESCAPE)
     {
