@@ -10,10 +10,13 @@
 #include <string.h>
 #include <peekpoke.h>
 #include <stdint.h>
+#include <cbm.h>
 #include "protocol.h"
 
 #define FALSE 0
 #define TRUE 1
+
+#define PROTOCOL_DEBUG 1
 
 #define ASCII_STATE_NONE 0
 #define ASCII_STATE_PNI_RS 1
@@ -227,7 +230,7 @@ void decode_dumb_terminal(uint8_t b)
       if (escape==FALSE)
 	{
 	  // STX found without corresponding escape, ignore.
-	  log("dt: stx");
+	  log("\ndt: stx\n");
 	}
       else
 	{
@@ -235,7 +238,7 @@ void decode_dumb_terminal(uint8_t b)
 	  dumb_terminal_active=FALSE;
 	  mode=(3<<2)+1;
 	  escape=FALSE;
-	  log("dt: etx. entering plato mode");
+	  log("\ndt: etx. entering plato mode\n");
 	}
     }
   else if (b==ASCII_ETX)
@@ -247,13 +250,13 @@ void decode_dumb_terminal(uint8_t b)
       else
 	{
 	  // ETX detected in dumb terminal mode, ignore.
-	  log("dt: etx.");
+	  log("\ndt: etx.\n");
 	}
     }
   else if (b==ASCII_CR)
     {
       x=margin;
-      log("dt: cr");
+      log("\ndt: cr\n");
     }
   else if (b==ASCII_LF)
     {
@@ -265,7 +268,7 @@ void decode_dumb_terminal(uint8_t b)
 	{
 	  scroll_up();
 	}
-      log("dt: lf");
+      log("\ndt: lf\n");
     }
   else if (b>=32 && b<127) // Printable char
     {
@@ -289,7 +292,7 @@ void decode_plato(uint8_t b)
   if (b==ASCII_ESCAPE)
     {
       escape=TRUE;
-      log("pm: escape");
+      log("\npm: escape\n");
     }
   else if (ascii_state == ASCII_STATE_PNI_RS)
     {
@@ -320,10 +323,10 @@ void decode_plato(uint8_t b)
 void process_pni_rs(void)
 {
   // Ignore the next three bytes.
-  log("pm: pni_rs byte");
+  log("\npm: pni_rs byte\n");
   if (++ascii_bytes==3)
     {
-      log("pm: end pni_rs");
+      log("\npm: end pni_rs\n");
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
     }  
@@ -336,7 +339,7 @@ void process_pni_rs(void)
 void process_plato_metadata(uint8_t b)
 {
   uint32_t n = assemble_ascii_plato_metadata(b);
-  log("pm: plato_metadata in '%c' 0x%02x",b,b);
+  log("\npm: plato_metadata in '%c' 0x%02x\n",b,b);
   if (n==0)
     {
       // Completed metadata, but just ignore it.
@@ -355,25 +358,25 @@ void process_escape_sequence(uint8_t b)
     case ASCII_STX:
       // STX called while still in PLATO mode. Ignore.
       dumb_terminal_active=FALSE;
-      log("pm: stx");
+      log("\npm: stx\n");
       break;
     case ASCII_ETX:
       // ETX ends PLATO mode and returns to dumb terminal mode.
       dumb_terminal_active=TRUE;
       x=0;
       y=496;
-      log("pm: etx. back to dumb terminal mode.");
+      log("\npm: etx. back to dumb terminal mode.\n");
       break;
     case ASCII_FF:
       // Erase screen
       screen_erase();
-      log("pm: ff");
+      log("\npm: ff\n");
       break;
     case ASCII_SYN:
       // Set XOR writing mode
       mode=(mode & 3) + 2;
       xor_mode=TRUE;
-      log("pm: xor mode on: 0x%02x",mode);
+      log("\npm: xor mode on: 0x%02x\n",mode);
       break;
     case ASCII_DC1:
     case ASCII_DC2:
@@ -382,23 +385,23 @@ void process_escape_sequence(uint8_t b)
       // Inverse, write, erase, rewrite
       xor_mode=FALSE;
       mode=(mode & ~3)+ascii_mode[b-ASCII_DC1];
-      log("pm: mode select: 0x%02X",mode);
+      log("\npm: mode select: 0x%02X\n",mode);
       break;
     case ASCII_2:
       // Load coordinate
       ascii_state=ASCII_STATE_LOAD_COORDINATES;
       ascii_bytes=0;
-      log("pm: set state load coordinates");
+      log("\npm: set state load coordinates\n");
       break;
     case ASCII_AT:
       // Superscript
       // TODO: IMPLEMENT SUPERSCRIPT
-      log("pm: superscript");
+      log("\npm: superscript\n");
       break;
     case ASCII_A:
       // Subscript
       // TODO: IMPLEMENT SUBSCRIPT
-      log("pm: subscript");
+      log("\npm: subscript\n");
       break;
     case ASCII_B:
     case ASCII_C:
@@ -410,124 +413,126 @@ void process_escape_sequence(uint8_t b)
     case ASCII_I:
       // Select current character set memory
       character_set=b-ASCII_B;
-      log("pm: set character memory M%u",character_set);
+      log("\npm: set character memory M%u\n",character_set);
       break;
     case ASCII_J:
       // Enable Horizontal Writing Mode
       vertical_writing_mode=FALSE;
-      log("pm: set horizontal writing mode");
+      log("\npm: set horizontal writing mode\n");
       break;
     case ASCII_K:
       // Enable Vertical Writing Mode
       vertical_writing_mode=TRUE;
-      log("pm: set vertical writing mode");
+      log("\npm: set vertical writing mode\n");
       break;
     case ASCII_L:
       // Forward writing mode (LTR)
       reverse_writing_mode=FALSE;
-      log("pm: set forward writing mode");
+      log("\npm: set forward writing mode\n");
       break;
     case ASCII_M:
       // Reverse writing mode (RTL)
       reverse_writing_mode=TRUE;
-      log("pm: set reverse writing mode");
+      log("\npm: set reverse writing mode\n");
       break;
     case ASCII_N:
       // Normal Size Writing Mode
       bold_writing_mode=FALSE;
-      log("pm: set normal size writing mode");
+      log("\npm: set normal size writing mode\n");
       break;
     case ASCII_O:
       // Bold size writing mode
       bold_writing_mode=TRUE;
-      log("pm: set bold size writing mode");
+      log("\npm: set bold size writing mode\n");
       break;
     case ASCII_P:
       // Load Character memory
       xor_mode=FALSE;
       mode=(mode & 3)+(2 << 2);
-      log("pm: set load character memory (mode2) 0x%02x",mode);
+      log("\npm: set load character memory (mode2) 0x%02x\n",mode);
       break;
     case ASCII_Q:
       // SSF
       ascii_state=ASCII_STATE_SSF;
       ascii_bytes=0;
-      log("pm: set state ssf");
+      log("\npm: set state ssf\n");
       break;
     case ASCII_R:
       // Load EXTERNAL
       ascii_state=ASCII_STATE_LOAD_EXTERNAL;
       ascii_bytes=0;
-      log("pm: set state load external");
+      log("\npm: set state load external\n");
       break;
     case ASCII_S:
       // LOAD Memory (Mode 2 data)
       xor_mode=FALSE;
       mode=(mode & 3)+(2 << 2);
-      log("pm: set state load data (mode2) 0x%02x",mode);
+      log("\npm: set state load data (mode2) 0x%02x\n",mode);
       break;
     case ASCII_T:
       // MODE 5 (not used, but must be decoded)
       xor_mode=FALSE;
       mode=(mode & 3)+(5 << 2);
-      log("pm: set mode 5 0x%02x",mode);
+      log("\npm: set mode 5 0x%02x\n",mode);
       break;
     case ASCII_U:
       // MODE 6 (not used, but must be decoded)
       xor_mode=FALSE;
       mode=(mode & 3)+(6 << 2);
-      log("pm: set mode 6 0x%02x",mode);
+      log("\npm: set mode 6 0x%02x\n",mode);
       break;
     case ASCII_V:
       // Mode 7 (not used, but must be decoded)
       xor_mode=FALSE;
       mode=(mode & 3)+(7 << 2);
-      log("pm: set mode 7 0x%02x",mode);
+      log("\npm: set mode 7 0x%02x\n",mode);
       break;
     case ASCII_W:
       // Load memory Address
       ascii_state=ASCII_STATE_LOAD_ADDRESS;
       ascii_bytes=0;
-      log("pm: set load memory address");
+      log("\npm: set load memory address\n");
       break;
     case ASCII_X:
       // Start PLATO Metadata
       ascii_state=ASCII_STATE_PLATO_META_DATA;
       ascii_bytes=0;
-      log("pm: set state plato metadata");
+      log("\npm: set state plato metadata\n");
+      break;
     case ASCII_Y:
       // Start LOAD ECHO
       ascii_state=ASCII_STATE_LOAD_ECHO;
       ascii_bytes=0;
-      log("pm: load echo");
+      log("\npm: load echo\n");
+      break;
     case ASCII_Z:
       // Set X margin
       margin=x;
-      log("pm: left margin %u",margin);
+      log("\npm: left margin %u\n",margin);
       break;
     case ASCII_a:
       // Start Foreground color
       ascii_state=ASCII_STATE_FG;
       ascii_bytes=0;
-      log("pm: state foreground");
+      log("\npm: state foreground\n");
       break;
     case ASCII_b:
       // Start Background color
       ascii_state=ASCII_STATE_BG;
       ascii_bytes=0;
-      log("pm: state background");
+      log("\npm: state background\n");
       break;
     case ASCII_c:
       // Start Paint
       ascii_state=ASCII_STATE_PAINT;
       ascii_bytes=0;
-      log("pm: state paint");
+      log("\npm: state paint\n");
       break;
     case ASCII_g:
       // Start greyscale foreground color
       ascii_state=ASCII_STATE_GSFG;
       ascii_bytes=0;
-      log("pm: state grayscale");
+      log("\npm: state grayscale\n");
       break;
     }
 }
@@ -542,62 +547,62 @@ void process_control_characters(uint8_t b)
     case ASCII_NUL:
       // Sleep for 8 milliseconds
       screen_sleep();
-      log("pm: sleep");
+      log("\npm: sleep\n");
       break;
     case ASCII_BACKSPACE:
       // Go back one character
       x=(x-delta_x)&0x1FF;
-      log("pm: bs");
+      log("\npm: bs\n");
       break;
     case ASCII_TAB:
       x=(x+delta_x)&0x1FF;
-      log("pm: tab");
+      log("\npm: tab\n");
       break;
     case ASCII_LF:
       y=(y-delta_y)&0x1FF;
-      log("pm: lf");
+      log("\npm: lf\n");
       break;
     case ASCII_VT:
       y=(y+delta_y)&0x1FF;
-      log("pm: vt");
+      log("\npm: vt\n");
       break;
     case ASCII_FF:
       x=0;
       y=511;
-      log("pm: ff");
+      log("\npm: ff\n");
       break;
     case ASCII_CR:
       x=margin;
       y=(y-delta_y)&0x1FF;
-      log("pm: cr");
+      log("\npm: cr\n");
       break;
     case ASCII_EM:
       // Block erase
       mode=(mode&3)+(4<<2);
       mode_words=0;
-      log("pm: blockerase (mode4) 0x%02x",mode);
+      log("\npm: blockerase (mode4) 0x%02x\n",mode);
       break;
     case ASCII_FS:
       // Point plot
       mode=(mode&3)+(0 << 2);
-      log("pm: point (mode0) 0x%02x",mode);
+      log("\npm: point (mode0) 0x%02x\n",mode);
       break;
     case ASCII_GS:
       // Draw Line
       mode=(mode&3)+(1<<2);
       ascii_state=ASCII_STATE_LOAD_COORDINATES;
       ascii_bytes=0;
-      log("pm: line (mode1) 0x%02x",mode);
+      log("\npm: line (mode1) 0x%02x\n",mode);
       break;
     case ASCII_RS:
       // PNI_RS START DOWNLOAD. IGNORE NEXT THREE COMMANDS.
       ascii_state=ASCII_STATE_PNI_RS;
-      log("pm: state pni_rs start");
+      log("\npm: state pni_rs start\n");
       break;
     case ASCII_US:
       // alpha mode (text)
       mode=(mode&3)+(3<<2);
-      log("pm: alpha (mode3) 0x%02x",mode);
+      log("\npm: alpha (mode3) 0x%02x\n",mode);
       break;
     }
 }
@@ -618,7 +623,7 @@ void process_other_states(uint8_t b)
 	      x=last_x;
 	      y=last_y;
 	    }
-	  log("pm: ldc: x: %u y: %u",x,y);
+	  log("\npm: ldc: x: %u y: %u\n",x,y);
 	  break;
 	case ASCII_STATE_PAINT:
 	  n=assemble_paint(b);
@@ -626,11 +631,11 @@ void process_other_states(uint8_t b)
 	    {
 	      paint();
 	    }
-	  log("pm: paint: x: %u y: %u",x,y);
+	  log("\npm: paint: x: %u y: %u\n",x,y);
 	  break;
 	case ASCII_STATE_LOAD_ECHO:
 	  n=assemble_data(b);
-	  log("pm: lde: 0x%02x",b);
+	  log("\npm: lde: 0x%02x\n",b);
 	  if (n != -1)
 	    {
 	      n &= 0x7F;
@@ -640,19 +645,19 @@ void process_other_states(uint8_t b)
 	  break;
 	case ASCII_STATE_LOAD_ADDRESS:
 	  n=assemble_data(b);
-	  log("pm: lda: 0x%02x",b);
+	  log("\npm: lda: 0x%02x\n",b);
 	  if (n!=1)
 	    {
 	      mar=n&0x7FFF;
 	    }
 	  break;
 	case ASCII_STATE_LOAD_EXTERNAL:
-	  log("pm: lde: 0x%02x",b);
+	  log("\npm: lde: 0x%02x",b);
 	  n=assemble_data(b);
 	  process_ext(n);
 	  break;
 	case ASCII_STATE_SSF:
-	  log("pm: ssf 0x%02x",b);
+	  log("\npm: ssf 0x%02x\n",b);
 	  n=assemble_data(b);
 	  if (n != -1)
 	    {
@@ -662,12 +667,12 @@ void process_other_states(uint8_t b)
 	  break;
 	case ASCII_STATE_FG:
 	case ASCII_STATE_BG:
-	  log("pm: color in: 0x%02x",b);
+	  log("\npm: color in: 0x%02x\n",b);
 	  n = assemble_color(b);
 	  process_color((long)n);
 	  break;
 	case ASCII_STATE_GSFG:
-	  log("pm: grey in: 0x%02x",b);
+	  log("\npm: grey in: 0x%02x\n",b);
 	  n= assemble_grayscale(b);
 	  process_grayscale(n);
 	  
@@ -691,7 +696,7 @@ void process_other_states(uint8_t b)
 unsigned int process_ext(unsigned int n)
 {
   // TODO
-  log("pm: process_ext(%0x%02x)",n);
+  log("\npm: process_ext(%0x%02x)\n",n);
   return n;
 }
 
@@ -706,14 +711,14 @@ unsigned int assemble_ascii_plato_metadata(uint8_t b)
   if (ascii_bytes == 0)
     {
       memset(&pmd,0,sizeof(pmd));
-      log("pm: pmd: clear");
+      log("\npm: pmd: clear\n");
     }
   ascii_bytes++;
   if (ob == 'F' && ascii_bytes == 1)
     {
       // Font PMD
       font_pmd=TRUE;
-      log("pm: font pmd");
+      log("\npm: font pmd\n");
     }
   else if (ob == 'f' && ascii_bytes == 1)
     {
@@ -723,7 +728,7 @@ unsigned int assemble_ascii_plato_metadata(uint8_t b)
       ascii_state=ASCII_STATE_NONE;
       send_ext(0);  // send 0 width and height.
       send_ext(0);
-      log("pm: fontinfo pmd");
+      log("\npm: fontinfo pmd\n");
     }
   else if (ob == 'o' && ascii_bytes == 1)
     {
@@ -733,7 +738,7 @@ unsigned int assemble_ascii_plato_metadata(uint8_t b)
       send_ext(0);
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
-      log("pm: osinfo");
+      log("\npm: osinfo\n");
     }
   else if (font_pmd && ascii_bytes == 2)
     {
@@ -767,7 +772,7 @@ unsigned int assemble_ascii_plato_metadata(uint8_t b)
 unsigned int assemble_coordinate(uint8_t b)
 {
   int coordinate = b & 037;  // Mask off top 3 bits.
-  log("pm: ldc: c: 0x%02x",coordinate);
+  log("\npm: ldc: c: 0x%02x\n",coordinate);
   switch(b >> 5) // get control bits 6 and 7 to determine what part of coordinate to parse
     {
     case 1:   // High X or High Y
@@ -776,25 +781,25 @@ unsigned int assemble_coordinate(uint8_t b)
 	  // High Y coordinate
 	  last_y = (last_y & 0x1F) | (coordinate << 5);
 	  ascii_bytes=2;
-	  log("pm: ldc: hy: 0x%02x",last_y);
+	  log("\npm: ldc: hy: 0x%02x\n",last_y);
 	}
       else
 	{
 	  // High X coordinate
 	  last_x = (last_x & 0x1F) | (coordinate << 5);
-	  log("pm: ldc: hx: 0x%02x",last_x);
+	  log("\npm: ldc: hx: 0x%02x\n",last_x);
 	}
       break;
     case 2:  // Low X
       last_x = (last_x & 0740) | coordinate;
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
-      log("pm: ldc: x: %u y: %u",last_x,last_y);
+      log("\npm: ldc: x: %u y: %u\n",last_x,last_y);
       return TRUE;
     case 3:  // Low Y
       last_y = (last_y & 0x1E0) | coordinate;
       ascii_bytes = 2;
-      log("pm: ldc: ly: %u",last_y);
+      log("\npm: ldc: ly: %u\n",last_y);
       break;
     }
   return FALSE;
@@ -806,7 +811,7 @@ unsigned int assemble_coordinate(uint8_t b)
  */
 unsigned int assemble_paint(uint8_t b)
 {
-  log("pm: paint: 0x%02x",b);
+  log("\npm: paint: 0x%02x\n",b);
   if (ascii_bytes == 0)
     assembler=0;
 
@@ -815,7 +820,7 @@ unsigned int assemble_paint(uint8_t b)
     {
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
-      log("pm: paint: assembler: 0x04x",assembler);
+      log("\npm: paint: assembler: 0x04x\n",assembler);
       return assembler;
     }
   else
@@ -830,10 +835,10 @@ unsigned int assemble_paint(uint8_t b)
  */
 uint32_t assemble_data(uint8_t b)
 {
-  log("pm: asd 0x%02x",b);
+  log("\npm: asd 0x%02x",b);
   if (ascii_bytes==0)
     {
-      log("pm: asd clear");
+      log("\npm: asd clear\n");
       assembler=0;
     }
 
@@ -842,7 +847,7 @@ uint32_t assemble_data(uint8_t b)
     {
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
-      log("pm: asd done 0x%04x",assembler);
+      log("\npm: asd done 0x%04lx\n",assembler);
       return assembler;
     }
   else
@@ -857,14 +862,14 @@ uint32_t assemble_data(uint8_t b)
  */
 uint32_t assemble_color(uint8_t b)
 {
-  log("pm: asc: 0x%02x",b);
+  log("\npm: asc: 0x%02x",b);
   if (ascii_bytes == 0) {
     assembler = 0;
-    log("pm: asc clear");
+    log("\npm: asc clear\n");
   }
   assembler |= ((b & 077) << (ascii_bytes * 6));
   if (++ascii_bytes == 4) {
-    log("pm: asc done 0x%04x",assembler);
+    log("\npm: asc done 0x%04x\n",assembler);
     return assembler;
   } 
   return -1;
@@ -875,14 +880,14 @@ uint32_t assemble_color(uint8_t b)
  */
 uint32_t assemble_grayscale(uint8_t b)
 {
-  log("pm: asg: 0x02x",b);
+  log("\npm: asg: 0x02x\n",b);
   if (ascii_bytes == 0) {
-    log("pm: asg clear");
+    log("\npm: asg clear\n");
     assembler = 0;
   }
   assembler = (b & 0x3F) << 2;
   if (++ascii_bytes == 1) {
-    log("pm: asg done 0x%04x",assembler);
+    log("\npm: asg done 0x%04x\n",assembler);
     return assembler;
   } 
   return -1;
@@ -906,7 +911,7 @@ void send_ext(unsigned int key)
   data[0] = 0x1B; // ESC
   data[1] = 0x40 | (key & 0x3F);
   data[2] = 0x68 | ((key >> 6) & 0x03);
-  log("pm: ext: 0x%02x 0x%02x 0x%02x",data[0],data[1],data[2]);
+  log("\npm: ext: 0x%02x 0x%02x 0x%02x\n",data[0],data[1],data[2]);
   for (i=0; i<3; i++)
     {
       send_byte(data[i]);
@@ -922,38 +927,38 @@ void send_echo_request(unsigned int n)
     {
     case 0x70:
       n = 0x70 + ASCTYPE;
-      log("pm: lde: termtype %u",n);
+      log("\npm: lde: termtype %u\n",n);
       break;
     case 0x71:
       n = 1;
-      log("pm: lde: termsubtype %u",n);
+      log("\npm: lde: termsubtype %u\n",n);
       break;
     case 0x72:
       n=0;
-      log("pm: lde: loadfile %u",n);
+      log("\npm: lde: loadfile %u\n",n);
       break;
     case 0x73:
       n=0x40;
-      log("pm: lde: termconfig",n);
+      log("\npm: lde: termconfig\n",n);
       break;
     case 0x7b:
       beep();
-      log("pm: lde: beep");
+      log("\npm: lde: beep\n");
       break;
     case 0x7d:
       n=mar;
-      log("pm: lde: mar = 0x%04x",mar);
+      log("\npm: lde: mar = 0x%04x\n",mar);
       break;
     case 0x52:
       flow_control=FALSE;
       /* flow_control=TRUE; */
       /* n=0x53; */
       n=0x52;
-      log("pm: lde: no flow");
+      log("\npm: lde: no flow\n");
       break;
     case 0x60:
       n += ASCFEATURES;
-      log("pm: lde: features: 0x%02x",n);
+      log("\npm: lde: features: 0x%02x\n",n);
       break;
     }
 
@@ -1024,7 +1029,7 @@ void send_processed_key(unsigned int n)
       data[length-1]=n;
       for (i=0;i<length;i++)
 	{
-	  log("pm: spk1: 0x%02x",data[i]);
+	  log("\npm: spk1: 0x%02x\n",data[i]);
 	  send_byte(data[i]);
 	}
     }
@@ -1035,7 +1040,7 @@ void send_processed_key(unsigned int n)
       data[1] = (0x40 + (n & 0x3F));
       data[2] = (0x60 + (n >> 6));
       for (i = 0; i < length; i++) {
-	  log("pm: spk2: 0x%02x",data[i]);
+	  log("\npm: spk2: 0x%02x\n",data[i]);
 	send_byte(data[i]);
       }
     }
@@ -1046,7 +1051,7 @@ void send_processed_key(unsigned int n)
       length = 2;
       for (i = 0; i < length; i++)
 	{
-	  log("pm: spk3: 0x%02x",data[i]);
+	  log("\npm: spk3: 0x%02x\n",data[i]);
 	  send_byte(data[i]);
 	}
     }
@@ -1067,11 +1072,11 @@ void process_color(uint32_t n)
       b = (long)n & 0xff;
       if (ascii_state == ASCII_STATE_FG)
 	{
-	  log("pm: pcfg: r: %u g: %u b: %u",r,g,b);
+	  log("\npm: pcfg: r: %u g: %u b: %u\n",r,g,b);
 	}
       else if (ascii_state == ASCII_STATE_BG)
 	{
-	  log("pm: pcbg: r: %u g: %u b: %u",r,g,b);
+	  log("\npm: pcbg: r: %u g: %u b: %u\n",r,g,b);
 	}
     }
   
@@ -1079,7 +1084,7 @@ void process_color(uint32_t n)
     {
       ascii_bytes=0;
       ascii_state=ASCII_STATE_NONE;
-      log("pm: pc: done");
+      log("\npm: pc: done\n");
     }
 }
 
@@ -1097,7 +1102,7 @@ void process_grayscale(uint32_t n)
       uint32_t c = 1; // for now.
       if (ascii_state == ASCII_STATE_GSFG)
 	{
-	  log("pm: pcgs: r: %u g: %u b: %u",r,g,b);
+	  log("\npm: pcgs: r: %u g: %u b: %u\n",r,g,b);
 	  platofgcolor=c;
 	}
     }
@@ -1153,7 +1158,7 @@ void mode0(uint32_t n)
   int nx, ny;
   nx = (n >> 9) & 0x1FF;
   ny = n & 0x1FF;
-  log("pm: mode0(n) x: %u y: %u",n,nx,ny);
+  log("\npm: mode0(n) x: %u y: %u\n",n,nx,ny);
   draw_point(nx,ny);
   x=nx;
   y=ny;
@@ -1167,7 +1172,7 @@ void mode1(uint32_t n)
   int nx, ny;
   nx = (n >> 9) & 0x1FF;
   ny = n & 0x1FF;
-  log("pm: mode1(n) x: %u y: %u nx: %u ny: %u",n,x,y,nx,ny);
+  log("\npm: mode1(n) x: %u y: %u nx: %u ny: %u\n",n,x,y,nx,ny);
   draw_line(x,y,nx,ny);
   x=nx;
   y=ny;  
@@ -1179,10 +1184,10 @@ void mode1(uint32_t n)
 void mode2(uint32_t n)
 {
   int chaddr;
-  log("pm: mode2(0x%02x)",n);
+  log("\npm: mode2(0x%02x)\n",n);
   chaddr = mar - 0x3800;
 
-  log("pm: mode2 chaddr 0x%04x",chaddr);
+  log("\npm: mode2 chaddr 0x%04x",chaddr);
   
   if (chaddr < 0 || chaddr > 127*16)
     {
@@ -1195,7 +1200,7 @@ void mode2(uint32_t n)
 	{
 	  // Load character data
 	  plato_m23[chaddr] = n & 0xffff;
-	  log("pm: mode2[0x%04x]=0x%02x",chaddr,plato_m23[chaddr]);
+	  log("\npm: mode2[0x%04x]=0x%02x\n",chaddr,plato_m23[chaddr]);
 	  ++chaddr;
 	}
     }
@@ -1207,28 +1212,29 @@ void mode2(uint32_t n)
  */
 void mode3(uint8_t n)
 {
-  log("pm: mode3(0x%02x)",n);
+  uint8_t c=0;
+  log("\npm: mode3(0x%02x)\n",n);
   ascii_state=ASCII_STATE_NONE;
   ascii_bytes=0;
   if (character_set == 0)
     {
-      n = asciiM0[n];
-      character_set = (n & 0x80) >> 7;
+      c = asciiM0[n];
+      character_set = (c & 0x80) >> 7;
     }
   else if (character_set == 1)
     {
-      n = asciiM1[n];
-      character_set = (n & 0x80) >> 7;
+      c = asciiM1[n];
+      character_set = (c & 0x80) >> 7;
     }
   else
     {
-      n = ((n - 0x20) & 0x3F);
+      c = ((n - 0x20) & 0x3F);
     }
-  if (n != 0xff)
+  if (c != 0xff)
     {
-      n &= 0x7F;
-      log("pm: mode3: draw_char(%u,%u)",character_set,n);
-      draw_char(character_set, n);
+      c &= 0x7F;
+      log("\npm: mode3: draw_char(%u,%u)\n",character_set,n);
+      draw_char(character_set, c);
     }
 }
 
@@ -1243,11 +1249,11 @@ void mode4(uint32_t n)
   unsigned int y1;
   unsigned int y2;
 
-  log("pm: mode4(0x%02x)",n);
+  log("\npm: mode4(0x%02x)",n);
   
   if ((mode_words & 1) > 0)
     {
-      log("pm: mode4start(0x%02x)",n);
+      log("\npm: mode4start(0x%02x)\n",n);
       mode4start=n;
       return;
     }
@@ -1257,7 +1263,7 @@ void mode4(uint32_t n)
   x2 = (n >> 9) & 0x1FF;
   y2 = n & 0x1FF;
 
-  log("pm: mode4 erase(%u,%u,%u,%u)",x1,y1,x2,y2);
+  log("\npm: mode4 erase(%u,%u,%u,%u)\n",x1,y1,x2,y2);
   screen_erase_block(x1, y1, x2, y2);
   x=x1;
   y=y1 - 15;

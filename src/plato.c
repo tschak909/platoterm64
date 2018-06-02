@@ -1,4 +1,5 @@
 #define _optspeed_
+#define PROTOCOL_DEBUG 1
 
 #include <6502.h>
 #include <stdio.h>
@@ -438,13 +439,13 @@ void log_open(void)
 void log(const char* format, ...)
 {
 #ifdef PROTOCOL_DEBUG
-  char lbuf[132];
+  char lbuf[48];
   va_list args;
   va_start(args,format);
   vsprintf(lbuf,format,args);
   va_end(args);
   cbm_write(1,lbuf,strlen(lbuf));
-  cbm_write(1,"\n",2);
+  //  cbm_write(1,"\n",2);
 #endif
 }
 
@@ -499,12 +500,11 @@ void main(void)
 	  // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
 	  if (c==0xFF && lastc == 0xFF)
 	    {
-	      POKE(0xD020,8);
 	      lastc=0x00;
 	    }
 	  else
 	    {
-	      POKE(0xD020,0);
+	      log("%02x ",c&0x7F);
 	      lastc=c;
 	      decode(c&0x7F);
 	    }
