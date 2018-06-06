@@ -37,23 +37,23 @@ extern padBool Reverse;
 extern DispMode CurMode;
 
 // PLATOTerm for Commodore 64
-const uint8_t welcomemsg_1[]={80,76,65,84,79,84,101,114,109,32,102,111,114,32,67,111,109,109,111,100,111,114,101,32,54,52};
+padByte welcomemsg_1[]={80,76,65,84,79,84,101,114,109,32,102,111,114,32,67,111,109,109,111,100,111,114,101,32,54,52};
 #define WELCOMEMSG_1_LEN 26
 
 // Copyright 2018 IRATA.ONLINE
-const uint8_t welcomemsg_2[]={67,111,112,121,114,105,103,104,116,32,40,99,41,32,0x32,0x30,0x31,0x38,0x20,73,82,65,84,65,46,79,78,76,73,78,69};
+padByte welcomemsg_2[]={67,111,112,121,114,105,103,104,116,32,40,99,41,32,0x32,0x30,0x31,0x38,0x20,73,82,65,84,65,46,79,78,76,73,78,69};
 #define WELCOMEMSG_2_LEN 31
 
 // This software is licensed under GPL 3.0.
-const uint8_t welcomemsg_3[]={84,104,105,115,32,115,111,102,116,119,97,114,101,32,105,115,32,108,105,99,101,110,115,101,100,32,117,110,100,101,114,32,71,80,76,32,51,46,48,32,46};
+padByte welcomemsg_3[]={84,104,105,115,32,115,111,102,116,119,97,114,101,32,105,115,32,108,105,99,101,110,115,101,100,32,117,110,100,101,114,32,71,80,76,32,51,46,48,32,46};
 #define WELCOMEMSG_3_LEN 40
 
 // See COPYING for details.
-const uint8_t welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,102,111,114,32,100,101,116,97,105,108,115};
+padByte welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,102,111,114,32,100,101,116,97,105,108,115};
 #define WELCOMEMSG_4_LEN 23
 
 // PLATOTerm READY
-const uint8_t welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
+padByte welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 #define WELCOMEMSG_5_LEN 15
 
 // The static symbol for the c64 swlink driver
@@ -77,7 +77,7 @@ void SetTTY(void)
   CharWide=8;
   CharHigh=16;
   TTYLoc.x = 0;
-  TTYLoc.y = 511-CharHigh;
+  TTYLoc.y = 511;
 }
 
 /**
@@ -290,9 +290,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t a=0; /* current character byte */
   uint8_t b=0; /* current character row bit */
   uint8_t z=0; /* ... */
-  
-  POKE(53280,8);
-  
+    
   switch(CurMem)
     {
     case M0:
@@ -314,30 +312,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
       deltaX <<= 1;  // 16 pixels
       deltaY <<= 1; // 32 pixels
     }
-  
-  /* for (i=0;i<count;++i) */
-  /*   { */
-  /*     x=scalex[(Coord->x)&0x1FF]; */
-  /*     y=scaley[(Coord->y+deltaY)&0x1FF]; */
-  /*     a=*ch++; */
-  /*     a=a+offset; */
-  /*     for (j=0;j<deltaY;j++) */
-  /* 	{ */
-  /* 	  b=font[fontptr[a]+j]; */
-  /* 	  for (k=0;j<deltaX;k++) */
-  /* 	    { */
-  /* 	      z=b&0x80; */
-  /* 	      if (z==0x80) */
-  /* 		tgi_setpixel(x,y); */
-  /* 	      x++; */
-  /* 	      b <<= 1; */
-  /* 	    } */
-  /* 	  y++; */
-  /* 	} */
-  /*     Coord->x+=deltaX; */
-  /*   } */
-
-  
+    
   for (i=0;i<count;++i)
     {
       y=scaley[(Coord->y)&0x1FF];
@@ -359,8 +334,6 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   	}
       Coord->x+=CharWide;
     }
-
-  POKE(53280,0);
 
 }
 
@@ -391,10 +364,22 @@ void TTYChar(padByte theChar)
 
 }
 
+/**
+ * greeting(void) - Show terminal greeting
+ */
+void greeting(void)
+{
+  padPt coord;
+  coord.x=168; coord.y=480; CharDraw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN);
+  coord.x=144; coord.y=464; CharDraw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN);
+  coord.x=104; coord.y=432; CharDraw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN);
+  coord.x=160; coord.y=416; CharDraw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN);
+  coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
+}
+
 void main(void)
 {
   static const uint8_t pal[2]={TGI_COLOR_BLACK,TGI_COLOR_ORANGE};
-  padPt coord;
   struct ser_params params = {
     SER_BAUD_19200,
     SER_BITS_8,
@@ -420,11 +405,8 @@ void main(void)
   modemc=ser_open(&params);
   ser_ioctl(1, NULL);  
 
-  coord.x = 256;
-  coord.y = 256;
-  
-  CharDraw(&coord,"Testing",7);
-  
+  greeting();
+    
   // And do the terminal
   for (;;)
     {
