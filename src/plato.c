@@ -4,6 +4,7 @@
 #include <6502.h>
 #include <stdio.h>
 #include <tgi.h>
+#include <stdbool.h>
 #include <conio.h>
 #include <serial.h>
 #include <peekpoke.h>
@@ -17,42 +18,23 @@
 #include <string.h>
 #endif
 
-uint8_t retval;
-uint8_t c=0;
-uint8_t lastc=0;
+static uint8_t c=0;
+static uint8_t lastc=0;
 
-uint16_t mode=017;
-uint8_t escape;
-uint8_t dumb_terminal_active=1;
-uint16_t margin=0;
-uint16_t x=0;
-uint16_t y=0;
-uint16_t last_x=0;
-uint16_t last_y=0;
-uint8_t delta_x=0;
-uint8_t delta_y=0;
-uint8_t ascii_state=0;
-uint8_t ascii_bytes=0;
-uint8_t pmd[64];
-uint8_t font_pmd=0;
-uint8_t font_info=0;
-uint8_t connection_active=1;
-uint8_t xor_mode=0;
-uint8_t character_set=0;
-uint8_t vertical_writing_mode=0;
-uint8_t reverse_writing_mode=0;
-uint8_t bold_writing_mode=0;
-uint8_t mode_words=0;
-uint32_t assembler=0; 
-uint16_t mar=0;
-uint8_t flow_control=0;
-uint32_t platofgcolor=0;
-uint32_t platobgcolor=0;
-uint16_t mode4start=0;
-uint8_t touch=0;
-uint16_t plato_m23[128*8];
-uint8_t special_mode=0;
-uint8_t special_mode_param=0;
+static uint8_t CharWide=5;
+static uint8_t CharHigh=6; 
+static padBool TouchActive;
+
+static padPt TTYLoc;
+
+extern padPt PLATOSize;
+extern CharMem CurMem;
+extern padBool TTY;
+extern padBool FlowControl;
+extern padBool ModeBold;
+extern padBool Rotate;
+extern padBool Reverse;
+extern DispMode CurMode;
 
 // PLATOTerm for Commodore 64
 const uint8_t welcomemsg_1[]={80,76,65,84,79,84,101,114,109,32,102,111,114,32,67,111,109,109,111,100,111,114,101,32,54,52};
@@ -77,383 +59,307 @@ const uint8_t welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 // The static symbol for the c64 swlink driver
 extern char c64_swlink;
 extern void install_nmi_trampoline(void);
+extern void ShowPLATO(padByte *buff, uint16_t count);
 
+/**
+ * SetTTY(void) - Switch to TTY mode
+ */
+void SetTTY(void)
+{
+  TTY=true;
+  ModeBold=padF;
+  Rotate=padF;
+  Reverse=padF;
+  CurMem=M0;
+  CurMode=ModeRewrite;
+  tgi_setcolor(TGI_COLOR_WHITE);
+  tgi_clear();
+  CharWide=5;
+  CharHigh=6;
+  TTYLoc.x = 0;
+  TTYLoc.y = scaley[511]-CharHigh;
+}
+
+/**
+ * SetPLATO(void) - Switch to PLATO mode
+ */
+void SetPLATO(void)
+{
+  TTY=false;
+  tgi_clear();
+}
+
+/**
+ * TermType(void) - Return the appropriate terminal type
+ */
+uint8_t TermType(void)
+{
+  return 12; /* ASCII terminal type */
+}
+
+/**
+ * SubType(void) - Return the appropriate terminal subtype
+ */
+uint8_t SubType(void)
+{
+  return 1; /* ASCII terminal subtype */
+}
+
+/**
+ * LoadFile(void) - Return the appropriate terminal loadfile (should just be 0)
+ */
+uint8_t LoadFile(void)
+{
+  return 0; /* This terminal does not load its resident from the PLATO system. */
+}
+
+/**
+ * Configuration(void) - Return the terminal configuration
+ */
+uint8_t Configuration(void)
+{
+  return 0x40; /* Touch panel is present. */
+}
+
+/**
+ * CharAddress(void) - Return the base address of the character set.
+ */
+uint16_t CharAddress(void)
+{
+  return 0x3000; /* What the? Shouldn't this be 0x3800? */
+}
+
+/**
+ * Beep(void) - Beep the terminal
+ */
+void Beep(void)
+{
+  /* TODO: Implement beep(); */
+}
+
+/**
+ * MemRead - Read a byte of program memory.
+ * not needed for our terminal, but must
+ * be decoded.
+ */
+padByte MemRead(padWord addr)
+{
+  return (0xFF);
+}
+
+/**
+ * MemLoad - Write a byte to non-character memory.
+ * not needed for our terminal, but must be decoded.
+ */
+void MemLoad(padWord addr, padWord value)
+{
+  /* Not Implemented */
+}
+
+/**
+ * CharLoad - Store a character into the user definable
+ * character set.
+ */
+void CharLoad(padWord charnum, charData theChar)
+{
+  /* TODO: Implement CharLoad */
+}
+
+/**
+ * Mode5, 6, and 7 are basically stubbed.
+ */
+void Mode5(padWord value)
+{
+  
+}
+
+void Mode6(padWord value)
+{
+  
+}
+
+void Mode7(padWord value)
+{
+  
+}
+
+/**
+ * TouchAllow - Set whether touchpanel is active or not.
+ */
+void TouchAllow(padBool allow)
+{
+  TouchActive=allow;
+}
+
+/**
+ * ExtAllow - External Input allowed. Not implemented.
+ */
+void ExtAllow(padBool allow)
+{
+  /* Not Implemented */
+}
+
+/**
+ * SetExtIn - Set which device to get input from.
+ * Not implemented
+ */
+void SetExtIn(padWord device)
+{
+}
+
+/**
+ * SetExtOut - Set which device to send external data to.
+ * Not implemented
+ */
+void SetExtOut(padWord device)
+{
+}
+
+/**
+ * ExtIn - get an external input from selected device.
+ * Not implemented.
+ */
+padByte ExtIn(void)
+{
+  return 0;
+}
+
+/**
+ * ExtOut - Send an external output to selected device
+ * Not implemented.
+ */
+void ExtOut(padByte value)
+{
+}
+
+/**
+ * ClearScreen - Clear the screen
+ */
+void ClearScreen(void)
+{
+  tgi_clear();
+}
+
+/**
+ * send_byte(b) - Send specified byte out
+ */
 void send_byte(uint8_t b)
 {
   ser_put(b);
 }
 
-void scroll_up(void)
+/**
+ * BlockDraw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
+ */
+void BlockDraw(padPt* Coord1, padPt* Coord2)
 {
+  tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
 }
 
-void draw_char(uint8_t charset_to_use, uint8_t char_to_plot)
+/**
+ * dotDraw(Coord) - Plot a mode 0 pixel
+ */
+void DotDraw(padPt* Coord)
 {
-  uint16_t a;
-  uint16_t nx;
-  uint16_t ny;
-  uint16_t b;
-  a=0;
-  nx=scalex[x+margin];
-  ny=scaley[y+16];
-  
-  if (charset_to_use==1)
-    a=64;
-   
-  a=a+char_to_plot;
-
-  nx=scalex[x+margin];
-
-  /////////////////////////////////////////////////////////////////////
-  // Line 1
-  b=font[fontptr[a]];
-
-  // Dot 1
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 2
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 3
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 4
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 5
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx=scalex[x+margin];
-  ny++;
-
-  /////////////////////////////////////////////////////////////////////
-  // Line 2
-  b=font[fontptr[a]+1];
-
-  // Dot 1
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 2
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 3
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 4
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 5
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx=scalex[x+margin];
-  ny++;
-
-  /////////////////////////////////////////////////////////////////////
-  // Line 3
-  b=font[fontptr[a]+2];
-
-  // Dot 1
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 2
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 3
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 4
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 5
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx=scalex[x+margin];
-  ny++;
-
-  /////////////////////////////////////////////////////////////////////
-  // Line 4
-  b=font[fontptr[a]+3];
-
-  // Dot 1
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 2
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 3
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 4
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 5
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx=scalex[x+margin];
-  ny++;
-
-  /////////////////////////////////////////////////////////////////////
-  // Line 5
-  b=font[fontptr[a]+4];
-
-  // Dot 1
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 2
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 3
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 4
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 5
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx=scalex[x+margin];
-  ny++;
-
-  /////////////////////////////////////////////////////////////////////
-  // Line 6
-  b=font[fontptr[a]+5];
-
-  // Dot 1
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 2
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 3
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 4
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx++;
-  
-  // Dot 5
-  c=b&0x80;
-  if (c==0x80)
-    tgi_setpixel(nx,ny);
-  b <<= 1;
-  nx=scalex[x+margin];
-  ny++;
-  
-  /* for (i=0;i<6;i++) */
-  /*   { */
-  /*     nx=scalex[x+margin]; */
-  /*     b=font[fontptr[a]+i]; */
-  /*     for (j=0;j<5;j++) */
-  /* 	{ */
-  /* 	  c=b&0x80; */
-  /* 	  if (c==0x80) */
-  /* 	    tgi_setpixel(nx,ny); */
-  /* 	  nx++; */
-  /* 	  b <<= 1; */
-  /* 	} */
-  /*     ny++; */
-  /*   } */
-
-  x=x+delta_x;
+  tgi_setpixel(scalex[Coord->x],scaley[Coord->y]);
 }
 
-void screen_erase(void)
+/**
+ * lineDraw(Coord1, Coord2) - Draw a mode 1 line
+ */
+void LineDraw(padPt* Coord1, padPt* Coord2)
 {
-  tgi_clear();
+  tgi_line(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord1->y]);
 }
 
-void screen_erase_block(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+/**
+ * CharDraw(Coord, ch, count) - Output buffer from ch* of length count as PLATO characters
+ */
+void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 {
-  tgi_setcolor(TGI_COLOR_BLACK);
-  tgi_bar(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
-  tgi_setcolor(TGI_COLOR_ORANGE);
-}
-void screen_sleep(void)
-{
-}
-
-void screen_backspace(void)
-{
-}
-
-void screen_forwardspace(void)
-{
-}
-
-void beep(void)
-{
-}
-
-void draw_string(const char* text,uint8_t len)
-{
-  uint8_t* currChar=NULL;
-  uint8_t counter=0;
-  for (counter=0;counter<len;counter++)
+  int16_t offset=0; /* due to negative offsets */
+  uint8_t deltaX=CharWide;
+  uint8_t deltaY=CharHigh;
+  uint8_t* chPt=&font[0];
+  int16_t x=0;
+  int16_t y=0;
+  int8_t i=0; /* current character counter */
+  int8_t j=0; /* vertical loop counter */
+  int8_t k=0; /* horizontal loop counter */
+  int8_t a=0; /* current character byte */
+  int8_t b=0; /* current character row bit */
+  
+  switch(CurMem)
     {
-      decode_dumb_terminal(text[counter]);
+    case M0:
+      offset=-32;
+      break;
+    case M1:
+      offset=64;
+      break;
+    case M2:
+      /* TODO: custom charsets */
+      break;
+    case M3:
+      /* TODO: custom charsets */
+      break;
+    }
+
+  if (ModeBold)
+    {
+      deltaX <<= 1;  // 16 pixels
+      deltaY <<= 1; // 32 pixels
+    }
+
+  x=scalex[(Coord->x)&0x1FF];
+  y=scaley[(Coord->y+deltaY)&0x1FF];
+
+  for (i=0;i<count;++i)
+    {
+      chPt=&font[fontptr[*ch]];
+      for (j=0;j<deltaY;++j)
+	{
+	  x=scalex[(x&0x1ff)];
+	  a=*chPt;
+	  for (k=0;k<deltaX;++k)
+	    {
+	      b=a&0x80;
+	      if (c==0x80)
+		tgi_setpixel(x,y);
+	      x++;
+	      b<<=1;
+	    }
+	  y++;
+	}
+      ch++;
     }
 }
 
-void draw_point(uint16_t x,uint16_t y)
+/**
+ * TTYChar - Called to plot chars when in tty mode
+ */
+void TTYChar(padByte theChar)
 {
-  tgi_setpixel(scalex[x],scaley[y]);
-}
+  if ((theChar >= 0x20) && (theChar < 0x7F)) {
+    CharDraw(&TTYLoc, &theChar, 1);
+    TTYLoc.x += CharWide;
+  }
+  else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
+    TTYLoc.x -= CharWide;
+  else if (theChar == 0x0A)			/* line feed */
+    TTYLoc.y -= CharHigh;
+  else if (theChar == 0x0D)			/* carriage return */
+    TTYLoc.x = 0;
+  
+  if (TTYLoc.x + CharWide > 511) {	/* wrap at right side */
+    TTYLoc.x = 0;
+    TTYLoc.y -= CharHigh;
+  }
+  
+  if (TTYLoc.y < 0) {
+    TTYLoc.y=495;
+  }
 
-void draw_line(uint16_t x1, uint16_t y1,uint16_t x2, uint16_t y2)
-{
-  tgi_line(scalex[x1],scaley[y1],scalex[x2],scaley[y2]);
-}
-
-void paint(void)
-{
-}
-
-void enable_touch(uint8_t n)
-{
-  touch=n;
-}
-
-void greeting(void)
-{
-  x=168; y=480; draw_string(welcomemsg_1,WELCOMEMSG_1_LEN);
-  x=144; y=464; draw_string(welcomemsg_2,WELCOMEMSG_2_LEN);
-  x=104; y=432; draw_string(welcomemsg_3,WELCOMEMSG_3_LEN);
-  x=160; y=416; draw_string(welcomemsg_4,WELCOMEMSG_4_LEN);
-  x=16;  y=384; draw_string(welcomemsg_5,WELCOMEMSG_5_LEN);
-
-  x=0;   y=352;
-}
-
-void log_open(void)
-{
-#ifdef PROTOCOL_DEBUG
-  cbm_open(1,4,CBM_WRITE,"");
-#endif
-}
-
-void log(const char* format, ...)
-{
-#ifdef PROTOCOL_DEBUG
-  char lbuf[48];
-  va_list args;
-  va_start(args,format);
-  vsprintf(lbuf,format,args);
-  va_end(args);
-  cbm_write(1,lbuf,strlen(lbuf));
-  //  cbm_write(1,"\n",2);
-#endif
-}
-
-void log_close(void)
-{
-#ifdef PROTOCOL_DEBUG
-  cbm_close(1);
-#endif
 }
 
 void main(void)
@@ -466,8 +372,6 @@ void main(void)
     SER_PAR_NONE,
     SER_HS_HW
   };
-
-  log_open();
   
   c=ser_install(&c64_swlink);
 
@@ -477,10 +381,6 @@ void main(void)
       return;
     }
 
-  y=496;
-  delta_x=8;
-  delta_y=16;
-  dumb_terminal_active=1;
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
@@ -489,8 +389,6 @@ void main(void)
   tgi_setpalette(pal);
   c=ser_open(&params);
   ser_ioctl(1, NULL);  
-    
-  greeting();
 
   // And do the terminal
   for (;;)
@@ -504,9 +402,8 @@ void main(void)
 	    }
 	  else
 	    {
-	      log("%02x ",c&0x7F);
 	      lastc=c;
-	      decode(c&0x7F);
+	      ShowPLATO(&c,1);
 	    }
 	}
       if (kbhit())
@@ -517,9 +414,5 @@ void main(void)
   tgi_done();
   ser_close();
   ser_uninstall();
-  tgi_uninstall();
-#ifdef PROTOCOL_DEBUG
-  log_close();
-#endif
-  
+  tgi_uninstall();  
 }
