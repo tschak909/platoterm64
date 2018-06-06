@@ -18,11 +18,11 @@
 #include <string.h>
 #endif
 
-static uint8_t c=0;
-static uint8_t lastc=0;
+static uint8_t modemc=0;
+static uint8_t lastmodemc=0;
 
-static uint8_t CharWide=5;
-static uint8_t CharHigh=6; 
+static uint8_t CharWide=8;
+static uint8_t CharHigh=16; 
 static padBool TouchActive;
 
 static padPt TTYLoc;
@@ -74,10 +74,10 @@ void SetTTY(void)
   CurMode=ModeRewrite;
   tgi_setcolor(TGI_COLOR_WHITE);
   tgi_clear();
-  CharWide=5;
-  CharHigh=6;
+  CharWide=8;
+  CharHigh=16;
   TTYLoc.x = 0;
-  TTYLoc.y = scaley[511]-CharHigh;
+  TTYLoc.y = 511-CharHigh;
 }
 
 /**
@@ -102,7 +102,7 @@ uint8_t TermType(void)
  */
 uint8_t SubType(void)
 {
-  return 1; /* ASCII terminal subtype */
+  return 14; /* ASCII terminal subtype */
 }
 
 /**
@@ -280,16 +280,18 @@ void LineDraw(padPt* Coord1, padPt* Coord2)
 void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 {
   int16_t offset=0; /* due to negative offsets */
-  uint8_t deltaX=CharWide;
-  uint8_t deltaY=CharHigh;
-  uint8_t* chPt=&font[0];
+  uint8_t deltaX=5;
+  uint8_t deltaY=6;
   int16_t x=0;
   int16_t y=0;
-  int8_t i=0; /* current character counter */
-  int8_t j=0; /* vertical loop counter */
-  int8_t k=0; /* horizontal loop counter */
-  int8_t a=0; /* current character byte */
-  int8_t b=0; /* current character row bit */
+  uint8_t i=0; /* current character counter */
+  uint8_t j=0; /* vertical loop counter */
+  uint8_t k=0; /* horizontal loop counter */
+  uint8_t a=0; /* current character byte */
+  uint8_t b=0; /* current character row bit */
+  uint8_t z=0; /* ... */
+  
+  POKE(53280,8);
   
   switch(CurMem)
     {
@@ -312,29 +314,54 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
       deltaX <<= 1;  // 16 pixels
       deltaY <<= 1; // 32 pixels
     }
+  
+  /* for (i=0;i<count;++i) */
+  /*   { */
+  /*     x=scalex[(Coord->x)&0x1FF]; */
+  /*     y=scaley[(Coord->y+deltaY)&0x1FF]; */
+  /*     a=*ch++; */
+  /*     a=a+offset; */
+  /*     for (j=0;j<deltaY;j++) */
+  /* 	{ */
+  /* 	  b=font[fontptr[a]+j]; */
+  /* 	  for (k=0;j<deltaX;k++) */
+  /* 	    { */
+  /* 	      z=b&0x80; */
+  /* 	      if (z==0x80) */
+  /* 		tgi_setpixel(x,y); */
+  /* 	      x++; */
+  /* 	      b <<= 1; */
+  /* 	    } */
+  /* 	  y++; */
+  /* 	} */
+  /*     Coord->x+=deltaX; */
+  /*   } */
 
-  x=scalex[(Coord->x)&0x1FF];
-  y=scaley[(Coord->y+deltaY)&0x1FF];
-
+  
   for (i=0;i<count;++i)
     {
-      chPt=&font[fontptr[*ch]];
+      y=scaley[(Coord->y)&0x1FF];
+      a=*ch++;
+      a=a+offset;
       for (j=0;j<deltaY;++j)
-	{
-	  x=scalex[(x&0x1ff)];
-	  a=*chPt;
-	  for (k=0;k<deltaX;++k)
-	    {
-	      b=a&0x80;
-	      if (c==0x80)
-		tgi_setpixel(x,y);
-	      x++;
-	      b<<=1;
-	    }
-	  y++;
-	}
-      ch++;
+  	{
+  	  b=font[fontptr[a]+j];
+  	  x=scalex[(Coord->x&0x1FF)];
+  	  for (k=0;k<deltaX;++k)
+  	    {
+  	      z=b&0x80;
+  	      if (z==0x80)
+  		tgi_setpixel(x,y);
+  	      x++;
+  	      b<<=1;
+  	    }
+  	  y++;
+  	}
+      Coord->x+=CharWide;
     }
+
+  POKE(53280,0);
+
 }
 
 /**
@@ -366,7 +393,8 @@ void TTYChar(padByte theChar)
 
 void main(void)
 {
-  static const uint8_t pal[2]={TGI_COLOR_BLACK,TGI_COLOR_ORANGE};  
+  static const uint8_t pal[2]={TGI_COLOR_BLACK,TGI_COLOR_ORANGE};
+  padPt coord;
   struct ser_params params = {
     SER_BAUD_19200,
     SER_BITS_8,
@@ -375,11 +403,11 @@ void main(void)
     SER_HS_HW
   };
   
-  c=ser_install(&c64_swlink);
+  modemc=ser_install(&c64_swlink);
 
-  if (c!=SER_ERR_OK)
+  if (modemc!=SER_ERR_OK)
     {
-      printf("ser_install returned: %d\n",c);
+      printf("ser_install returned: %d\n",modemc);
       return;
     }
 
@@ -389,23 +417,28 @@ void main(void)
   tgi_clear();
   POKE(0xD020,0);
   tgi_setpalette(pal);
-  c=ser_open(&params);
+  modemc=ser_open(&params);
   ser_ioctl(1, NULL);  
 
+  coord.x = 256;
+  coord.y = 256;
+  
+  CharDraw(&coord,"Testing",7);
+  
   // And do the terminal
   for (;;)
     {
-      if (ser_get(&c)==SER_ERR_OK)
+      if (ser_get(&modemc)==SER_ERR_OK)
 	{
 	  // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
-	  if (c==0xFF && lastc == 0xFF)
+	  if (modemc==0xFF && lastmodemc == 0xFF)
 	    {
-	      lastc=0x00;
+	      lastmodemc=0x00;
 	    }
 	  else
 	    {
-	      lastc=c;
-	      ShowPLATO(&c,1);
+	      lastmodemc=modemc;
+	      ShowPLATO(&modemc,1);
 	    }
 	}
       if (kbhit())
