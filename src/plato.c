@@ -269,7 +269,7 @@ void DotDraw(padPt* Coord)
  */
 void LineDraw(padPt* Coord1, padPt* Coord2)
 {
-  tgi_line(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord1->y]);
+  tgi_line(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
 }
 
 /**
