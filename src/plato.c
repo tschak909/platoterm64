@@ -253,7 +253,9 @@ void send_byte(uint8_t b)
  */
 void BlockDraw(padPt* Coord1, padPt* Coord2)
 {
+  tgi_setcolor(TGI_COLOR_BLACK);
   tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
+  tgi_setcolor(TGI_COLOR_WHITE);
 }
 
 /**
