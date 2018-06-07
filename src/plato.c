@@ -77,7 +77,7 @@ void SetTTY(void)
   CharWide=8;
   CharHigh=16;
   TTYLoc.x = 0;
-  TTYLoc.y = 511;
+  TTYLoc.y = 368;
 }
 
 /**
@@ -344,7 +344,7 @@ void TTYChar(padByte theChar)
 {
   if ((theChar >= 0x20) && (theChar < 0x7F)) {
     CharDraw(&TTYLoc, &theChar, 1);
-    TTYLoc.x += CharWide;
+    /* TTYLoc.x += CharWide; */
   }
   else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
     TTYLoc.x -= CharWide;
@@ -399,14 +399,14 @@ void main(void)
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
-  tgi_clear();
   POKE(0xD020,0);
   tgi_setpalette(pal);
   modemc=ser_open(&params);
   ser_ioctl(1, NULL);  
 
+  SetTTY();
   greeting();
-    
+  
   // And do the terminal
   for (;;)
     {
