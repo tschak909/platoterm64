@@ -95,7 +95,7 @@ static padByte PTAT1[128] = {
 
 /*	externally referenced variables	*/
 
-padPt PLATOSize;		/* Logical screen size */
+padPt PLATOSize={512,512};	/* Logical screen size */
 CharMem CurMem;			/* Font to plot in */
 padBool TTY,			/* TTY mode */
   FlowControl,			/* Flow control on */
