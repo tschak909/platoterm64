@@ -1,4 +1,3 @@
-#define _optspeed_
 #define PROTOCOL_DEBUG 1
 
 #include <6502.h>
@@ -9,6 +8,7 @@
 #include <serial.h>
 #include <peekpoke.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "font.h"
 #include "scale.h"
 #include "protocol.h"
@@ -280,16 +280,19 @@ void LineDraw(padPt* Coord1, padPt* Coord2)
 void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 {
   int16_t offset=0; /* due to negative offsets */
-  uint8_t deltaX=5;
-  uint8_t deltaY=6;
-  int16_t x=0;
+  int16_t x=0;      /* Current X and Y coordinates */
   int16_t y=0;
+  int16_t* px=NULL;   /* Pointers to X and Y coordinates used for actual plotting */
+  int16_t* py=NULL;
   uint8_t i=0; /* current character counter */
   uint8_t j=0; /* vertical loop counter */
   uint8_t k=0; /* horizontal loop counter */
   uint8_t a=0; /* current character byte */
   uint8_t b=0; /* current character row bit */
   uint8_t z=0; /* ... */
+  uint8_t width=CharWide;
+  uint8_t height=CharHigh;
+  uint8_t altColor=TGI_COLOR_WHITE;
     
   switch(CurMem)
     {
@@ -307,32 +310,113 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
       break;
     }
 
-  if (ModeBold)
+  if (CurMode==ModeRewrite)
     {
-      deltaX <<= 1;  // 16 pixels
-      deltaY <<= 1; // 32 pixels
+      altColor=TGI_COLOR_BLACK;
     }
-    
+  
+  // Mode Write or Erase
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+  
   for (i=0;i<count;++i)
     {
+
       y=scaley[(Coord->y)&0x1FF];
       a=*ch++;
       a=a+offset;
-      for (j=0;j<deltaY;++j)
+      for (j=0;j<FONT_SIZE_Y;++j)
   	{
   	  b=font[fontptr[a]+j];
   	  x=scalex[(Coord->x&0x1FF)];
-  	  for (k=0;k<deltaX;++k)
+
+	  if (Rotate)
+	    {
+	      px=&y;
+	      py=&x;
+	    }
+	  else
+	    {
+	      px=&x;
+	      py=&y;
+	    }
+
+  	  for (k=0;k<FONT_SIZE_X;++k)
   	    {
   	      z=b&0x80;
   	      if (z==0x80)
-  		tgi_setpixel(x,y);
-  	      x++;
+		{
+		  if (ModeBold)
+		    {
+		      tgi_setpixel(*px+1,*py);
+		      tgi_setpixel(*px,*py+1);
+		      tgi_setpixel(*px+1,*py+1);
+		    }
+		  tgi_setpixel(*px,*py);
+		}
+
+	      if (Rotate)
+		{
+		  if (ModeBold)
+		    x-=2;
+		  else
+		    x--;
+		}
+	      else
+		{
+		  if (ModeBold)
+		    x+=2;
+		  else
+		    x++;
+		}
+	      
   	      b<<=1;
   	    }
-  	  y++;
+
+	  if (ModeBold)
+	    y+=2;
+	  else
+	    y++;
+	    
   	}
-      Coord->x+=CharWide;
+
+      /* If vertical, X axes behavior needs to be reversed for next character */
+      if (Rotate)
+	{
+	  if (ModeBold)
+	    {
+	      if (Reverse)
+		Coord->x-=width+width;
+	      else
+		Coord->x+=width+width;
+	    }
+	  else
+	    {
+	      if (Reverse)
+		Coord->x+=width;
+	      else
+		Coord->x-=width; 
+	    }
+	}
+      else
+	{
+	  if (ModeBold)
+	    {
+	      if (Reverse)
+		Coord->x-=width+width;
+	      else
+		Coord->x+=width+width;
+	    }
+	  else
+	    {
+	      if (Reverse)
+		Coord->x-=width;
+	      else
+		Coord->x+=width; 
+	    }
+	}
     }
 
 }
@@ -370,11 +454,15 @@ void TTYChar(padByte theChar)
 void greeting(void)
 {
   padPt coord;
-  coord.x=168; coord.y=480; CharDraw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN);
-  coord.x=144; coord.y=464; CharDraw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN);
-  coord.x=104; coord.y=432; CharDraw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN);
-  coord.x=160; coord.y=416; CharDraw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN);
-  coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
+  Rotate=padT;
+  coord.x=256; coord.y=256; CharDraw(&coord,"testing",7);
+  Rotate=padF;
+  coord.x=256; coord.y=256; CharDraw(&coord,"testing",7);  
+  /* coord.x=168; coord.y=480; CharDraw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN); */
+  /* coord.x=144; coord.y=464; CharDraw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN); */
+  /* coord.x=104; coord.y=432; CharDraw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN); */
+  /* coord.x=160; coord.y=416; CharDraw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN); */
+  /* coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN); */
 }
 
 void main(void)
