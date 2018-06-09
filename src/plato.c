@@ -254,9 +254,12 @@ void send_byte(uint8_t b)
  */
 void BlockDraw(padPt* Coord1, padPt* Coord2)
 {
-  tgi_setcolor(TGI_COLOR_BLACK);
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+  
   tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
-  tgi_setcolor(TGI_COLOR_WHITE);
 }
 
 /**
@@ -264,6 +267,11 @@ void BlockDraw(padPt* Coord1, padPt* Coord2)
  */
 void DotDraw(padPt* Coord)
 {
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+  
   tgi_setpixel(scalex[Coord->x],scaley[Coord->y]);
 }
 
@@ -272,6 +280,11 @@ void DotDraw(padPt* Coord)
  */
 void LineDraw(padPt* Coord1, padPt* Coord2)
 {
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+  
   tgi_line(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
 }
 
