@@ -71,7 +71,8 @@ void SetTTY(void)
   Rotate=padF;
   Reverse=padF;
   CurMem=M0;
-  CurMode=ModeRewrite;
+  /* CurMode=ModeRewrite; */
+  CurMode=ModeWrite; /* For speed reasons. */
   tgi_setcolor(TGI_COLOR_WHITE);
   tgi_clear();
   CharWide=8;
@@ -292,7 +293,8 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t z=0; /* ... */
   uint8_t width=CharWide;
   uint8_t height=CharHigh;
-  uint8_t altColor=TGI_COLOR_WHITE;
+  uint8_t mainColor=TGI_COLOR_WHITE;
+  uint8_t altColor;
     
   switch(CurMem)
     {
@@ -314,16 +316,19 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
     {
       altColor=TGI_COLOR_BLACK;
     }
+  else if (CurMode==ModeInverse)
+    {
+      altColor=TGI_COLOR_WHITE;
+    }
   
   // Mode Write or Erase
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(TGI_COLOR_BLACK);
+    mainColor=TGI_COLOR_BLACK;
   else
-    tgi_setcolor(TGI_COLOR_WHITE);
+    mainColor=TGI_COLOR_WHITE;
   
   for (i=0;i<count;++i)
     {
-
       y=scaley[(Coord->y)&0x1FF];
       a=*ch++;
       a=a+offset;
@@ -348,6 +353,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   	      z=b&0x80;
   	      if (z==0x80)
 		{
+		  tgi_setcolor(mainColor);
 		  if (ModeBold)
 		    {
 		      tgi_setpixel(*px+1,*py);
@@ -355,6 +361,20 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 		      tgi_setpixel(*px+1,*py+1);
 		    }
 		  tgi_setpixel(*px,*py);
+		}
+	      else
+		{
+		  if (CurMode==ModeInverse || CurMode==ModeRewrite)
+		    {
+		      tgi_setcolor(altColor);
+		      if (ModeBold)
+			{
+			  tgi_setpixel(*px+1,*py);
+			  tgi_setpixel(*px,*py+1);
+			  tgi_setpixel(*px+1,*py+1);
+			}
+		      tgi_setpixel(*px,*py); 
+		    }
 		}
 
 	      if (Rotate)
@@ -454,15 +474,12 @@ void TTYChar(padByte theChar)
 void greeting(void)
 {
   padPt coord;
-  Rotate=padT;
-  coord.x=256; coord.y=256; CharDraw(&coord,"testing",7);
-  Rotate=padF;
-  coord.x=256; coord.y=256; CharDraw(&coord,"testing",7);  
-  /* coord.x=168; coord.y=480; CharDraw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN); */
-  /* coord.x=144; coord.y=464; CharDraw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN); */
-  /* coord.x=104; coord.y=432; CharDraw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN); */
-  /* coord.x=160; coord.y=416; CharDraw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN); */
-  /* coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN); */
+
+  coord.x=168; coord.y=480; CharDraw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN);
+  coord.x=144; coord.y=464; CharDraw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN);
+  coord.x=104; coord.y=432; CharDraw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN);
+  coord.x=160; coord.y=416; CharDraw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN);
+  coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
 }
 
 void main(void)
