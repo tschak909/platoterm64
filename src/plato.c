@@ -103,7 +103,7 @@ uint8_t TermType(void)
  */
 uint8_t SubType(void)
 {
-  return 14; /* ASCII terminal subtype */
+  return 1; /* ASCII terminal subtype IST-III */
 }
 
 /**
@@ -342,7 +342,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   
   for (i=0;i<count;++i)
     {
-      y=scaley[(Coord->y)&0x1FF];
+      y=scaley[(Coord->y)+14&0x1FF];
       a=*ch++;
       a=a+offset;
       for (j=0;j<FONT_SIZE_Y;++j)
@@ -402,7 +402,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 		  if (ModeBold)
 		    x+=2;
 		  else
-		    x++;
+		    ++x;
 		}
 	      
   	      b<<=1;
@@ -411,7 +411,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 	  if (ModeBold)
 	    y+=2;
 	  else
-	    y++;
+	    ++y;
 	    
   	}
 
@@ -497,7 +497,7 @@ void greeting(void)
 
 void main(void)
 {
-  static const uint8_t pal[2]={TGI_COLOR_BLACK,TGI_COLOR_ORANGE};
+  static const uint8_t pal[2]={TGI_COLOR_BLUE,TGI_COLOR_LIGHTBLUE};
   struct ser_params params = {
     SER_BAUD_19200,
     SER_BITS_8,
@@ -517,7 +517,6 @@ void main(void)
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
-  POKE(0xD020,0);
   tgi_setpalette(pal);
   modemc=ser_open(&params);
   ser_ioctl(1, NULL);  
