@@ -302,7 +302,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t j=0; /* vertical loop counter */
   uint8_t k=0; /* horizontal loop counter */
   uint8_t a=0; /* current character byte */
-  uint8_t b=0; /* current character row bit */
+  int8_t b=0; /* current character row bit signed */
   uint8_t z=0; /* ... */
   uint8_t width=CharWide;
   uint8_t height=CharHigh;
@@ -363,8 +363,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   	  for (k=0;k<FONT_SIZE_X;++k)
   	    {
-  	      z=b&0x80;
-  	      if (z==0x80)
+  	      if (b<0) /* check sign bit. */
 		{
 		  tgi_setcolor(mainColor);
 		  if (ModeBold)
