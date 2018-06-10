@@ -296,6 +296,8 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   int16_t offset; /* due to negative offsets */
   uint16_t x;      /* Current X and Y coordinates */
   uint16_t y;
+  uint16_t deltaX;
+  uint16_t deltaY;
   uint16_t* px;   /* Pointers to X and Y coordinates used for actual plotting */
   uint16_t* py;
   uint8_t i; /* current character counter */
@@ -338,6 +340,9 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
     mainColor=TGI_COLOR_BLACK;
   else
     mainColor=TGI_COLOR_WHITE;
+
+  deltaX = deltaY = (ModeBold ? 2 : 1);
+  deltaX = (Rotate ? -abs(deltaX) : abs(deltaX));
   
   for (i=0;i<count;++i)
     {
@@ -389,29 +394,11 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 		    }
 		}
 
-	      if (Rotate)
-		{
-		  if (ModeBold)
-		    x-=2;
-		  else
-		    x--;
-		}
-	      else
-		{
-		  if (ModeBold)
-		    x+=2;
-		  else
-		    ++x;
-		}
-	      
+	      x += deltaX;
   	      b<<=1;
   	    }
 
-	  if (ModeBold)
-	    y+=2;
-	  else
-	    ++y;
-	    
+	  y += deltaY;
   	}
 
       /* If vertical, X axes behavior needs to be reversed for next character */
