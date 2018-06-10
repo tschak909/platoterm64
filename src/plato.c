@@ -296,8 +296,6 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   int16_t offset; /* due to negative offsets */
   uint16_t x;      /* Current X and Y coordinates */
   uint16_t y;
-  uint16_t deltaX;
-  uint16_t deltaY;
   uint16_t* px;   /* Pointers to X and Y coordinates used for actual plotting */
   uint16_t* py;
   uint8_t i; /* current character counter */
@@ -307,6 +305,8 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   int8_t b; /* current character row bit signed */
   uint8_t width=CharWide;
   uint8_t height=CharHigh;
+  uint16_t deltaX=1;
+  uint16_t deltaY=1;
   uint8_t mainColor=TGI_COLOR_WHITE;
   uint8_t altColor;
     
@@ -335,14 +335,22 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
       altColor=TGI_COLOR_WHITE;
     }
   
-  // Mode Write or Erase
   if (CurMode==ModeErase || CurMode==ModeInverse)
     mainColor=TGI_COLOR_BLACK;
   else
     mainColor=TGI_COLOR_WHITE;
 
-  deltaX = deltaY = (ModeBold ? 2 : 1);
-  deltaX = (Rotate ? -abs(deltaX) : abs(deltaX));
+  if (ModeBold)
+    {
+      deltaX = deltaY = 2;
+      width<<=1;
+    }
+
+  if (Rotate)
+    {
+      deltaX=-abs(deltaX);
+      width=-abs(width);
+    }
   
   for (i=0;i<count;++i)
     {
@@ -401,41 +409,7 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 	  y += deltaY;
   	}
 
-      /* If vertical, X axes behavior needs to be reversed for next character */
-      if (Rotate)
-	{
-	  if (ModeBold)
-	    {
-	      if (Reverse)
-		Coord->x-=width+width;
-	      else
-		Coord->x+=width+width;
-	    }
-	  else
-	    {
-	      if (Reverse)
-		Coord->x+=width;
-	      else
-		Coord->x-=width; 
-	    }
-	}
-      else
-	{
-	  if (ModeBold)
-	    {
-	      if (Reverse)
-		Coord->x-=width+width;
-	      else
-		Coord->x+=width+width;
-	    }
-	  else
-	    {
-	      if (Reverse)
-		Coord->x-=width;
-	      else
-		Coord->x+=width; 
-	    }
-	}
+      Coord->x+=width;
     }
 
 }
