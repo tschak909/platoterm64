@@ -343,7 +343,8 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   for (i=0;i<count;++i)
     {
       y=scaley[(Coord->y)+14&0x1FF];
-      a=*ch++;
+      a=*ch;
+      ++ch;
       a=a+offset;
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
