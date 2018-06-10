@@ -1,6 +1,7 @@
 /* Copyright (c) 1990 by Steve Peltz */
 
 #include <stdbool.h>
+#include <peekpoke.h>
 #include "protocol.h"
 
 #define	BSIZE	64
@@ -102,7 +103,7 @@ padBool TTY,			/* TTY mode */
   ModeBold,			/* Character plotting conditions */
   Rotate, Reverse;
 DispMode CurMode;		/* Current PLATO plotting mode */
-
+padBool FastText;               /* Indicate to main program if text optimizations can be done. */
 
 
 /*----------------------------------------------*
@@ -125,6 +126,7 @@ InitTTY (void)
   charCount = 0;
   EscFlag = false;
   TTY = true;
+  FastText = true;
   FlowControl = false;
   SetTTY();
 }
@@ -157,6 +159,7 @@ InitPLATOx (void)
   ModeBold = false;
   Rotate = false;
   Reverse = false;
+  FastText = true;
   CurMem = M0;
   CurMode = ModeRewrite;
 }
@@ -749,15 +752,19 @@ ShowPLATO (padByte *buff, uint16_t count)
 
 	    case 0x11:
 	      CurMode = ModeInverse;
+	      SetFast();
 	      break;
 	    case 0x12:
 	      CurMode = ModeWrite;
+	      SetFast();
 	      break;
 	    case 0x13:
 	      CurMode = ModeErase;
+	      SetFast();
 	      break;
 	    case 0x14:
 	      CurMode = ModeRewrite;
+	      SetFast();
 	      break;
 
 	    case 0x32:
@@ -786,21 +793,27 @@ ShowPLATO (padByte *buff, uint16_t count)
 
 	    case 0x4A:
 	      Rotate = false;
+	      SetFast();
 	      break;
 	    case 0x4B:
 	      Rotate = true;
+	      SetFast();
 	      break;
 	    case 0x4C:
 	      Reverse = false;
+	      SetFast();
 	      break;
 	    case 0x4D:
 	      Reverse = true;
+	      SetFast();
 	      break;
 	    case 0x4E:
 	      ModeBold = false;
+	      SetFast();
 	      break;
 	    case 0x4F:
 	      ModeBold = true;
+	      SetFast();
 	      break;
 
 	    case 0x50:
@@ -898,4 +911,13 @@ ShowPLATO (padByte *buff, uint16_t count)
       CharDraw (&charCoord, charBuff, charCount);
       charCount = 0;
     }
+}
+
+/**
+ * SetFast()
+ * Toggle fast text output if mode = write or erase, and no rotate or bold
+ */
+void SetFast(void)
+{
+  FastText = (((CurMode == ModeWrite) || (CurMode == ModeErase)) && ((Rotate == padF) && (ModeBold == padF))); 
 }

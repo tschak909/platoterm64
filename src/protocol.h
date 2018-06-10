@@ -75,3 +75,4 @@ void GoColor(void);
 void GoPaint(void);
 void DataChar(void);
 void ShowPLATO(padByte* buff, uint16_t count);
+void SetFast(void);

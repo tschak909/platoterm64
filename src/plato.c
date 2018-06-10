@@ -34,6 +34,7 @@ extern padBool FlowControl;
 extern padBool ModeBold;
 extern padBool Rotate;
 extern padBool Reverse;
+extern padBool FastText;
 extern DispMode CurMode;
 
 // PLATOTerm for Commodore 64
@@ -339,19 +340,57 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
     mainColor=TGI_COLOR_BLACK;
   else
     mainColor=TGI_COLOR_WHITE;
+  
+  if (FastText==padF)
+    {
+      goto chardraw_with_fries;
+    }
 
+ diet_chardraw:
+  for (i=0;i<count;++i)
+    {
+      y=scaley[(Coord->y)+14&0x1FF];
+      a=*ch;
+      ++ch;
+      a=a+offset;
+      for (j=0;j<FONT_SIZE_Y;++j)
+  	{
+  	  b=font[fontptr[a]+j];
+  	  x=scalex[(Coord->x&0x1FF)];
+
+  	  for (k=0;k<FONT_SIZE_X;++k)
+  	    {
+  	      if (b<0) /* check sign bit. */
+		{
+		  tgi_setcolor(mainColor);
+		  tgi_setpixel(x,y);
+		}
+
+	      x += deltaX;
+  	      b<<=1;
+  	    }
+
+	  y += deltaY;
+  	}
+
+      Coord->x+=width;
+    }
+
+  return;
+  
+ chardraw_with_fries:
   if (ModeBold)
     {
       deltaX = deltaY = 2;
       width<<=1;
     }
-
+  
   if (Rotate)
     {
       deltaX=-abs(deltaX);
       width=-abs(width);
     }
-  
+
   for (i=0;i<count;++i)
     {
       y=scaley[(Coord->y)+14&0x1FF];
