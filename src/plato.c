@@ -293,17 +293,16 @@ void LineDraw(padPt* Coord1, padPt* Coord2)
  */
 void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 {
-  int16_t offset=0; /* due to negative offsets */
-  int16_t x=0;      /* Current X and Y coordinates */
-  int16_t y=0;
-  int16_t* px=NULL;   /* Pointers to X and Y coordinates used for actual plotting */
-  int16_t* py=NULL;
-  uint8_t i=0; /* current character counter */
-  uint8_t j=0; /* vertical loop counter */
-  uint8_t k=0; /* horizontal loop counter */
-  uint8_t a=0; /* current character byte */
-  int8_t b=0; /* current character row bit signed */
-  uint8_t z=0; /* ... */
+  int16_t offset; /* due to negative offsets */
+  uint16_t x;      /* Current X and Y coordinates */
+  uint16_t y;
+  uint16_t* px;   /* Pointers to X and Y coordinates used for actual plotting */
+  uint16_t* py;
+  uint8_t i; /* current character counter */
+  uint8_t j; /* vertical loop counter */
+  uint8_t k; /* horizontal loop counter */
+  uint8_t a; /* current character byte */
+  int8_t b; /* current character row bit signed */
   uint8_t width=CharWide;
   uint8_t height=CharHigh;
   uint8_t mainColor=TGI_COLOR_WHITE;
