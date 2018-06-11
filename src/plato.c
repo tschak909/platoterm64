@@ -12,6 +12,7 @@
 #include "font.h"
 #include "scale.h"
 #include "protocol.h"
+#include "key.h"
 
 #ifdef PROTOCOL_DEBUG
 #include <cbm.h>
@@ -20,6 +21,8 @@
 
 static uint8_t modemc=0;
 static uint8_t lastmodemc=0;
+
+static uint8_t lastkey;
 
 static uint8_t CharWide=8;
 static uint8_t CharHigh=16; 
@@ -56,6 +59,11 @@ padByte welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,102,111,114,
 // PLATOTerm READY
 padByte welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 #define WELCOMEMSG_5_LEN 15
+
+#define MODIFIER_NONE  0x00
+#define MODIFIER_SHIFT 0x01
+#define MODIFIER_COMMO 0x02
+#define MODIFIER_CTRL  0x04
 
 // The static symbol for the c64 swlink driver
 extern char c64_swlink;
@@ -494,6 +502,26 @@ void greeting(void)
   coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
 }
 
+/**
+ * handle_keyboard - Handle the keyboard presses
+ */
+void handle_keyboard(void)
+{
+  if (PEEK(0xCB)==lastkey)
+    return;
+
+  if (PEEK(0x28D)==MODIFIER_NONE)
+    Key(KEYBOARD_TO_PLATO[PEEK(0xCB)]);
+  else if (PEEK(0x28D)==MODIFIER_SHIFT)
+    Key(KEYBOARD_TO_PLATO_SHIFT[PEEK(0xCB)]);
+  else if (PEEK(0x28D)==MODIFIER_COMMO)
+    Key(KEYBOARD_TO_PLATO_COMMO[PEEK(0xCB)]);
+  else if (PEEK(0x28D)==0x03)
+    Key(KEYBOARD_TO_PLATO_CS[PEEK(0xCB)]);
+  
+  lastkey=PEEK(0xCB);
+}
+
 void main(void)
 {
   static const uint8_t pal[2]={TGI_COLOR_BLUE,TGI_COLOR_LIGHTBLUE};
@@ -539,9 +567,16 @@ void main(void)
 	      ShowPLATO(&modemc,1);
 	    }
 	}
-      if (kbhit())
+      if (TTY)
 	{
-	  send_byte(cgetc());
+	  if (kbhit())
+	    {
+	      send_byte(cgetc());
+	    }
+	}
+      else
+	{
+	  handle_keyboard();
 	}
     }
   tgi_done();
