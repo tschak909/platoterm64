@@ -48,7 +48,7 @@ void Ext(padWord theKey);
 void Echo(padWord theKey);
 void SetCommand(Mode theMode, DataType theType);
 void SetMode(Mode theMode, DataType theType);
-void FixXY(uint16_t DX, uint16_t DY);
+void FixXY(int16_t DX, int16_t DY);
 void Superx(void);
 void Subx(void);
 void Marginx(void);

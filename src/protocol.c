@@ -272,7 +272,7 @@ SetMode (Mode theMode, DataType theType)
  *----------------------------------------------*/
 
 void
-FixXY (uint16_t DX, uint16_t DY)
+FixXY (int16_t DX, int16_t DY)
 {
   if (ModeBold)
     {
