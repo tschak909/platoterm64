@@ -35,6 +35,7 @@ extern uint16_t CharAddress(void);
 extern padByte MemRead(padWord addr);
 extern padByte ExtIn(void);
 
+extern void Wait(void);
 extern void Beep(void);
 extern void send_byte(uint8_t b);
 extern void BlockDraw(padPt* Coord1, padPt* Coord2);
@@ -880,6 +881,8 @@ ShowPLATO (padByte *buff, uint16_t count)
 	    }
 	  switch (theChar)
 	    {
+	    case 0x00:
+	      Wait();
 	    case 0x08:
 	      BSx ();
 	      break;

@@ -76,6 +76,14 @@ extern void install_nmi_trampoline(void);
 extern void ShowPLATO(padByte *buff, uint16_t count);
 
 /**
+ * Wait(void) - Sleep for approx 16.67ms
+ */
+void Wait(void)
+{
+  waitvsync();
+}
+
+/**
  * SetTTY(void) - Switch to TTY mode
  */
 void SetTTY(void)
