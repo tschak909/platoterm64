@@ -96,7 +96,7 @@ static const uint8_t KEYBOARD_TO_PLATO_SHIFT[] = {
   0x65, /* E */
   0xff, /* UNUSED */
   0x25, /* 5 */
-  0x52, /* R */
+  0x72, /* R */
   0x64, /* D */
   0x26, /* 6 */
   0x63, /* C */
@@ -225,39 +225,39 @@ static const uint8_t KEYBOARD_TO_PLATO_CS[] = {
   0xff, /* CRSR ^V */
   0xff, /* 3 */
   0xff, /* W */
-  0x12, /* A */
+  0x32, /* A */
   0xff, /* 4 */
   0xff, /* Z */
   0x3a, /* S */
   0x17, /* E */
   0xff, /* UNUSED */
   0xff, /* 5 */
-  0x13, /* R */
-  0x19, /* D */
+  0x33, /* R */
+  0x39, /* D */
   0xff, /* 6 */
-  0x1b, /* C */
+  0x3b, /* C */
   0x34, /* F */
   0x32, /* T */
   0x0a, /* X */
   0xff, /* 7 */
-  0x11, /* Y */
-  0x0b, /* G */
+  0x31, /* Y */
+  0x2b, /* G */
   0xff, /* 8 */
-  0x18, /* B */
-  0x15, /* H */
+  0x38, /* B */
+  0x35, /* H */
   0xff, /* U */
   0xff, /* V */
   0xff, /* 9 */
   0xff, /* I */
   0xff, /* J */
   0xff, /* 0 */
-  0x14, /* M */
+  0x34, /* M */
   0xff, /* K */
   0xff, /* O */
   0x16, /* N */
   0x2e, /* + */ /* possible multiply */
   0x10, /* P */
-  0x1d, /* L */
+  0x3d, /* L */
   0x2f, /* - */ /* possible divide */
   0xff, /* . */
   0xff, /* : */
@@ -277,7 +277,7 @@ static const uint8_t KEYBOARD_TO_PLATO_CS[] = {
   0xff, /* 2 */
   0xff, /* SPACE */
   0xff, /* UNUSED */
-  0x1C, /* Q */
+  0x3C, /* Q */
   0x3a, /* RUN/STOP */
   0xff, /* EMPTY KEY */
 };
