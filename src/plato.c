@@ -9,6 +9,7 @@
 #include <peekpoke.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <mouse.h>
 #include "font.h"
 #include "scale.h"
 #include "protocol.h"
@@ -29,6 +30,9 @@ static uint8_t CharHigh=16;
 static padBool TouchActive;
 
 static padPt TTYLoc;
+
+static uint16_t screen_w;
+static uint16_t screen_h;
 
 extern padPt PLATOSize;
 extern CharMem CurMem;
@@ -67,6 +71,7 @@ padByte welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 
 // The static symbol for the c64 swlink driver
 extern char c64_swlink;
+
 extern void install_nmi_trampoline(void);
 extern void ShowPLATO(padByte *buff, uint16_t count);
 
@@ -172,7 +177,6 @@ void MemLoad(padWord addr, padWord value)
  */
 void CharLoad(padWord charnum, charData theChar)
 {
-  /* TODO: Implement CharLoad */
 }
 
 /**
@@ -199,6 +203,8 @@ void Mode7(padWord value)
 void TouchAllow(padBool allow)
 {
   TouchActive=allow;
+  if (TouchActive==1)
+    mouse_move(0,0);
 }
 
 /**
@@ -522,6 +528,35 @@ void handle_keyboard(void)
   lastkey=PEEK(0xCB);
 }
 
+/**
+ * handle_mouse - Process mouse events and turn into scaled touch events
+ */
+void handle_mouse(void)
+{
+  struct mouse_info info;
+  uint8_t lastbuttons;
+  padPt coord;
+  
+  /* If touch screen isn't active, don't let the mouse be used. */
+  if (TouchActive==0)
+    {
+      mouse_move(screen_w,screen_h);
+      return;
+    }
+
+  mouse_info(&info);
+
+  if (info.buttons == lastbuttons)
+    return; /* debounce */
+  else if ((info.buttons & MOUSE_BTN_LEFT))
+    {
+      coord.x = scaletx[info.pos.x];
+      coord.y = scalety[info.pos.y];
+      Touch(&coord);
+    }
+  lastbuttons = info.buttons;
+}
+
 void main(void)
 {
   static const uint8_t pal[2]={TGI_COLOR_BLUE,TGI_COLOR_LIGHTBLUE};
@@ -541,13 +576,17 @@ void main(void)
       return;
     }
 
+  mouse_install(&mouse_def_callbacks,&mouse_static_stddrv);
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
   tgi_setpalette(pal);
   modemc=ser_open(&params);
   ser_ioctl(1, NULL);  
-
+  screen_w = tgi_getmaxx();
+  screen_h = tgi_getmaxy();
+  mouse_move(screen_w,screen_h);
+  mouse_show();
   SetTTY();
   greeting();
   
@@ -569,6 +608,7 @@ void main(void)
 	}
       if (TTY)
 	{
+	  mouse_move(screen_w,screen_h);
 	  if (kbhit())
 	    {
 	      send_byte(cgetc());
@@ -577,10 +617,19 @@ void main(void)
       else
 	{
 	  handle_keyboard();
+	  if (TouchActive)
+	    {
+	      handle_mouse();
+	    }
+	  else
+	    {
+	      mouse_move(screen_w,screen_h);
+	    }
 	}
     }
   tgi_done();
   ser_close();
   ser_uninstall();
-  tgi_uninstall();  
+  tgi_uninstall();
+  mouse_uninstall();
 }

@@ -43,6 +43,7 @@ void InitTTY(void);
 void InitPLATO(void);
 void InitPLATOx(void);
 void Key(padWord theKey);
+void Touch(padPt* where);
 void Ext(padWord theKey);
 void Echo(padWord theKey);
 void SetCommand(Mode theMode, DataType theType);

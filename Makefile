@@ -35,7 +35,7 @@ ASFLAGS =
  
 # Additional linker flags and options.
 # Default: none
-LDFLAGS =
+LDFLAGS = c64-tgimousedata.o
  
 # Path to the directory containing C and ASM sources.
 # Default: src

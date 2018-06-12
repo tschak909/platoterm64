@@ -200,6 +200,17 @@ Key (padWord theKey)
     }
 }
 
+/*----------------------------------------------*
+ *	Touch					*
+ *						*
+ *	Send a touch key (01yyyyxxxx).		*
+ *----------------------------------------------*/
+
+void	Touch(padPt* where)
+{
+	Key(0x100 | ((where->x >> 1) & 0xF0) |
+		((where->y >> 5) & 0x0F));
+}
 
 /*----------------------------------------------*
  *	Ext					*
@@ -225,6 +236,7 @@ Echo (padWord theKey)
 {
   Key (0x080 | theKey);
 }
+
 
 
 /*----------------------------------------------*
@@ -466,7 +478,7 @@ LoadEchox (void)
       break;
 
     case 0x71:
-      Echo (SubType ());	/* subtype */
+      Echo (1);	/* subtype */
       break;
 
     case 0x72:
