@@ -64,11 +64,6 @@ padByte welcomemsg_4[]={83,101,101,32,99,111,112,121,105,110,103,32,102,111,114,
 padByte welcomemsg_5[]={80,76,65,84,79,84,101,114,109,32,82,69,65,68,89};
 #define WELCOMEMSG_5_LEN 15
 
-#define MODIFIER_NONE  0x00
-#define MODIFIER_SHIFT 0x01
-#define MODIFIER_COMMO 0x02
-#define MODIFIER_CTRL  0x04
-
 // The static symbol for the c64 swlink driver
 extern char c64_swlink;
 
@@ -517,21 +512,40 @@ void greeting(void)
 }
 
 /**
+ * handle_keyboard - If platoKey < 0x7f, pass off to protocol
+ * directly. Otherwise, platoKey is an access key, and the
+ * ACCESS key must be sent, followed by the particular
+ * access key from PTAT_ACCESS.
+ */
+void handle_key(padByte platoKey)
+{
+  /* if (platoKey>0x7f) */
+  /*   { */
+  /*     Key(ACCESS); */
+  /*     Key(ACCESS_KEYS[platoKey&0x7f]); */
+  /*   } */
+  /* else */
+    /* { */
+      Key(platoKey);
+    /* } */
+}
+
+/**
  * handle_keyboard - Handle the keyboard presses
  */
 void handle_keyboard(void)
 {
   if (PEEK(0xCB)==lastkey)
     return;
-
+  
   if (PEEK(0x28D)==MODIFIER_NONE)
-    Key(KEYBOARD_TO_PLATO[PEEK(0xCB)]);
+    handle_key(KEYBOARD_TO_PLATO[PEEK(0xCB)]);
   else if (PEEK(0x28D)==MODIFIER_SHIFT)
-    Key(KEYBOARD_TO_PLATO_SHIFT[PEEK(0xCB)]);
+    handle_key(KEYBOARD_TO_PLATO_SHIFT[PEEK(0xCB)]);
   else if (PEEK(0x28D)==MODIFIER_COMMO)
-    Key(KEYBOARD_TO_PLATO_COMMO[PEEK(0xCB)]);
+    handle_key(KEYBOARD_TO_PLATO_COMMO[PEEK(0xCB)]);
   else if (PEEK(0x28D)==0x03)
-    Key(KEYBOARD_TO_PLATO_CS[PEEK(0xCB)]);
+    handle_key(KEYBOARD_TO_PLATO_CS[PEEK(0xCB)]);
   
   lastkey=PEEK(0xCB);
 }

@@ -6,9 +6,18 @@
 #ifndef KEY_H
 #define KEY_H
 
+#define MODIFIER_NONE        0x00
+#define MODIFIER_SHIFT       0x01
+#define MODIFIER_COMMO       0x02
+#define MODIFIER_COMMO_SHIFT 0x03
+#define MODIFIER_CTRL        0x04
+
 /* 64 entries for each possible primary scancode */
 /* each of these map to indexes in PTAT          */
 /* Thereby mapping each C= key to a PLATO key.   */
+/* anything above 0x7f is a special key, that    */
+/* causes an ACCESS key to be sent, followed by  */
+/* the processed key value in ACCESS_KEYS        */
 
 static const uint8_t KEYBOARD_TO_PLATO[] = {
   0x13, /* INS/DEL */
@@ -57,7 +66,7 @@ static const uint8_t KEYBOARD_TO_PLATO[] = {
   0x0f, /* - */
   0x5e, /* . */
   0x7C, /* : */
-  0xff, /* @ */
+  0x98, /* @ */ /* ACCESS */
   0x5f, /* , */
   0xff, /* STERLING */
   0xff, /* ASTERISK */
@@ -87,7 +96,7 @@ static const uint8_t KEYBOARD_TO_PLATO_SHIFT[] = {
   0xff, /* F3/F4 */
   0xff, /* F5/F6 */
   0x2a, /* CRSR ^V */
-  0x23, /* 3 */
+  0xB2, /* 3 */
   0x77, /* W */
   0x61, /* A */
   0x24, /* 4 */
@@ -98,7 +107,7 @@ static const uint8_t KEYBOARD_TO_PLATO_SHIFT[] = {
   0x25, /* 5 */
   0x72, /* R */
   0x64, /* D */
-  0x26, /* 6 */
+  0x2b, /* 6 */
   0x63, /* C */
   0x66, /* F */
   0x74, /* T */
@@ -133,7 +142,7 @@ static const uint8_t KEYBOARD_TO_PLATO_SHIFT[] = {
   0xff, /* CLR/HOME */
   0xff, /* UNUSED */
   0xFF, /* = */
-  0xFF, /* UP ARROW */
+  0x8D, /* UP ARROW */ /* SHIFT access to PI */
   0x7d, /* / */
   0x7E, /* 1 */
   0xff, /* LEFT ARROW */
@@ -281,5 +290,199 @@ static const uint8_t KEYBOARD_TO_PLATO_CS[] = {
   0x3a, /* RUN/STOP */
   0xff, /* EMPTY KEY */
 };
+
+static const uint8_t KEYBOARD_TO_PLATO_CTRL[] = {
+  0xff, /* INS/DEL */
+  0xff, /* RETURN */
+  0xff, /* CRSR <-> */
+  0xff, /* F7/F8 */
+  0xff, /* F1/F2 */
+  0xff, /* F3/F4 */
+  0xff, /* F5/F6 */
+  0xff, /* CRSR ^V */
+  0xff, /* 3 */
+  0x94, /* W */
+  0x80, /* A */
+  0xff, /* 4 */
+  0xff, /* Z */
+  0x90, /* S */
+  0x85, /* E */
+  0xff, /* UNUSED */
+  0x35, /* 5 */
+  0x8F, /* R */
+  0x84, /* D */
+  0x99, /* 6 */
+  0x82, /* C */
+  0xFF, /* F */
+  0x91, /* T */
+  0x95, /* X */
+  0xff, /* 7 */
+  0xA0, /* Y */
+  0x85, /* G */
+  0xff, /* 8 */
+  0x81, /* B */
+  0x86, /* H */
+  0x92, /* U */
+  0x93, /* V */
+  0xff, /* 9 */
+  0xff, /* I */
+  0x87, /* J */
+  0x96, /* 0 */
+  0x8A, /* M */
+  0x88, /* K */
+  0x8C, /* O */
+  0x8B, /* N */
+  0x9A, /* + */ /* possible multiply */
+  0x8D, /* P */
+  0x89, /* L */
+  0xff, /* - */ /* possible divide */
+  0xff, /* . */
+  0x9c, /* : */
+  0x98, /* @ */
+  0x9d, /* , */
+  0xff, /* STERLING */
+  0xff, /* ASTERISK */
+  0xff, /* ] */
+  0xff, /* CLR/HOME */
+  0xff, /* UNUSED */
+  0x9f, /* = */
+  0xff, /* UP ARROW */
+  0x9e, /* / */
+  0x97, /* 1 */
+  0xff, /* LEFT ARROW */
+  0xff, /* UNUSED */
+  0xff, /* 2 */
+  0xff, /* SPACE */
+  0xff, /* UNUSED */
+  0x8E, /* Q */
+  0xff, /* RUN/STOP */
+  0xff, /* EMPTY KEY */
+};
+
+static const uint8_t KEYBOARD_TO_PLATO_CTRL_SHIFT[] = {
+  0xff, /* INS/DEL */
+  0xff, /* RETURN */
+  0xff, /* CRSR <-> */
+  0xff, /* F7/F8 */
+  0xff, /* F1/F2 */
+  0xff, /* F3/F4 */
+  0xff, /* F5/F6 */
+  0xff, /* CRSR ^V */
+  0xff, /* 3 */
+  0xA4, /* W */
+  0xA1, /* A */
+  0xff, /* 4 */
+  0xff, /* Z */
+  0xff, /* S */
+  0xff, /* E */
+  0xff, /* UNUSED */
+  0xff, /* 5 */
+  0xff, /* R */
+  0xA3, /* D */
+  0xB3, /* 6 */
+  0xA5, /* C */
+  0xA6, /* F */
+  0xff, /* T */
+  0xA2, /* X */
+  0xff, /* 7 */
+  0xAD, /* Y */
+  0xA7, /* G */
+  0xff, /* 8 */
+  0xff, /* B */
+  0xA8, /* H */
+  0xff, /* U */
+  0xff, /* V */
+  0xB4, /* 9 */
+  0xA9, /* I */
+  0xAA, /* J */
+  0xff, /* 0 */
+  0xff, /* M */
+  0xAB, /* K */
+  0xAC, /* O */
+  0xff, /* N */
+  0xff, /* + */ /* possible multiply */
+  0xff, /* P */
+  0xff, /* L */
+  0xff, /* - */ /* possible divide */
+  0xAF, /* . */
+  0xff, /* : */
+  0xff, /* @ */
+  0xAE, /* , */
+  0xff, /* STERLING */
+  0xff, /* ASTERISK */
+  0xff, /* ] */
+  0xff, /* CLR/HOME */
+  0xff, /* UNUSED */
+  0xff, /* = */
+  0xff, /* UP ARROW */
+  0xff, /* / */
+  0xff, /* 1 */
+  0xff, /* LEFT ARROW */
+  0xff, /* UNUSED */
+  0xff, /* 2 */
+  0xff, /* SPACE */
+  0xff, /* UNUSED */
+  0xff, /* Q */
+  0xff, /* RUN/STOP */
+  0xff, /* EMPTY KEY */
+};
+
+/* ACCESS Key combinations. */
+static uint8_t ACCESS_KEYS[] = {
+  0x61, /* 0x80 a ɑ alpha */ 
+  0x62, /* 0x81 b ß beta */
+  0x63, /* 0x82 c not sure */
+  0x64, /* 0x83 d δ delta */
+  0x65, /* 0x84 e ' acute accent */
+  0x67, /* 0x85 g æ ae */
+  0x68, /* 0x86 h oe oe */
+  0x6A, /* 0x87 j å a with ring */
+  0x6B, /* 0x88 k ä a with diaeresis */
+  0x6C, /* 0x89 l ƛ lambda */
+  0x6D, /* 0x8A m μ mu */
+  0x6E, /* 0x8B n ~ tilde */
+  0x6F, /* 0x8C o ° degree */
+  0x70, /* 0x8D p π pi */
+  0x71, /* 0x8E q ` grave */
+  0x72, /* 0x8F r ρ rho */
+  0x73, /* 0x90 s σ sigma */
+  0x74, /* 0x91 t θ theta */
+  0x75, /* 0x92 u ¨ diaeresis */
+  0x76, /* 0x93 v hacek (upside down circumflex) */
+  0x77, /* 0x94 w ϖ capital pi */
+  0x78, /* 0x95 x ^ circumflex */
+  0x30, /* 0x96 0 l-embed */
+  0x31, /* 0x97 1 r-embed */
+  0x35, /* 0x98 5 @ */
+  0x36, /* 0x99 6 arrow */
+  0x2b, /* 0x9a + & */
+  0x26, /* 0x9b & interpunct */
+  0x3a, /* 0x9c : ~ lower tilde */
+  0x2c, /* 0x9d , delimiter */
+  0x2f, /* 0x9e / \ */
+  0x3d, /* 0x9f = not equal */
+  0x79, /* 0xA0 y ö */
+  0x41, /* 0xA1 A left arrow */
+  0x58, /* 0xA2 X down arrow */
+  0x44, /* 0xA3 D right arrow */
+  0x57, /* 0xA4 W up arrow */
+  0x43, /* 0xA5 C © */
+  0x46, /* 0xA6 F ♦ */
+  0x47, /* 0xA7 G Æ */
+  0x48, /* 0xA8 H OE */
+  0x49, /* 0xA9 I | */
+  0x4A, /* 0xAA J Å */
+  0x4B, /* 0xAB K Ä */
+  0x4F, /* 0xAC O SQUARE */
+  0x59, /* 0xAD Y Ö */
+  0x3C, /* 0xAE < ≤ */
+  0x3E, /* 0xAF > ≥ */
+  0x5B, /* 0xB0 [ { */
+  0x5D, /* 0xB1 ] } */
+  0x24, /* 0xB2 $ # */
+  0x26, /* 0xB3 & big cross */
+  0x29  /* 0xB4 EQUIVALENT */
+};
+
 
 #endif /* KEY_H */
