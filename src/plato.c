@@ -517,17 +517,19 @@ void greeting(void)
  * ACCESS key must be sent, followed by the particular
  * access key from PTAT_ACCESS.
  */
-void handle_key(padByte platoKey)
+void handle_key(uint8_t platoKey)
 {
-  /* if (platoKey>0x7f) */
-  /*   { */
-  /*     Key(ACCESS); */
-  /*     Key(ACCESS_KEYS[platoKey&0x7f]); */
-  /*   } */
-  /* else */
-    /* { */
-      Key(platoKey);
-    /* } */
+  if (platoKey==0xff)
+    return;
+  
+  if (platoKey>0x7F)
+    {
+      Key(ACCESS);
+      Key(ACCESS_KEYS[platoKey-0x80]);
+      return;
+    }
+  Key(platoKey);
+  return;
 }
 
 /**
@@ -535,19 +537,25 @@ void handle_key(padByte platoKey)
  */
 void handle_keyboard(void)
 {
-  if (PEEK(0xCB)==lastkey)
-    return;
-  
-  if (PEEK(0x28D)==MODIFIER_NONE)
-    handle_key(KEYBOARD_TO_PLATO[PEEK(0xCB)]);
-  else if (PEEK(0x28D)==MODIFIER_SHIFT)
-    handle_key(KEYBOARD_TO_PLATO_SHIFT[PEEK(0xCB)]);
-  else if (PEEK(0x28D)==MODIFIER_COMMO)
-    handle_key(KEYBOARD_TO_PLATO_COMMO[PEEK(0xCB)]);
-  else if (PEEK(0x28D)==0x03)
-    handle_key(KEYBOARD_TO_PLATO_CS[PEEK(0xCB)]);
-  
-  lastkey=PEEK(0xCB);
+  uint8_t key=PEEK(0xCB);
+  uint8_t modifier=PEEK(0x28D);
+
+  if (key!=lastkey)
+    {  
+      if (modifier==MODIFIER_NONE)
+	handle_key(KEYBOARD_TO_PLATO[key]);
+      else if (modifier==MODIFIER_SHIFT)
+	handle_key(KEYBOARD_TO_PLATO_SHIFT[key]);
+      else if (modifier==MODIFIER_COMMO)
+	handle_key(KEYBOARD_TO_PLATO_COMMO[key]);
+      else if (modifier==MODIFIER_COMMO_SHIFT)
+	handle_key(KEYBOARD_TO_PLATO_CS[key]);
+      else if (modifier==MODIFIER_CTRL)
+	handle_key(KEYBOARD_TO_PLATO_CTRL[key]);
+      else if (modifier==MODIFIER_CTRL_SHIFT)
+	handle_key(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
+    }
+      lastkey=key;
 }
 
 /**
