@@ -20,16 +20,23 @@
 #include <string.h>
 #endif
 
+static uint8_t color_background=TGI_COLOR_BLUE;
+static uint8_t color_foreground=TGI_COLOR_LIGHTBLUE;
+static uint8_t color_border=TGI_COLOR_LIGHTBLUE;
+static uint8_t pal[2];
 static uint8_t modemc=0;
 static uint8_t lastmodemc=0;
 
 static uint8_t lastkey;
 
+static padPt TTYLoc;
 static uint8_t CharWide=8;
 static uint8_t CharHigh=16; 
 static padBool TouchActive;
 
-static padPt TTYLoc;
+static struct mouse_info mouse_data;
+static uint16_t previous_mouse_x;
+static uint16_t previous_mouse_y;
 
 static uint16_t screen_w;
 static uint16_t screen_h;
@@ -205,9 +212,17 @@ void Mode7(padWord value)
  */
 void TouchAllow(padBool allow)
 {
+  // If mouse is off screen (due to previously being moved off screen, move onscreen to make visible.
+  if (allow)
+    {
+      mouse_move(previous_mouse_x,previous_mouse_y);
+    }
+  else
+    {
+      previous_mouse_x = mouse_data.pos.x;
+      previous_mouse_y = mouse_data.pos.y;
+    }
   TouchActive=allow;
-  if (TouchActive==1)
-    mouse_move(0,0);
 }
 
 /**
@@ -512,6 +527,17 @@ void greeting(void)
 }
 
 /**
+ * Set the terminal colors
+ */
+void set_terminal_colors(void)
+{
+  pal[0]=color_background;
+  pal[1]=color_foreground;
+  tgi_setpalette(pal);
+  POKE(0xD020,color_border);
+}
+
+/**
  * handle_keyboard - If platoKey < 0x7f, pass off to protocol
  * directly. Otherwise, platoKey is an access key, and the
  * ACCESS key must be sent, followed by the particular
@@ -540,6 +566,28 @@ void handle_keyboard(void)
   uint8_t key=PEEK(0xCB);
   uint8_t modifier=PEEK(0x28D);
 
+  // Handle Function keys
+  if (key==0x04 && lastkey!=0x04)
+    {
+      // Change colors
+      if (modifier==0x00)
+	{
+	  ++color_background;
+	  color_background&=0x0f;
+	}
+      else if (modifier==0x01)
+	{
+	  ++color_foreground;
+	  color_background&=0x0f;
+	}
+      else if (modifier==0x02)
+	{
+	  ++color_border;
+	  color_border&=0x0f;
+	}
+      set_terminal_colors();
+    }
+  
   if (key!=lastkey)
     {  
       if (modifier==MODIFIER_NONE)
@@ -563,33 +611,33 @@ void handle_keyboard(void)
  */
 void handle_mouse(void)
 {
-  struct mouse_info info;
   uint8_t lastbuttons;
   padPt coord;
   
+  mouse_info(&mouse_data);
+
   /* If touch screen isn't active, don't let the mouse be used. */
   if (TouchActive==0)
     {
+      previous_mouse_x = mouse_data.pos.x;
+      previous_mouse_y = mouse_data.pos.y;
       mouse_move(screen_w,screen_h);
       return;
     }
-
-  mouse_info(&info);
-
-  if (info.buttons == lastbuttons)
+  
+  if (mouse_data.buttons == lastbuttons)
     return; /* debounce */
-  else if ((info.buttons & MOUSE_BTN_LEFT))
+  else if ((mouse_data.buttons & MOUSE_BTN_LEFT))
     {
-      coord.x = scaletx[info.pos.x];
-      coord.y = scalety[info.pos.y];
+      coord.x = scaletx[mouse_data.pos.x];
+      coord.y = scalety[mouse_data.pos.y];
       Touch(&coord);
     }
-  lastbuttons = info.buttons;
+  lastbuttons = mouse_data.buttons;
 }
 
 void main(void)
 {
-  static const uint8_t pal[2]={TGI_COLOR_BLUE,TGI_COLOR_LIGHTBLUE};
   struct ser_params params = {
     SER_BAUD_19200,
     SER_BITS_8,
@@ -606,10 +654,12 @@ void main(void)
       return;
     }
 
+  POKE(0xD020,0);
   mouse_install(&mouse_def_callbacks,&mouse_static_stddrv);
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
+  set_terminal_colors();
   tgi_setpalette(pal);
   modemc=ser_open(&params);
   ser_ioctl(1, NULL);  
