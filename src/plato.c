@@ -342,7 +342,8 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint16_t deltaY=1;
   uint8_t mainColor=TGI_COLOR_WHITE;
   uint8_t altColor;
-    
+  uint8_t *p;
+  
   switch(CurMem)
     {
     case M0:
@@ -384,10 +385,11 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
       y=scaley[(Coord->y)+14&0x1FF];
       a=*ch;
       ++ch;
-      a=a+offset;
+      a+=offset;
+      p=&font[fontptr[a]];
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
-  	  b=font[fontptr[a]+j];
+  	  b=*p;
   	  x=scalex[(Coord->x&0x1FF)];
 
   	  for (k=0;k<FONT_SIZE_X;++k)
@@ -398,11 +400,12 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 		  tgi_setpixel(x,y);
 		}
 
-	      x += deltaX;
+	      ++x;
   	      b<<=1;
   	    }
 
-	  y += deltaY;
+	  ++y;
+	  ++p;
   	}
 
       Coord->x+=width;

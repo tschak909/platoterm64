@@ -479,7 +479,7 @@ LoadEchox (void)
       break;
 
     case 0x71:
-      Echo (1);	/* subtype */
+      Echo (SubType());	/* subtype */
       break;
 
     case 0x72:

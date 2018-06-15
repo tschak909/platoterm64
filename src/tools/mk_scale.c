@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	   "unsigned short scalex[]={\n");
 
     for (i=0;i<512;i++) { 
-	printf("%d,",(int)floor(i*sx));
+	printf("%d,",(int)ceil(i*sx));
 	if( i % 8 == 7 )
 	    printf("\n");
     }
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     
     printf("unsigned short scaley[]={\n");
     for (i=511;i>=0;i-=1) {
-	printf("%d,",(int)floor(i*sy));
+	printf("%d,",(int)ceil(i*sy));
 	if (i % 8 == 0 )
 	    printf("\n");
     } 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     printf("unsigned short scaletx[]={\n");
 
     for (i=0;i<rx;i++) { 
-	printf("%d,",(int)floor(i*zx));
+	printf("%d,",(int)ceil(i*zx));
 	if( i % 8 == 7 )
 	    printf("\n");
     }
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     printf("unsigned short scalety[]={\n");
     for (i=ry;i>=0;i-=1) {
-	printf("%d,",(int)floor(i*zy));
+	printf("%d,",(int)ceil(i*zy));
 	if (i % 8 == 0 )
 	    printf("\n");
     } 
