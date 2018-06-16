@@ -78,6 +78,24 @@ extern void install_nmi_trampoline(void);
 extern void ShowPLATO(padByte *buff, uint16_t count);
 
 /**
+ * log(const char* format, ...)
+ * put some data out to the printer for logging
+ */
+void log(const char* format, ...)
+{
+#ifdef PROTOCOL_DEBUG
+  char lbuf[128];
+  va_list args;
+  cbm_open(1,4,CBM_WRITE,"");
+  va_start(args,format);
+  vsprintf(lbuf,format,args);
+  va_end(args);
+  cbm_write(1,lbuf,strlen(lbuf));
+  cbm_close(1);
+#endif
+}
+
+/**
  * Wait(void) - Sleep for approx 16.67ms
  */
 void Wait(void)
