@@ -18,6 +18,11 @@
 #include <string.h>
 #endif
 
+#define ASC_ZFGT        0x01
+#define ASC_ZPCKEYS     0x02
+#define ASC_ZKERMIT     0x04
+#define ASC_ZWINDOW     0x08
+
 static uint8_t color_background=TGI_COLOR_BLUE;
 static uint8_t color_foreground=TGI_COLOR_LIGHTBLUE;
 static uint8_t color_border=TGI_COLOR_LIGHTBLUE;
@@ -128,6 +133,14 @@ void SetPLATO(void)
 {
   TTY=false;
   tgi_clear();
+}
+
+/**
+ * Features(void) - Inquire about terminal ASCII features
+ */
+uint8_t Features(void)
+{
+  return ASC_ZFGT; /* This terminal can do Fine Grained Touch (FGT) */
 }
 
 /**

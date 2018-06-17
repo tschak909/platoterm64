@@ -27,6 +27,7 @@ static padByte charBuff[BSIZE];
 static uint16_t charCount;	/* Count of characters currently buffered */
 static padPt charCoord;
 
+extern uint8_t Features(void);
 extern uint8_t TermType(void);
 extern uint8_t SubType(void);
 extern uint8_t LoadFile(void);
@@ -486,6 +487,9 @@ LoadEchox (void)
 	Echo (0x53);		/* flow control on */
       else
 	Echo (0x52);		/* flow control not on */
+      break;
+    case 0x60:                  /* Inquire about ascii specific features. */
+      Echo (Features());
       break;
     case 0x70:
       Echo (TermType ());	/* terminal type */
