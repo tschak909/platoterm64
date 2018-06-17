@@ -57,6 +57,10 @@ extern void ClearScreen(void);
 extern void SetTTY(void);
 extern void SetPLATO(void);
 
+#ifdef PROTOCOL_DEBUG
+extern void log(const char* format, ...);
+#endif
+
 static padByte PTAT0[128] = {	/* PLATO to ASCII lookup table */
   0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,	/* original mapping */
   0x38, 0x39, 0x26, 0x60, 0x0a, 0x5e, 0x2b, 0x2d,
@@ -209,8 +213,17 @@ Key (padWord theKey)
 
 void	Touch(padPt* where)
 {
-	Key(0x100 | ((where->x >> 1) & 0xF0) |
-		((where->y >> 5) & 0x0F));
+  // Send FGT (Fine Grained Touch) data.
+  send_byte(0x1b);
+  send_byte(0x1f);
+  send_byte(0x40 + (where->x & 0x1f));
+  send_byte(0x40 + ((where->x >> 5) & 0x0f));
+  send_byte(0x40 + (where->y & 0x1f));
+  send_byte(0x40 + ((where->y >> 5) & 0x0f));
+  
+  // Send coarse touch data
+  Key(0x100 | ((where->x >> 1) & 0xF0) |
+      ((where->y >> 5) & 0x0F));
 }
 
 /*----------------------------------------------*

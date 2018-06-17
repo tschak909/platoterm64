@@ -1,5 +1,3 @@
-#define PROTOCOL_DEBUG 1
-
 #include <6502.h>
 #include <stdio.h>
 #include <tgi.h>
