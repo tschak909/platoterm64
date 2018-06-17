@@ -123,7 +123,7 @@ void SetTTY(void)
   CharWide=8;
   CharHigh=16;
   TTYLoc.x = 0;
-  TTYLoc.y = 368;
+  TTYLoc.y = 495;
 }
 
 /**
@@ -539,6 +539,7 @@ void TTYChar(padByte theChar)
   }
   
   if (TTYLoc.y < 0) {
+    tgi_clear();
     TTYLoc.y=495;
   }
 
@@ -700,6 +701,7 @@ void main(void)
   mouse_move(screen_w,screen_h);
   mouse_show();
   SetTTY();
+  TTYLoc.y=368; // Right under the greeting.
   greeting();
   
   // And do the terminal
