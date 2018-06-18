@@ -72,7 +72,7 @@ static const uint8_t KEYBOARD_TO_PLATO[] = {
   PKEY_AT, /* @ */ /* ACCESS */
   PKEY_COMMA, /* , */
   PKEY_NOKEY, /* STERLING */
-  , /* ASTERISK */
+  PKEY_ASTERISK, /* ASTERISK */
   PKEY_BRACKET_RIGHT, /* ] */
   PKEY_NOKEY, /* CLR/HOME */
   PKEY_NOKEY, /* UNUSED */
