@@ -13,16 +13,6 @@
 #include "protocol.h"
 #include "key.h"
 
-#ifdef PROTOCOL_DEBUG
-#include <cbm.h>
-#include <string.h>
-#endif
-
-#define ASC_ZFGT        0x01
-#define ASC_ZPCKEYS     0x02
-#define ASC_ZKERMIT     0x04
-#define ASC_ZWINDOW     0x08
-
 static uint8_t color_background=TGI_COLOR_BLUE;
 static uint8_t color_foreground=TGI_COLOR_LIGHTBLUE;
 static uint8_t color_border=TGI_COLOR_LIGHTBLUE;
@@ -45,14 +35,7 @@ static uint16_t screen_w;
 static uint16_t screen_h;
 
 extern padPt PLATOSize;
-extern CharMem CurMem;
-extern padBool TTY;
-extern padBool FlowControl;
-extern padBool ModeBold;
-extern padBool Rotate;
-extern padBool Reverse;
 extern padBool FastText;
-extern DispMode CurMode;
 
 // PLATOTerm for Commodore 64
 padByte welcomemsg_1[]={80,76,65,84,79,84,101,114,109,32,102,111,114,32,67,111,109,109,111,100,111,114,101,32,54,52};
@@ -106,82 +89,6 @@ void Wait(void)
   waitvsync();
 }
 
-/**
- * SetTTY(void) - Switch to TTY mode
- */
-void SetTTY(void)
-{
-  TTY=true;
-  ModeBold=padF;
-  Rotate=padF;
-  Reverse=padF;
-  CurMem=M0;
-  /* CurMode=ModeRewrite; */
-  CurMode=ModeWrite; /* For speed reasons. */
-  tgi_setcolor(TGI_COLOR_WHITE);
-  tgi_clear();
-  CharWide=8;
-  CharHigh=16;
-  TTYLoc.x = 0;
-  TTYLoc.y = 495;
-}
-
-/**
- * SetPLATO(void) - Switch to PLATO mode
- */
-void SetPLATO(void)
-{
-  TTY=false;
-  tgi_clear();
-}
-
-/**
- * Features(void) - Inquire about terminal ASCII features
- */
-uint8_t Features(void)
-{
-  return ASC_ZFGT; /* This terminal can do Fine Grained Touch (FGT) */
-}
-
-/**
- * TermType(void) - Return the appropriate terminal type
- */
-uint8_t TermType(void)
-{
-  return 12; /* ASCII terminal type */
-}
-
-/**
- * SubType(void) - Return the appropriate terminal subtype
- */
-uint8_t SubType(void)
-{
-  return 1; /* ASCII terminal subtype IST-III */
-}
-
-/**
- * LoadFile(void) - Return the appropriate terminal loadfile (should just be 0)
- */
-uint8_t LoadFile(void)
-{
-  return 0; /* This terminal does not load its resident from the PLATO system. */
-}
-
-/**
- * Configuration(void) - Return the terminal configuration
- */
-uint8_t Configuration(void)
-{
-  return 0x40; /* Touch panel is present. */
-}
-
-/**
- * CharAddress(void) - Return the base address of the character set.
- */
-uint16_t CharAddress(void)
-{
-  return 0x3000; /* What the? Shouldn't this be 0x3800? */
-}
 
 /**
  * Beep(void) - Beep the terminal
@@ -189,51 +96,6 @@ uint16_t CharAddress(void)
 void Beep(void)
 {
   /* TODO: Implement beep(); */
-}
-
-/**
- * MemRead - Read a byte of program memory.
- * not needed for our terminal, but must
- * be decoded.
- */
-padByte MemRead(padWord addr)
-{
-  return (0xFF);
-}
-
-/**
- * MemLoad - Write a byte to non-character memory.
- * not needed for our terminal, but must be decoded.
- */
-void MemLoad(padWord addr, padWord value)
-{
-  /* Not Implemented */
-}
-
-/**
- * CharLoad - Store a character into the user definable
- * character set.
- */
-void CharLoad(padWord charnum, charData theChar)
-{
-}
-
-/**
- * Mode5, 6, and 7 are basically stubbed.
- */
-void Mode5(padWord value)
-{
-  
-}
-
-void Mode6(padWord value)
-{
-  
-}
-
-void Mode7(padWord value)
-{
-  
 }
 
 /**
@@ -252,47 +114,6 @@ void TouchAllow(padBool allow)
       previous_mouse_y = mouse_data.pos.y;
     }
   TouchActive=allow;
-}
-
-/**
- * ExtAllow - External Input allowed. Not implemented.
- */
-void ExtAllow(padBool allow)
-{
-  /* Not Implemented */
-}
-
-/**
- * SetExtIn - Set which device to get input from.
- * Not implemented
- */
-void SetExtIn(padWord device)
-{
-}
-
-/**
- * SetExtOut - Set which device to send external data to.
- * Not implemented
- */
-void SetExtOut(padWord device)
-{
-}
-
-/**
- * ExtIn - get an external input from selected device.
- * Not implemented.
- */
-padByte ExtIn(void)
-{
-  return 0;
-}
-
-/**
- * ExtOut - Send an external output to selected device
- * Not implemented.
- */
-void ExtOut(padByte value)
-{
 }
 
 /**
