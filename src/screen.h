@@ -13,6 +13,34 @@
 #include "protocol.h"
 
 /**
+ * screen_init() - Set up the screen
+ */
+void screen_init(void);
+
+/**
+ * screen_cycle_foreground()
+ * Go to the next foreground color in palette
+ */
+void screen_cycle_foreground(void);
+
+/**
+ * screen_cycle_background()
+ * Go to the next background color in palette
+ */
+void screen_cycle_background(void);
+
+/**
+ * screen_cycle_border()
+ * Go to the next border color in palette
+ */
+void screen_cycle_border(void);
+
+/**
+ * Set the terminal colors
+ */
+void set_terminal_colors(void);
+
+/**
  * Wait(void) - Sleep for approx 16.67ms
  */
 void Wait(void);

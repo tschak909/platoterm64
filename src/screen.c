@@ -10,6 +10,8 @@
 #include <c64.h>
 #include <tgi.h>
 #include <stdlib.h>
+#include <peekpoke.h>
+#include "screen.h"
 #include "protocol.h"
 #include "font.h"
 #include "scale.h"
@@ -17,9 +19,67 @@
 uint8_t CharWide=8;
 uint8_t CharHigh=16;
 padPt TTYLoc;
+uint8_t pal[2];
+
+static uint8_t color_background=TGI_COLOR_BLUE;
+static uint8_t color_foreground=TGI_COLOR_LIGHTBLUE;
+static uint8_t color_border=TGI_COLOR_LIGHTBLUE;
 
 extern padBool FastText;
+extern void install_nmi_trampoline(void);
 
+/**
+ * screen_init() - Set up the screen
+ */
+void screen_init(void)
+{
+  tgi_install(tgi_static_stddrv);
+  tgi_init();
+  install_nmi_trampoline();
+  set_terminal_colors();
+  tgi_setpalette(pal);
+}
+
+/**
+ * screen_cycle_foreground()
+ * Go to the next foreground color in palette
+ */
+void screen_cycle_foreground(void)
+{
+  ++color_foreground;
+  color_foreground&=0x0f;
+}
+
+/**
+ * screen_cycle_background()
+ * Go to the next background color in palette
+ */
+void screen_cycle_background(void)
+{
+  ++color_background;
+  color_background&=0x0f;
+}
+
+/**
+ * screen_cycle_border()
+ * Go to the next border color in palette
+ */
+void screen_cycle_border(void)
+{
+  ++color_border;
+  color_border&=0x0f;
+}
+
+/**
+ * Set the terminal colors
+ */
+void set_terminal_colors(void)
+{
+  pal[0]=color_background;
+  pal[1]=color_foreground;
+  tgi_setpalette(pal);
+  POKE(0xD020,color_border);
+}
 
 /**
  * Wait(void) - Sleep for approx 16.67ms

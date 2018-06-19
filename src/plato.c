@@ -14,24 +14,15 @@
 #include "terminal.h"
 #include "welcome.h"
 #include "screen.h"
+#include "touch.h"
 
-static uint8_t color_background=TGI_COLOR_BLUE;
-static uint8_t color_foreground=TGI_COLOR_LIGHTBLUE;
-static uint8_t color_border=TGI_COLOR_LIGHTBLUE;
-static uint8_t pal[2];
 static uint8_t modemc=0;
 static uint8_t lastmodemc=0;
 
 static uint8_t lastkey;
 
-static padBool TouchActive;
-
-static struct mouse_info mouse_data;
-static uint16_t previous_mouse_x;
-static uint16_t previous_mouse_y;
-
-static uint16_t screen_w;
-static uint16_t screen_h;
+extern uint16_t screen_w;
+extern uint16_t screen_h;
 
 extern padPt PLATOSize;
 extern padPt TTYLoc;
@@ -44,7 +35,6 @@ extern unsigned short scalety[];
 // The static symbol for the c64 swlink driver
 extern char c64_swlink;
 
-extern void install_nmi_trampoline(void);
 extern void ShowPLATO(padByte *buff, uint16_t count);
 
 /**
@@ -66,25 +56,6 @@ extern void ShowPLATO(padByte *buff, uint16_t count);
 /* } */
 
 /**
- * TouchAllow - Set whether touchpanel is active or not.
- */
-void TouchAllow(padBool allow)
-{
-  // If mouse is off screen (due to previously being moved off screen, move onscreen to make visible.
-  if (allow)
-    {
-      mouse_move(previous_mouse_x,previous_mouse_y);
-    }
-  else
-    {
-      previous_mouse_x = mouse_data.pos.x;
-      previous_mouse_y = mouse_data.pos.y;
-    }
-  TouchActive=allow;
-}
-
-
-/**
  * send_byte(b) - Send specified byte out
  */
 void send_byte(uint8_t b)
@@ -104,17 +75,6 @@ void greeting(void)
   coord.x=104; coord.y=432; CharDraw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN);
   coord.x=160; coord.y=416; CharDraw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN);
   coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
-}
-
-/**
- * Set the terminal colors
- */
-void set_terminal_colors(void)
-{
-  pal[0]=color_background;
-  pal[1]=color_foreground;
-  tgi_setpalette(pal);
-  POKE(0xD020,color_border);
 }
 
 /**
@@ -152,18 +112,15 @@ void handle_keyboard(void)
       // Change colors
       if (modifier==0x00)
 	{
-	  ++color_background;
-	  color_background&=0x0f;
+	  screen_cycle_background();
 	}
       else if (modifier==0x01)
 	{
-	  ++color_foreground;
-	  color_background&=0x0f;
+	  screen_cycle_foreground();
 	}
       else if (modifier==0x02)
 	{
-	  ++color_border;
-	  color_border&=0x0f;
+	  screen_cycle_border();
 	}
       set_terminal_colors();
     }
@@ -186,36 +143,6 @@ void handle_keyboard(void)
       lastkey=key;
 }
 
-/**
- * handle_mouse - Process mouse events and turn into scaled touch events
- */
-void handle_mouse(void)
-{
-  uint8_t lastbuttons;
-  padPt coord;
-  
-  mouse_info(&mouse_data);
-
-  /* If touch screen isn't active, don't let the mouse be used. */
-  if (TouchActive==0)
-    {
-      previous_mouse_x = mouse_data.pos.x;
-      previous_mouse_y = mouse_data.pos.y;
-      mouse_move(screen_w,screen_h);
-      return;
-    }
-  
-  if (mouse_data.buttons == lastbuttons)
-    return; /* debounce */
-  else if ((mouse_data.buttons & MOUSE_BTN_LEFT))
-    {
-      coord.x = scaletx[mouse_data.pos.x];
-      coord.y = scalety[mouse_data.pos.y];
-      Touch(&coord);
-    }
-  lastbuttons = mouse_data.buttons;
-}
-
 void main(void)
 {
   struct ser_params params = {
@@ -234,21 +161,9 @@ void main(void)
       return;
     }
 
-  POKE(0xD020,0);
-  mouse_install(&mouse_def_callbacks,&mouse_static_stddrv);
-  tgi_install(tgi_static_stddrv);
-  tgi_init();
-  install_nmi_trampoline();
-  set_terminal_colors();
-  tgi_setpalette(pal);
   modemc=ser_open(&params);
-  ser_ioctl(1, NULL);  
-  screen_w = tgi_getmaxx();
-  screen_h = tgi_getmaxy();
-  mouse_move(screen_w,screen_h);
-  mouse_show();
-  SetTTY();
-  TTYLoc.y=368; // Right under the greeting.
+  ser_ioctl(1, NULL);
+  touch_init();
   greeting();
   
   // And do the terminal
@@ -278,14 +193,7 @@ void main(void)
       else
 	{
 	  handle_keyboard();
-	  if (TouchActive)
-	    {
-	      handle_mouse();
-	    }
-	  else
-	    {
-	      mouse_move(screen_w,screen_h);
-	    }
+	  touch_main();
 	}
     }
   tgi_done();

@@ -39,6 +39,15 @@ extern uint8_t CharWide;
 extern uint8_t CharHigh;
 extern padPt TTYLoc;
 
+/**
+ * terminal_init()
+ * Initialize terminal state
+ */
+void terminal_init(void)
+{
+  SetTTY();
+  TTYLoc.y=368; // Right under the greeting.
+}
 
 /**
  * SetTTY(void) - Switch to TTY mode
