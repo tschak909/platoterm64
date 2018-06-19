@@ -1,4 +1,19 @@
+/**
+ * PLATOTerm64 - A PLATO Terminal for the Commodore 64
+ * Based on Steve Peltz's PAD
+ * 
+ * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
+ * This file written by Steve Peltz. Copyright notice preserved.
+ * and this code has been used with permission, and can be considered
+ * public domain.
+ *
+ * protocol.h - Protocol decoder functions 
+ */
+
 /* Copyright (c) 1990 by Steve Peltz */
+
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
 #include <stdint.h>
 
@@ -77,3 +92,5 @@ void GoPaint(void);
 void DataChar(void);
 void ShowPLATO(padByte* buff, uint16_t count);
 void SetFast(void);
+
+#endif

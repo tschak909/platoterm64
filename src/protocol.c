@@ -1,7 +1,18 @@
+/**
+ * PLATOTerm64 - A PLATO Terminal for the Commodore 64
+ * Based on Steve Peltz's PAD
+ * 
+ * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
+ * This file written by Steve Peltz. Copyright notice preserved.
+ * and this code has been used with permission, and can be considered
+ * public domain.
+ *
+ * protocol.c - Protocol decoder functions 
+ */
+
 /* Copyright (c) 1990 by Steve Peltz */
 
 #include <stdbool.h>
-#include <peekpoke.h>
 #include "protocol.h"
 
 #define	BSIZE	64
