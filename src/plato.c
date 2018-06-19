@@ -8,29 +8,21 @@
 #include <peekpoke.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <mouse.h>
 #include "protocol.h"
-#include "key.h"
 #include "terminal.h"
 #include "welcome.h"
 #include "screen.h"
 #include "touch.h"
+#include "keyboard.h"
 
 static uint8_t modemc=0;
 static uint8_t lastmodemc=0;
-
-static uint8_t lastkey;
 
 extern uint16_t screen_w;
 extern uint16_t screen_h;
 
 extern padPt PLATOSize;
 extern padPt TTYLoc;
-
-extern unsigned short scalex[];
-extern unsigned short scaley[];
-extern unsigned short scaletx[];
-extern unsigned short scalety[];
 
 // The static symbol for the c64 swlink driver
 extern char c64_swlink;
@@ -77,72 +69,6 @@ void greeting(void)
   coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
 }
 
-/**
- * handle_keyboard - If platoKey < 0x7f, pass off to protocol
- * directly. Otherwise, platoKey is an access key, and the
- * ACCESS key must be sent, followed by the particular
- * access key from PTAT_ACCESS.
- */
-void handle_key(uint8_t platoKey)
-{
-  if (platoKey==0xff)
-    return;
-  
-  if (platoKey>0x7F)
-    {
-      Key(ACCESS);
-      Key(ACCESS_KEYS[platoKey-0x80]);
-      return;
-    }
-  Key(platoKey);
-  return;
-}
-
-/**
- * handle_keyboard - Handle the keyboard presses
- */
-void handle_keyboard(void)
-{
-  uint8_t key=PEEK(0xCB);
-  uint8_t modifier=PEEK(0x28D);
-
-  // Handle Function keys
-  if (key==0x04 && lastkey!=0x04)
-    {
-      // Change colors
-      if (modifier==0x00)
-	{
-	  screen_cycle_background();
-	}
-      else if (modifier==0x01)
-	{
-	  screen_cycle_foreground();
-	}
-      else if (modifier==0x02)
-	{
-	  screen_cycle_border();
-	}
-      set_terminal_colors();
-    }
-  
-  if (key!=lastkey)
-    {  
-      if (modifier==MODIFIER_NONE)
-	handle_key(KEYBOARD_TO_PLATO[key]);
-      else if (modifier==MODIFIER_SHIFT)
-	handle_key(KEYBOARD_TO_PLATO_SHIFT[key]);
-      else if (modifier==MODIFIER_COMMO)
-	handle_key(KEYBOARD_TO_PLATO_COMMO[key]);
-      else if (modifier==MODIFIER_COMMO_SHIFT)
-	handle_key(KEYBOARD_TO_PLATO_CS[key]);
-      else if (modifier==MODIFIER_CTRL)
-	handle_key(KEYBOARD_TO_PLATO_CTRL[key]);
-      else if (modifier==MODIFIER_CTRL_SHIFT)
-	handle_key(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
-    }
-      lastkey=key;
-}
-
 void main(void)
 {
   struct ser_params params = {
@@ -184,7 +110,7 @@ void main(void)
 	}
       if (TTY)
 	{
-	  mouse_move(screen_w,screen_h);
+	  touch_hide();
 	  if (kbhit())
 	    {
 	      send_byte(cgetc());
@@ -193,12 +119,11 @@ void main(void)
       else
 	{
 	  handle_keyboard();
-	  touch_main();
+	  handle_mouse();
 	}
     }
-  tgi_done();
+  screen_done();
   ser_close();
   ser_uninstall();
-  tgi_uninstall();
-  mouse_uninstall();
+  touch_done();
 }

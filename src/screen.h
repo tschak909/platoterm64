@@ -80,6 +80,10 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count);
  */
 void TTYChar(padByte theChar);
 
-
+/**
+ * screen_done()
+ * Close down TGI
+ */
+void screen_done(void);
 
 #endif /* SCREEN_H */

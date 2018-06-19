@@ -37,4 +37,9 @@ void handle_mouse(void);
  */
 void touch_hide(void);
 
+/**
+ * touch_done() - Stop the mouse driver
+ */
+void touch_done(void);
+
 #endif /* TOUCH_H */
