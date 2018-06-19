@@ -118,7 +118,7 @@ void main(void)
 	}
       else
 	{
-	  handle_keyboard();
+	  keyboard_handle();
 	  handle_mouse();
 	}
     }

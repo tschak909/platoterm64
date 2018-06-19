@@ -17,12 +17,12 @@
 static uint8_t lastkey;
 
 /**
- * handle_keyboard - If platoKey < 0x7f, pass off to protocol
+ * keyboard_out - If platoKey < 0x7f, pass off to protocol
  * directly. Otherwise, platoKey is an access key, and the
  * ACCESS key must be sent, followed by the particular
  * access key from PTAT_ACCESS.
  */
-void handle_key(uint8_t platoKey)
+void keyboard_out(uint8_t platoKey)
 {
   if (platoKey==0xff)
     return;
@@ -38,9 +38,9 @@ void handle_key(uint8_t platoKey)
 }
 
 /**
- * handle_keyboard - Handle the keyboard presses
+ * keyboard_handle - Handle the keyboard presses
  */
-void handle_keyboard(void)
+void keyboard_handle(void)
 {
   uint8_t key=PEEK(0xCB);
   uint8_t modifier=PEEK(0x28D);
@@ -67,17 +67,17 @@ void handle_keyboard(void)
   if (key!=lastkey)
     {  
       if (modifier==MODIFIER_NONE)
-	handle_key(KEYBOARD_TO_PLATO[key]);
+	keyboard_out(KEYBOARD_TO_PLATO[key]);
       else if (modifier==MODIFIER_SHIFT)
-	handle_key(KEYBOARD_TO_PLATO_SHIFT[key]);
+	keyboard_out(KEYBOARD_TO_PLATO_SHIFT[key]);
       else if (modifier==MODIFIER_COMMO)
-	handle_key(KEYBOARD_TO_PLATO_COMMO[key]);
+	keyboard_out(KEYBOARD_TO_PLATO_COMMO[key]);
       else if (modifier==MODIFIER_COMMO_SHIFT)
-	handle_key(KEYBOARD_TO_PLATO_CS[key]);
+	keyboard_out(KEYBOARD_TO_PLATO_CS[key]);
       else if (modifier==MODIFIER_CTRL)
-	handle_key(KEYBOARD_TO_PLATO_CTRL[key]);
+	keyboard_out(KEYBOARD_TO_PLATO_CTRL[key]);
       else if (modifier==MODIFIER_CTRL_SHIFT)
-	handle_key(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
+	keyboard_out(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
     }
       lastkey=key;
 }

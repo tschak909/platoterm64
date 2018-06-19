@@ -11,16 +11,16 @@
 #define KEYBOARD_H
 
 /**
- * handle_keyboard - If platoKey < 0x7f, pass off to protocol
+ * keyboard_out - If platoKey < 0x7f, pass off to protocol
  * directly. Otherwise, platoKey is an access key, and the
  * ACCESS key must be sent, followed by the particular
  * access key from PTAT_ACCESS.
  */
-void handle_key(uint8_t platoKey);
+void keyboard_out(uint8_t platoKey);
 
 /**
- * handle_keyboard - Handle the keyboard presses
+ * keyboard_handle - Handle the keyboard presses
  */
-void handle_keyboard(void);
+void keyboard_handle(void);
 
 #endif
