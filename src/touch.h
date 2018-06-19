@@ -23,9 +23,9 @@ void touch_init(void);
 void touch_main(void);
 
 /**
- * TouchAllow - Set whether touchpanel is active or not.
+ * touch_allow - Set whether touchpanel is active or not.
  */
-void TouchAllow(padBool allow);
+void touch_allow(padBool allow);
 
 /**
  * handle_mouse - Process mouse events and turn into scaled touch events

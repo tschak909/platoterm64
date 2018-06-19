@@ -170,8 +170,9 @@ void screen_init(void)
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
-  set_terminal_colors();
+  screen_update_colors();
   tgi_setpalette(pal);
+  tgi_clear();
 }
 
 /**
@@ -207,7 +208,7 @@ void screen_cycle_border(void)
 /**
  * Set the terminal colors
  */
-void set_terminal_colors(void)
+void screen_update_colors(void)
 {
   pal[0]=color_background;
   pal[1]=color_foreground;
@@ -218,32 +219,32 @@ void set_terminal_colors(void)
 /**
  * Wait(void) - Sleep for approx 16.67ms
  */
-void Wait(void)
+void screen_wait(void)
 {
   waitvsync();
 }
 
 
 /**
- * Beep(void) - Beep the terminal
+ * screen_beep(void) - Beep the terminal
  */
-void Beep(void)
+void screen_beep(void)
 {
   /* TODO: Implement beep(); */
 }
 
 /**
- * ClearScreen - Clear the screen
+ * screen_clear - Clear the screen
  */
-void ClearScreen(void)
+void screen_clear(void)
 {
   tgi_clear();
 }
 
 /**
- * BlockDraw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
+ * screen_block_draw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
  */
-void BlockDraw(padPt* Coord1, padPt* Coord2)
+void screen_block_draw(padPt* Coord1, padPt* Coord2)
 {
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(TGI_COLOR_BLACK);
@@ -254,9 +255,9 @@ void BlockDraw(padPt* Coord1, padPt* Coord2)
 }
 
 /**
- * dotDraw(Coord) - Plot a mode 0 pixel
+ * screen_dot_draw(Coord) - Plot a mode 0 pixel
  */
-void DotDraw(padPt* Coord)
+void screen_dot_draw(padPt* Coord)
 {
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(TGI_COLOR_BLACK);
@@ -267,9 +268,9 @@ void DotDraw(padPt* Coord)
 }
 
 /**
- * lineDraw(Coord1, Coord2) - Draw a mode 1 line
+ * screen_line_draw(Coord1, Coord2) - Draw a mode 1 line
  */
-void LineDraw(padPt* Coord1, padPt* Coord2)
+void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(TGI_COLOR_BLACK);
@@ -280,9 +281,9 @@ void LineDraw(padPt* Coord1, padPt* Coord2)
 }
 
 /**
- * CharDraw(Coord, ch, count) - Output buffer from ch* of length count as PLATO characters
+ * screen_char_draw(Coord, ch, count) - Output buffer from ch* of length count as PLATO characters
  */
-void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
+void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 {
   int16_t offset; /* due to negative offsets */
   uint16_t x;      /* Current X and Y coordinates */
@@ -447,12 +448,12 @@ void CharDraw(padPt* Coord, unsigned char* ch, unsigned char count)
 }
 
 /**
- * TTYChar - Called to plot chars when in tty mode
+ * screen_tty_char - Called to plot chars when in tty mode
  */
-void TTYChar(padByte theChar)
+void screen_tty_char(padByte theChar)
 {
   if ((theChar >= 0x20) && (theChar < 0x7F)) {
-    CharDraw(&TTYLoc, &theChar, 1);
+    screen_char_draw(&TTYLoc, &theChar, 1);
     /* TTYLoc.x += CharWide; */
   }
   else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */

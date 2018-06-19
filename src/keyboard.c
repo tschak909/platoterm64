@@ -38,9 +38,9 @@ void keyboard_out(uint8_t platoKey)
 }
 
 /**
- * keyboard_handle - Handle the keyboard presses
+ * keyboard_main - Handle the keyboard presses
  */
-void keyboard_handle(void)
+void keyboard_main(void)
 {
   uint8_t key=PEEK(0xCB);
   uint8_t modifier=PEEK(0x28D);
@@ -61,7 +61,7 @@ void keyboard_handle(void)
 	{
 	  screen_cycle_border();
 	}
-      set_terminal_colors();
+      screen_update_colors();
     }
   
   if (key!=lastkey)

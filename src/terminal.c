@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include "terminal.h"
+#include "screen.h"
 
 /**
  * ASCII Features to return in Features
@@ -45,15 +46,16 @@ extern padPt TTYLoc;
  */
 void terminal_init(void)
 {
-  SetTTY();
+  terminal_set_tty();
   TTYLoc.y=368; // Right under the greeting.
 }
 
 /**
- * SetTTY(void) - Switch to TTY mode
+ * terminal_set_tty(void) - Switch to TTY mode
  */
-void SetTTY(void)
+void terminal_set_tty(void)
 {
+  screen_clear();
   TTY=true;
   ModeBold=padF;
   Rotate=padF;
@@ -61,8 +63,6 @@ void SetTTY(void)
   CurMem=M0;
   /* CurMode=ModeRewrite; */
   CurMode=ModeWrite;    /* For speed reasons. */
-  /* tgi_setcolor(TGI_COLOR_WHITE); */ // move this to screen.c
-  /* tgi_clear(); */ // also move to screen.c
   CharWide=8;
   CharHigh=16;
   TTYLoc.x = 0;        // leftmost coordinate on screen
@@ -70,141 +70,141 @@ void SetTTY(void)
 }
 
 /**
- * SetPLATO(void) - Switch to PLATO mode
+ * terminal_set_plato(void) - Switch to PLATO mode
  */
-void SetPLATO(void)
+void terminal_set_plato(void)
 {
   TTY=false;
-  /* tgi_clear(); */  // move to screen.c
+  screen_clear();
 }
 
 /**
- * Features(void) - Inquire about terminal ASCII features
+ * terminal_get_features(void) - Inquire about terminal ASCII features
  */
-uint8_t Features(void)
+uint8_t terminal_get_features(void)
 {
   return ASC_ZFGT; /* This terminal can do Fine Grained Touch (FGT) */
 }
 
 /**
- * TermType(void) - Return the appropriate terminal type
+ * terminal_get_type(void) - Return the appropriate terminal type
  */
-uint8_t TermType(void)
+uint8_t terminal_get_type(void)
 {
   return 12; /* ASCII terminal type */
 }
 
 /**
- * SubType(void) - Return the appropriate terminal subtype
+ * terminal_get_subtype(void) - Return the appropriate terminal subtype
  */
-uint8_t SubType(void)
+uint8_t terminal_get_subtype(void)
 {
   return 1; /* ASCII terminal subtype IST-III */
 }
 
 /**
- * LoadFile(void) - Return the appropriate terminal loadfile (should just be 0)
+ * terminal_get_load_file(void) - Return the appropriate terminal loadfile (should just be 0)
  */
-uint8_t LoadFile(void)
+uint8_t terminal_get_load_file(void)
 {
   return 0; /* This terminal does not load its resident from the PLATO system. */
 }
 
 /**
- * Configuration(void) - Return the terminal configuration
+ * terminal_get_configuration(void) - Return the terminal configuration
  */
-uint8_t Configuration(void)
+uint8_t terminal_get_configuration(void)
 {
   return 0x40; /* Touch panel is present. */
 }
 
 /**
- * CharAddress(void) - Return the base address of the character set.
+ * terminal_get_char_address(void) - Return the base address of the character set.
  */
-uint16_t CharAddress(void)
+uint16_t terminal_get_char_address(void)
 {
   return 0x3000; /* What the? Shouldn't this be 0x3800? */
 }
 
 /**
- * MemRead - Read a byte of program memory.
+ * terminal_mem_read - Read a byte of program memory.
  * not needed for our terminal, but must
  * be decoded.
  */
-padByte MemRead(padWord addr)
+padByte terminal_mem_read(padWord addr)
 {
   return (0xFF);
 }
 
 /**
- * MemLoad - Write a byte to non-character memory.
+ * terminal_mem_load - Write a byte to non-character memory.
  * not needed for our terminal, but must be decoded.
  */
-void MemLoad(padWord addr, padWord value)
+void terminal_mem_load(padWord addr, padWord value)
 {
   /* Not Implemented */
 }
 
 /**
- * CharLoad - Store a character into the user definable
+ * terminal_char_load - Store a character into the user definable
  * character set.
  */
-void CharLoad(padWord charnum, charData theChar)
+void terminal_char_load(padWord charnum, charData theChar)
 {
 }
 
 /**
  * Mode5, 6, and 7 are basically stubbed.
  */
-void Mode5(padWord value)
+void terminal_mode_5(padWord value)
 { 
 }
 
-void Mode6(padWord value)
+void terminal_mode_6(padWord value)
 { 
 }
 
-void Mode7(padWord value)
+void terminal_mode_7(padWord value)
 { 
 }
 
 /**
- * ExtAllow - External Input allowed. Not implemented.
+ * terminal_ext_allow - External Input allowed. Not implemented.
  */
-void ExtAllow(padBool allow)
+void terminal_ext_allow(padBool allow)
 {
   /* Not Implemented */
 }
 
 /**
- * SetExtIn - Set which device to get input from.
+ * terminal_set_ext_in - Set which device to get input from.
  * Not implemented
  */
-void SetExtIn(padWord device)
+void terminal_set_ext_in(padWord device)
 {
 }
 
 /**
- * SetExtOut - Set which device to send external data to.
+ * terminal_set_ext_out - Set which device to send external data to.
  * Not implemented
  */
-void SetExtOut(padWord device)
+void terminal_set_ext_out(padWord device)
 {
 }
 
 /**
- * ExtIn - get an external input from selected device.
+ * terminal_ext_in - get an external input from selected device.
  * Not implemented.
  */
-padByte ExtIn(void)
+padByte terminal_ext_in(void)
 {
   return 0;
 }
 
 /**
- * ExtOut - Send an external output to selected device
+ * terminal_ext_out - Send an external output to selected device
  * Not implemented.
  */
-void ExtOut(padByte value)
+void terminal_ext_out(padByte value)
 {
 }

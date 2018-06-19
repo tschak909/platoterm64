@@ -99,9 +99,9 @@ void touch_init(void)
 }
 
 /**
- * TouchAllow - Set whether touchpanel is active or not.
+ * touch_allow - Set whether touchpanel is active or not.
  */
-void TouchAllow(padBool allow)
+void touch_allow(padBool allow)
 {
   // If mouse is off screen (due to previously being moved off screen, move onscreen to make visible.
   if (allow)
@@ -117,9 +117,9 @@ void TouchAllow(padBool allow)
 }
 
 /**
- * handle_mouse - Process mouse events and turn into scaled touch events
+ * touch_main - Process mouse events and turn into scaled touch events
  */
-void handle_mouse(void)
+void touch_main(void)
 {
   uint8_t lastbuttons;
   padPt coord;

@@ -62,11 +62,11 @@ void greeting(void)
 {
   padPt coord;
 
-  coord.x=168; coord.y=480; CharDraw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN);
-  coord.x=144; coord.y=464; CharDraw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN);
-  coord.x=104; coord.y=432; CharDraw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN);
-  coord.x=160; coord.y=416; CharDraw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN);
-  coord.x=16;  coord.y=384; CharDraw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
+  coord.x=168; coord.y=480; screen_char_draw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN);
+  coord.x=144; coord.y=464; screen_char_draw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN);
+  coord.x=104; coord.y=432; screen_char_draw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN);
+  coord.x=160; coord.y=416; screen_char_draw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN);
+  coord.x=16;  coord.y=384; screen_char_draw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
 }
 
 void main(void)
@@ -89,6 +89,7 @@ void main(void)
 
   modemc=ser_open(&params);
   ser_ioctl(1, NULL);
+  screen_init();
   touch_init();
   greeting();
   
@@ -118,12 +119,12 @@ void main(void)
 	}
       else
 	{
-	  keyboard_handle();
-	  handle_mouse();
+	  keyboard_main();
+	  touch_main();
 	}
     }
   screen_done();
+  touch_done();
   ser_close();
   ser_uninstall();
-  touch_done();
 }

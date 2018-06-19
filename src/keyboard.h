@@ -19,8 +19,8 @@
 void keyboard_out(uint8_t platoKey);
 
 /**
- * keyboard_handle - Handle the keyboard presses
+ * keyboard_main - Handle the keyboard presses
  */
-void keyboard_handle(void);
+void keyboard_main(void);
 
 #endif
