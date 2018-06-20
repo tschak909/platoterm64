@@ -272,12 +272,20 @@ void screen_dot_draw(padPt* Coord)
  */
 void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
+  uint16_t x1=scalex[Coord1->x];
+  uint16_t x2=scalex[Coord2->x];
+  uint16_t y1=scaley[Coord1->y];
+  uint16_t y2=scaley[Coord2->y];
+  
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(TGI_COLOR_BLACK);
   else
     tgi_setcolor(TGI_COLOR_WHITE);
-  
-  tgi_line(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
+
+  if ((x1==x2) && (y1==y2))
+    tgi_setpixel(x1,y1);        // Avoid bug in tgi_line()
+  else
+    tgi_line(x1,y1,x2,y2);
 }
 
 /**
