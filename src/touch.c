@@ -9,6 +9,7 @@
 
 #include <mouse.h>
 #include "touch.h"
+#include "config.h"
 
 static padBool TouchActive;
 
@@ -93,7 +94,7 @@ unsigned short scalety[]={
  */
 void touch_init(void)
 {
-  mouse_install(&mouse_def_callbacks,&mouse_static_stddrv);
+  mouse_load_driver(&mouse_def_callbacks,config_get_mouse_driver());
   mouse_show();
   touch_hide();
 }

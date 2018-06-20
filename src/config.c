@@ -113,3 +113,12 @@ unsigned char config_get_baud_rate(void)
 {
   return config.baud;
 }
+
+/** 
+ * config_get_mouse_driver()
+ * Get the defined mouse driver from configuration
+ */
+const char* config_get_mouse_driver(void)
+{
+  return config.driver_mou;
+}

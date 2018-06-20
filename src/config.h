@@ -49,4 +49,10 @@ const char* config_get_serial_driver(void);
  */
 unsigned char config_get_baud_rate(void);
 
+/** 
+ * config_get_mouse_driver()
+ * Get the defined mouse driver from configuration
+ */
+const char* config_get_mouse_driver(void);
+
 #endif /* CONFIG_H */
