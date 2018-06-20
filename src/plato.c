@@ -7,6 +7,7 @@
  * plato.c - main program
  */
 
+#include <serial.h>
 #include "protocol.h"
 #include "terminal.h"
 #include "welcome.h"
@@ -14,6 +15,7 @@
 #include "touch.h"
 #include "keyboard.h"
 #include "io.h"
+#include "config.h"
 
 /**
  * greeting(void) - Show terminal greeting
@@ -31,8 +33,9 @@ void greeting(void)
 
 void main(void)
 {
-  io_init();
   screen_init();
+  config_init();
+  io_init();
   touch_init();
   greeting();
   

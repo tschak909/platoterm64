@@ -11,13 +11,12 @@
 #include <stdint.h>
 #include "io.h"
 #include "protocol.h"
+#include "config.h"
 
 #define NULL 0
 
 static uint8_t ch=0;
 static uint8_t lastch=0;
-
-extern char c64_swlink;
 
 static struct ser_params params = {
   SER_BAUD_19200,
@@ -33,7 +32,7 @@ static struct ser_params params = {
 void io_init(void)
 {
   uint8_t res;
-  res=ser_install(&c64_swlink);
+  res=ser_load_driver(config_get_serial_driver());
 
   if (res!=SER_ERR_OK)
     {
@@ -41,6 +40,8 @@ void io_init(void)
       return;
     }
 
+  params.baudrate = config_get_baud_rate();
+  
   res=ser_open(&params);
 
   if (res!=SER_ERR_OK)
