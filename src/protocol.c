@@ -49,7 +49,7 @@ extern padByte terminal_ext_in(void);
 
 extern void screen_wait(void);
 extern void screen_beep(void);
-extern void send_byte(uint8_t b);
+extern void io_send_byte(uint8_t b);
 extern void screen_block_draw(padPt* Coord1, padPt* Coord2);
 extern void screen_dot_draw(padPt* Coord);
 extern void screen_line_draw(padPt* Coord1, padPt* Coord2);
@@ -195,9 +195,9 @@ Key (padWord theKey)
 {
   if (theKey >> 7)
     {
-      send_byte (0x1b);
-      send_byte (0x40 | (theKey & 0x3f));
-      send_byte (0x60 | ((theKey >> 6) & 0x0f));
+      io_send_byte (0x1b);
+      io_send_byte (0x40 | (theKey & 0x3f));
+      io_send_byte (0x60 | ((theKey >> 6) & 0x0f));
     }
   else
     {
@@ -209,11 +209,11 @@ Key (padWord theKey)
 
       if (theKey & 0x80)
 	{
-	  send_byte (0x1b);
-	  send_byte (theKey & 0x7f);
+	  io_send_byte (0x1b);
+	  io_send_byte (theKey & 0x7f);
 	}
       else
-	send_byte (theKey);
+	io_send_byte (theKey);
     }
 }
 
@@ -226,12 +226,12 @@ Key (padWord theKey)
 void	Touch(padPt* where)
 {
   // Send FGT (Fine Grained Touch) data.
-  send_byte(0x1b);
-  send_byte(0x1f);
-  send_byte(0x40 + (where->x & 0x1f));
-  send_byte(0x40 + ((where->x >> 5) & 0x0f));
-  send_byte(0x40 + (where->y & 0x1f));
-  send_byte(0x40 + ((where->y >> 5) & 0x0f));
+  io_send_byte(0x1b);
+  io_send_byte(0x1f);
+  io_send_byte(0x40 + (where->x & 0x1f));
+  io_send_byte(0x40 + ((where->x >> 5) & 0x0f));
+  io_send_byte(0x40 + (where->y & 0x1f));
+  io_send_byte(0x40 + ((where->y >> 5) & 0x0f));
   
   // Send coarse touch data
   Key(0x100 | ((where->x >> 1) & 0xF0) |

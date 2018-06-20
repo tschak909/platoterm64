@@ -1,59 +1,19 @@
-#include <c64.h>
-#include <6502.h>
-#include <stdio.h>
-#include <tgi.h>
-#include <stdbool.h>
-#include <conio.h>
-#include <serial.h>
-#include <peekpoke.h>
-#include <stdint.h>
-#include <stdlib.h>
+/**
+ * PLATOTerm64 - A PLATO Terminal for the Commodore 64
+ * Based on Steve Peltz's PAD
+ * 
+ * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
+ *
+ * plato.c - main program
+ */
+
 #include "protocol.h"
 #include "terminal.h"
 #include "welcome.h"
 #include "screen.h"
 #include "touch.h"
 #include "keyboard.h"
-
-static uint8_t modemc=0;
-static uint8_t lastmodemc=0;
-
-extern uint16_t screen_w;
-extern uint16_t screen_h;
-
-extern padPt PLATOSize;
-extern padPt TTYLoc;
-
-// The static symbol for the c64 swlink driver
-extern char c64_swlink;
-
-extern void ShowPLATO(padByte *buff, uint16_t count);
-
-/**
- * log(const char* format, ...)
- * put some data out to the printer for logging
- */
-/* void log(const char* format, ...) */
-/* { */
-/* #ifdef PROTOCOL_DEBUG */
-/*   char lbuf[128]; */
-/*   va_list args; */
-/*   cbm_open(1,4,CBM_WRITE,""); */
-/*   va_start(args,format); */
-/*   vsprintf(lbuf,format,args); */
-/*   va_end(args); */
-/*   cbm_write(1,lbuf,strlen(lbuf)); */
-/*   cbm_close(1); */
-/* #endif */
-/* } */
-
-/**
- * send_byte(b) - Send specified byte out
- */
-void send_byte(uint8_t b)
-{
-  ser_put(b);
-}
+#include "io.h"
 
 /**
  * greeting(void) - Show terminal greeting
@@ -71,24 +31,7 @@ void greeting(void)
 
 void main(void)
 {
-  struct ser_params params = {
-    SER_BAUD_19200,
-    SER_BITS_8,
-    SER_STOP_1,
-    SER_PAR_NONE,
-    SER_HS_HW
-  };
-  
-  modemc=ser_install(&c64_swlink);
-
-  if (modemc!=SER_ERR_OK)
-    {
-      printf("ser_install returned: %d\n",modemc);
-      return;
-    }
-
-  modemc=ser_open(&params);
-  ser_ioctl(1, NULL);
+  io_init();
   screen_init();
   touch_init();
   greeting();
@@ -96,35 +39,11 @@ void main(void)
   // And do the terminal
   for (;;)
     {
-      if (ser_get(&modemc)==SER_ERR_OK)
-	{
-	  // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
-	  if (modemc==0xFF && lastmodemc == 0xFF)
-	    {
-	      lastmodemc=0x00;
-	    }
-	  else
-	    {
-	      lastmodemc=modemc;
-	      ShowPLATO(&modemc,1);
-	    }
-	}
-      if (TTY)
-	{
-	  touch_hide();
-	  if (kbhit())
-	    {
-	      send_byte(cgetc());
-	    }
-	}
-      else
-	{
-	  keyboard_main();
-	  touch_main();
-	}
+      io_main();
+      keyboard_main();
+      touch_main();
     }
+  
   screen_done();
   touch_done();
-  ser_close();
-  ser_uninstall();
 }
