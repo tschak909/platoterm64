@@ -17,19 +17,6 @@
 #define CONFIG_DEFAULT_SERIAL_DRIVER "ser-swlink"
 #define CONFIG_DEFAULT_MOUSE_DRIVER "mou-1351"
 
-typedef struct configInfo
-{
-  unsigned char io_mode;
-  unsigned char baud;
-  unsigned char use_dhcp;
-  unsigned long ip_address;
-  unsigned long netmask;
-  unsigned long gateway;
-  unsigned long dns;
-  unsigned char driver_ser[16];
-  unsigned char driver_mou[16];
-} ConfigInfo;
-
 ConfigInfo config;
 
 /**
@@ -96,29 +83,3 @@ void config_set_defaults(void)
   config_save();
 }
 
-/**
- * config_get_serial_driver()
- * Get the defined serial driver from configuration
- */
-const char* config_get_serial_driver(void)
-{
-  return config.driver_ser;
-}
-
-/**
- * config_get_baud_rate()
- * Get the defined serial baud rate from configuration
- */
-unsigned char config_get_baud_rate(void)
-{
-  return config.baud;
-}
-
-/** 
- * config_get_mouse_driver()
- * Get the defined mouse driver from configuration
- */
-const char* config_get_mouse_driver(void)
-{
-  return config.driver_mou;
-}

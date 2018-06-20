@@ -19,6 +19,8 @@ static uint16_t previous_mouse_y;
 static uint16_t screen_w;
 static uint16_t screen_h;
 
+extern ConfigInfo config;
+
 /* Scaling tables for touch to convert 320x192 to 512x512 */
 unsigned short scaletx[]={
 0,2,4,5,7,8,10,12,
@@ -94,7 +96,7 @@ unsigned short scalety[]={
  */
 void touch_init(void)
 {
-  mouse_load_driver(&mouse_def_callbacks,config_get_mouse_driver());
+  mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
   mouse_show();
   touch_hide();
 }

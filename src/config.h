@@ -13,6 +13,22 @@
 #define IO_MODE_SERIAL        0
 #define IO_MODE_ETHERNET      1
 
+typedef struct configInfo
+{
+  unsigned char io_mode;
+  unsigned char baud;
+  unsigned char use_dhcp;
+  unsigned long ip_address;
+  unsigned long netmask;
+  unsigned long gateway;
+  unsigned long dns;
+  unsigned char driver_ser[16];
+  unsigned char driver_mou[16];
+  unsigned char color_foreground;
+  unsigned char color_background;
+  unsigned char color_border;
+} ConfigInfo;
+
 /**
  * config_init()
  * Initialize configuration and load either config or defaults.
@@ -36,23 +52,5 @@ void config_save(void);
  * Set default values for config file
  */
 void config_set_defaults(void);
-
-/**
- * config_get_serial_driver()
- * Get the defined serial driver from configuration
- */
-const char* config_get_serial_driver(void);
-
-/**
- * config_get_baud_rate()
- * Get the defined serial baud rate from configuration
- */
-unsigned char config_get_baud_rate(void);
-
-/** 
- * config_get_mouse_driver()
- * Get the defined mouse driver from configuration
- */
-const char* config_get_mouse_driver(void);
 
 #endif /* CONFIG_H */
