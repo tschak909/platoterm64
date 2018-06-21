@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <c64.h>
 #include "config.h"
+#include "screen.h"
 
 #define CONFIG_FILE "config"
 
@@ -26,6 +27,7 @@ void config_init(void)
 {
   memset(&config,0,sizeof(config));
   config_load();
+  screen_update_colors(); /* because the screen is already initialized. */
 }
 
 /**

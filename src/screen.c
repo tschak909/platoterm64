@@ -14,18 +14,16 @@
 #include "screen.h"
 #include "protocol.h"
 #include "font.h"
+#include "config.h"
 
 uint8_t CharWide=8;
 uint8_t CharHigh=16;
 padPt TTYLoc;
 uint8_t pal[2];
 
-static uint8_t color_background=TGI_COLOR_BLUE;
-static uint8_t color_foreground=TGI_COLOR_LIGHTBLUE;
-static uint8_t color_border=TGI_COLOR_LIGHTBLUE;
-
 extern padBool FastText;
 extern void install_nmi_trampoline(void);
+extern ConfigInfo config;
 
 /* X and Y tables used to scale 512x512 PLATO display to 320x192 */
 unsigned short scalex[]={
@@ -170,6 +168,9 @@ void screen_init(void)
   tgi_install(tgi_static_stddrv);
   tgi_init();
   install_nmi_trampoline();
+  config.color_foreground=TGI_COLOR_LIGHTBLUE;
+  config.color_background=TGI_COLOR_BLUE;
+  config.color_border=TGI_COLOR_LIGHTBLUE;
   screen_update_colors();
   tgi_setpalette(pal);
   tgi_clear();
@@ -181,8 +182,8 @@ void screen_init(void)
  */
 void screen_cycle_foreground(void)
 {
-  ++color_foreground;
-  color_foreground&=0x0f;
+  ++config.color_foreground;
+  config.color_foreground&=0x0f;
 }
 
 /**
@@ -191,8 +192,8 @@ void screen_cycle_foreground(void)
  */
 void screen_cycle_background(void)
 {
-  ++color_background;
-  color_background&=0x0f;
+  ++config.color_background;
+  config.color_background&=0x0f;
 }
 
 /**
@@ -201,8 +202,8 @@ void screen_cycle_background(void)
  */
 void screen_cycle_border(void)
 {
-  ++color_border;
-  color_border&=0x0f;
+  ++config.color_border;
+  config.color_border&=0x0f;
 }
 
 /**
@@ -210,10 +211,10 @@ void screen_cycle_border(void)
  */
 void screen_update_colors(void)
 {
-  pal[0]=color_background;
-  pal[1]=color_foreground;
+  pal[0]=config.color_background;
+  pal[1]=config.color_foreground;
   tgi_setpalette(pal);
-  POKE(0xD020,color_border);
+  POKE(0xD020,config.color_border);
 }
 
 /**
