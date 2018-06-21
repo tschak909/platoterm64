@@ -52,6 +52,18 @@ void prefs_touch(void);
 void prefs_save(void);
 
 /**
+ * prefs_get_address()
+ * get string with ip address numbers, terminated by return.
+ */
+void prefs_get_address(char* address);
+
+/**
+ * prefs_ip(void)
+ * Preferences menu for IP address
+ */
+void prefs_ip(void);
+
+/**
  * prefs_ethernet(void)
  * Preferences menu to show for ethernet devices.
  */
@@ -67,6 +79,11 @@ void prefs_display(const char* text);
  * Wait for a key matching input, return it.
  */
 unsigned char prefs_get_key_matching(const char* matches);
+
+/**
+ * TEMPORARY: Wait for a key matching input, return it.
+ */
+unsigned char prefs_get_key_matching1(const char* matches);
 
 /**
  * indicate selection, display it, and wait a bit for visual confirmation.

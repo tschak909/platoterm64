@@ -465,6 +465,10 @@ void screen_tty_char(padByte theChar)
     screen_char_draw(&TTYLoc, &theChar, 1);
     /* TTYLoc.x += CharWide; */
   }
+  else if ((theChar == 0x0b)) /* Vertical Tab */
+    {
+      TTYLoc.y += CharHigh;
+    }
   else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
     TTYLoc.x -= CharWide;
   else if (theChar == 0x0A)			/* line feed */

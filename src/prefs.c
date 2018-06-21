@@ -14,23 +14,34 @@
 #include <tgi.h>
 #include <string.h>
 #include <serial.h>
+#include <peekpoke.h>
 #include "screen.h"
 #include "prefs.h"
 #include "protocol.h"
+#include "terminal.h"
 #include "config.h"
+#include "ip65.h"
 
 extern ConfigInfo config;
 
-static padPt coord;
 static uint8_t prefs_running;
 static uint8_t prefs_need_updating;
 static uint8_t ch;
+static char temp_ip_address[16];
+static padBool TTYSave;
+static padPt TTYLocSave;
+extern padBool TTY;
+extern padPt TTYLoc;
 
 /**
  * Run the preferences menu
  */
 void prefs_run(void)
 {
+  TTYSave=TTY;
+  TTYLocSave.x = TTYLoc.x;
+  TTYLocSave.y = TTYLoc.y;
+  TTY=true;
   prefs_running=true;
   prefs_need_updating=false;
   while (prefs_running)
@@ -45,6 +56,9 @@ void prefs_run(void)
 	  break;
 	}
     }
+  TTY=TTYSave;
+  TTYLoc.x=TTYLocSave.x;
+  TTYLoc.y=TTYLocSave.y;
   prefs_done();
 }
 
@@ -242,6 +256,82 @@ void prefs_interface(void)
 }
 
 /**
+ * prefs_dhcp(void)
+ * Preferences menu to enable/disable dhcp
+ */
+void prefs_dhcp(void)
+{
+  prefs_display("dhcp - y)es n)o b)ack: ");
+
+  ch=prefs_get_key_matching("ynb");
+
+  switch(ch)
+    {
+    case 'y':
+      prefs_select("yes");
+      config.use_dhcp=true;
+      prefs_need_updating=true;
+      break;
+    case 'n':
+      prefs_select("no");
+      config.use_dhcp=false;
+      prefs_need_updating=true;
+      break;
+    case 'b':
+      prefs_select("back");
+      break;
+    }
+}
+
+/**
+ * prefs_get_address()
+ * get string with ip address numbers, terminated by return.
+ */
+void prefs_get_address(char* address)
+{
+  unsigned char i=0;
+  
+  memset(&address,0,sizeof(address));
+  ch=0;
+
+  while (ch != '\r')
+    {
+      ch=prefs_get_key_matching1("0123456789.");
+      ShowPLATO(&ch,1);
+    }
+  
+  /* while (ch != '\n') */
+  /*   { */
+  /*     POKE(0xD020,i&0x0f); */
+  /*     ch=prefs_get_key_matching("0123456789.\n\b"); */
+  /*     if (ch=='\b' && i>0) */
+  /* 	{ */
+  /* 	  --i; */
+  /* 	  address[i]=0; */
+  /* 	} */
+  /*     else */
+  /* 	{ */
+  /* 	  ++i; */
+  /* 	  address[i]=ch; */
+  /* 	  ShowPLATO(&ch,1); */
+  /* 	} */
+  /*   } */
+}
+
+/**
+ * prefs_ip(void)
+ * Preferences menu for IP address
+ */
+void prefs_ip(void)
+{
+  prefs_display("ip address (x.x.x.x) or return for none: ");
+  prefs_get_address(temp_ip_address);
+  config.ip_address = parse_dotted_quad(temp_ip_address);
+  prefs_select(" ok");
+  prefs_need_updating=true;
+}
+
+/**
  * prefs_ethernet(void)
  * Preferences menu to show for ethernet devices.
  */
@@ -249,7 +339,7 @@ void prefs_ethernet(void)
 {
   prefs_display("i)nterface d)hcp p)ip n)etmask g)ateway w)dns s)save e)xit: ");
 
-  ch=prefs_get_key_matching("idangwse");
+  ch=prefs_get_key_matching("idpngwse");
 
   switch(ch)
     {
@@ -258,8 +348,12 @@ void prefs_ethernet(void)
       prefs_interface();
       break;
     case 'd':
+      prefs_select("dhcp");
+      prefs_dhcp();
       break;
     case 'p':
+      prefs_select("ip");
+      prefs_ip();
       break;
     case 'n':
       break;
@@ -285,12 +379,9 @@ void prefs_display(const char* text)
 
   c=tgi_getcolor();
 
-  coord.x=0;
-  coord.y=0;
-
   tgi_setcolor(TGI_COLOR_WHITE);
 
-  screen_char_draw(&coord, (unsigned char*)text, strlen(text));
+  ShowPLATO((unsigned char*)text, strlen(text));
   
   tgi_setcolor(c);
 }
@@ -315,6 +406,28 @@ unsigned char prefs_get_key_matching(const char* matches)
 }
 
 /**
+ * TEMPORARY: Wait for a key matching input, return it.
+ */
+unsigned char prefs_get_key_matching1(const char* matches)
+{
+  unsigned char ch;
+  unsigned char i;
+  
+  for (;;)
+    {
+      ch=cgetc();
+
+      if ((ch==0x14) || (ch==0x0d))
+	return ch;
+      
+      for (i=0;i<strlen(matches);++i)
+	{
+	  return ch;
+	}
+    }
+}
+
+/**
  * erase prefs bar
  */
 void prefs_clear(void)
@@ -324,6 +437,7 @@ void prefs_clear(void)
   tgi_setcolor(TGI_COLOR_BLACK);
   tgi_bar(0,185,319,191);
   tgi_setcolor(c);
+  ShowPLATO("\n\v",2);
 }
 
 /**
@@ -332,7 +446,7 @@ void prefs_clear(void)
 void prefs_select(const char* text)
 {
   unsigned char i=0;
-  screen_char_draw(&coord,(unsigned char *)text,strlen(text));
+  ShowPLATO((unsigned char *)text,strlen(text));
   
   for (i=0;i<100;i++)
     {
