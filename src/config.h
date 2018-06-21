@@ -13,6 +13,17 @@
 #define IO_MODE_SERIAL        0
 #define IO_MODE_ETHERNET      1
 
+#define CONFIG_SERIAL_DRIVER_SWIFTLINK "ser-swlink"
+#define CONFIG_SERIAL_DRIVER_UP2400 "ser-up2400"
+
+#define CONFIG_MOUSE_DRIVER_1351 "mou-1351"
+#define CONFIG_MOUSE_DRIVER_JOY "mou-joy"
+#define CONFIG_MOUSE_DRIVER_INKWELL "mou-inkwell"
+#define CONFIG_MOUSE_DRIVER_POT "mou-pot"
+
+#define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_SWIFTLINK
+#define CONFIG_DEFAULT_MOUSE_DRIVER CONFIG_MOUSE_DRIVER_1351
+
 typedef struct configInfo
 {
   unsigned char io_mode;

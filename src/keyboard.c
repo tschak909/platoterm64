@@ -13,6 +13,7 @@
 #include "key.h"
 #include "screen.h"
 #include "protocol.h"
+#include "prefs.h"
 
 static uint8_t lastkey;
 
@@ -62,6 +63,10 @@ void keyboard_main(void)
 	  screen_cycle_border();
 	}
       screen_update_colors();
+    }
+  else if (key==0x05 && lastkey!=0x05)
+    {
+      prefs_run();
     }
   
   if (key!=lastkey)

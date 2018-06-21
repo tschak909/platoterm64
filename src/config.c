@@ -11,11 +11,10 @@
 #include <string.h>
 #include <serial.h>
 #include <stdbool.h>
+#include <c64.h>
 #include "config.h"
 
 #define CONFIG_FILE "config"
-#define CONFIG_DEFAULT_SERIAL_DRIVER "ser-swlink"
-#define CONFIG_DEFAULT_MOUSE_DRIVER "mou-1351"
 
 ConfigInfo config;
 
@@ -80,6 +79,9 @@ void config_set_defaults(void)
   config.dns=0;
   strcpy(config.driver_ser,CONFIG_DEFAULT_SERIAL_DRIVER);
   strcpy(config.driver_mou,CONFIG_DEFAULT_MOUSE_DRIVER);
+  config.color_foreground=TGI_COLOR_LIGHTBLUE;
+  config.color_background=TGI_COLOR_BLUE;
+  config.color_border=TGI_COLOR_LIGHTBLUE;
   config_save();
 }
 
