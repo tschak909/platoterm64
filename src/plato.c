@@ -37,6 +37,7 @@ void main(void)
   config_init();
   io_init();
   // touch_init();
+  terminal_init();
   greeting();
   
   // And do the terminal

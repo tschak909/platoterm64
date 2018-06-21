@@ -13,6 +13,12 @@
 #include "protocol.h"
 
 /**
+ * terminal_init()
+ * Initialize terminal state
+ */
+void terminal_init(void);
+
+/**
  * terminal_set_tty(void) - Switch to TTY mode
  */
 void terminal_set_tty(void);

@@ -470,7 +470,12 @@ void screen_tty_char(padByte theChar)
       TTYLoc.y += CharHigh;
     }
   else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
-    TTYLoc.x -= CharWide;
+    {
+      TTYLoc.x -= CharWide;
+      tgi_setcolor(TGI_COLOR_BLACK);
+      tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
+      tgi_setcolor(TGI_COLOR_WHITE);
+    }
   else if (theChar == 0x0A)			/* line feed */
     TTYLoc.y -= CharHigh;
   else if (theChar == 0x0D)			/* carriage return */
