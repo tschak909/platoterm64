@@ -108,6 +108,11 @@ void prefs_select(const char* text);
 void prefs_clear(void);
 
 /**
+ * Update program state with selected preferences
+ */
+void prefs_update(void);
+
+/**
  * Clear the preferences menu from screen. 
  */
 void prefs_done(void);

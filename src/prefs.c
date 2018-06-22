@@ -14,7 +14,7 @@
 #include <tgi.h>
 #include <string.h>
 #include <serial.h>
-#include <peekpoke.h>
+#include <mouse.h>
 #include "screen.h"
 #include "prefs.h"
 #include "protocol.h"
@@ -57,6 +57,12 @@ void prefs_run(void)
 	  break;
 	}
     }
+
+  if (prefs_need_updating)
+    {
+      prefs_update();
+    }
+  
   TTY=TTYSave;
   TTYLoc.x=TTYLocSave.x;
   TTYLoc.y=TTYLocSave.y;
@@ -506,6 +512,56 @@ void prefs_select(const char* text)
 
   prefs_clear();
 
+}
+
+/**
+ * Update program state with selected preferences
+ */
+void prefs_update(void)
+{
+  unsigned char retv;
+  
+  // Close any serial drivers.
+  prefs_display("closing serial driver...");
+  ser_close();
+  prefs_display("unloading serial driver...");
+  ser_unload();
+
+  // Close any touch drivers
+  prefs_display("unloading touch driver...");
+  mouse_unload();
+
+  if (config.io_mode == IO_MODE_SERIAL)
+    {
+      prefs_display("loading serial driver...");
+      retv = ser_load_driver(config.driver_ser);
+      if (retv==SER_ERR_OK)
+	{
+	  prefs_select("ok");
+	}
+      else
+	{
+	  prefs_select("error");
+	}
+    }
+  else if (config.io_mode == IO_MODE_ETHERNET)
+    {
+      // Come back here and implement ethernet specific stuff
+      prefs_display("ethernet not implemented, yet.");
+      prefs_select("");
+    }
+
+  prefs_display("loading touch driver...");
+  retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
+  if (retv==MOUSE_ERR_OK)
+    {
+      prefs_select("ok");
+      mouse_show();
+    }
+  else
+    {
+      prefs_select("error");
+    }
 }
 
 /**
