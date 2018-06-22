@@ -40,6 +40,8 @@ extern uint8_t CharWide;
 extern uint8_t CharHigh;
 extern padPt TTYLoc;
 
+extern uint8_t already_started;
+
 /**
  * terminal_init()
  * Initialize terminal state
@@ -47,7 +49,15 @@ extern padPt TTYLoc;
 void terminal_init(void)
 {
   terminal_set_tty();
-  TTYLoc.y=368; // Right under the greeting.
+}
+
+/**
+ * terminal_initial_position()
+ * Set terminal initial position after splash screen.
+ */
+void terminal_initial_position(void)
+{
+  TTYLoc.y=100; // Right under splashscreen.
 }
 
 /**
@@ -55,7 +65,8 @@ void terminal_init(void)
  */
 void terminal_set_tty(void)
 {
-  screen_clear();
+  if (already_started)
+    screen_clear();
   TTY=true;
   ModeBold=padF;
   Rotate=padF;

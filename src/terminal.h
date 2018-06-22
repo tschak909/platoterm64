@@ -19,6 +19,12 @@
 void terminal_init(void);
 
 /**
+ * terminal_initial_position()
+ * Set terminal initial position after splash screen.
+ */
+void terminal_initial_position(void);
+
+/**
  * terminal_set_tty(void) - Switch to TTY mode
  */
 void terminal_set_tty(void);

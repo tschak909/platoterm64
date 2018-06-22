@@ -8,6 +8,7 @@
  */
 
 #include <serial.h>
+#include <stdbool.h>
 #include "protocol.h"
 #include "terminal.h"
 #include "welcome.h"
@@ -16,19 +17,17 @@
 #include "keyboard.h"
 #include "io.h"
 #include "config.h"
+#include "splash.h"
+
+uint8_t already_started=false;
 
 /**
  * greeting(void) - Show terminal greeting
  */
 void greeting(void)
 {
-  padPt coord;
-
-  coord.x=168; coord.y=480; screen_char_draw(&coord,welcomemsg_1,WELCOMEMSG_1_LEN);
-  coord.x=144; coord.y=464; screen_char_draw(&coord,welcomemsg_2,WELCOMEMSG_2_LEN);
-  coord.x=104; coord.y=432; screen_char_draw(&coord,welcomemsg_3,WELCOMEMSG_3_LEN);
-  coord.x=160; coord.y=416; screen_char_draw(&coord,welcomemsg_4,WELCOMEMSG_4_LEN);
-  coord.x=16;  coord.y=384; screen_char_draw(&coord,welcomemsg_5,WELCOMEMSG_5_LEN);
+  ShowPLATO(splash,sizeof(splash));
+  terminal_initial_position();
 }
 
 void main(void)
@@ -39,6 +38,8 @@ void main(void)
   touch_init();
   terminal_init();
   greeting();
+
+  already_started=true;
   
   // And do the terminal
   for (;;)
