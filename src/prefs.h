@@ -55,13 +55,25 @@ void prefs_save(void);
  * prefs_get_address()
  * get string with ip address numbers, terminated by return.
  */
-void prefs_get_address(char* address);
+void prefs_get_address(void);
 
 /**
  * prefs_ip(void)
  * Preferences menu for IP address
  */
 void prefs_ip(void);
+
+/**
+ * prefs_netmask(void)
+ * Preferences menu for netmask
+ */
+void prefs_netmask(void);
+
+/**
+ * prefs_ip(void)
+ * Preferences menu for IP address
+ */
+void prefs_gateway(void);
 
 /**
  * prefs_ethernet(void)

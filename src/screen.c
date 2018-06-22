@@ -283,9 +283,9 @@ void screen_line_draw(padPt* Coord1, padPt* Coord2)
   else
     tgi_setcolor(TGI_COLOR_WHITE);
 
-  if ((x1==x2) && (y1==y2))
-    tgi_setpixel(x1,y1);        // Avoid bug in tgi_line()
-  else
+  /* if ((x1==x2) && (y1==y2)) */
+  /*   tgi_setpixel(x1,y1);        // Avoid bug in tgi_line() */
+  /* else */
     tgi_line(x1,y1,x2,y2);
 }
 

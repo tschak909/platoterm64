@@ -21,7 +21,7 @@ static uint8_t lastch=0;
 extern ConfigInfo config;
 
 static struct ser_params params = {
-  SER_BAUD_19200,
+  SER_BAUD_38400,
   SER_BITS_8,
   SER_STOP_1,
   SER_PAR_NONE,

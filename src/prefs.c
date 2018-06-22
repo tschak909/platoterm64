@@ -27,11 +27,12 @@ extern ConfigInfo config;
 static uint8_t prefs_running;
 static uint8_t prefs_need_updating;
 static uint8_t ch;
-static char temp_ip_address[16];
 static padBool TTYSave;
 static padPt TTYLocSave;
 extern padBool TTY;
 extern padPt TTYLoc;
+
+static char temp_ip_address[17];
 
 /**
  * Run the preferences menu
@@ -287,35 +288,35 @@ void prefs_dhcp(void)
  * prefs_get_address()
  * get string with ip address numbers, terminated by return.
  */
-void prefs_get_address(char* address)
+void prefs_get_address(void)
 {
-  unsigned char i=0;
+  unsigned char strp=0;
   
-  memset(&address,0,sizeof(address));
   ch=0;
 
-  while (ch != '\r')
+  while (ch != 0x0d)
     {
       ch=prefs_get_key_matching1("0123456789.");
-      ShowPLATO(&ch,1);
+      if (ch==0x08) /* was translated from 0x14 to 0x08 */
+  	{
+	  if (strp>0)
+	    {
+	      --strp;
+	      temp_ip_address[strp]=0;
+	      ShowPLATO(&ch,1);
+	    }
+  	}
+      else if (ch==0x0d)
+	{
+	  // Don't append or show the CR
+	}
+      else
+  	{
+  	  temp_ip_address[strp]=ch;
+  	  ShowPLATO(&ch,1);
+	  ++strp;	  
+  	}
     }
-  
-  /* while (ch != '\n') */
-  /*   { */
-  /*     POKE(0xD020,i&0x0f); */
-  /*     ch=prefs_get_key_matching("0123456789.\n\b"); */
-  /*     if (ch=='\b' && i>0) */
-  /* 	{ */
-  /* 	  --i; */
-  /* 	  address[i]=0; */
-  /* 	} */
-  /*     else */
-  /* 	{ */
-  /* 	  ++i; */
-  /* 	  address[i]=ch; */
-  /* 	  ShowPLATO(&ch,1); */
-  /* 	} */
-  /*   } */
 }
 
 /**
@@ -325,8 +326,47 @@ void prefs_get_address(char* address)
 void prefs_ip(void)
 {
   prefs_display("ip address (x.x.x.x) or return for none: ");
-  prefs_get_address(temp_ip_address);
+  prefs_get_address();
   config.ip_address = parse_dotted_quad(temp_ip_address);
+  prefs_select(" ok");
+  prefs_need_updating=true;
+}
+
+/**
+ * prefs_dns(void)
+ * Preferences menu for dns
+ */
+void prefs_dns(void)
+{
+  prefs_display("dns (x.x.x.x) or return for none: ");
+  prefs_get_address();
+  config.dns = parse_dotted_quad(temp_ip_address);
+  prefs_select(" ok");
+  prefs_need_updating=true;
+}
+
+/**
+ * prefs_netmask(void)
+ * Preferences menu for netmask
+ */
+void prefs_netmask(void)
+{
+  prefs_display("netmask (x.x.x.x) or return for none: ");
+  prefs_get_address();
+  config.netmask = parse_dotted_quad(temp_ip_address);
+  prefs_select(" ok");
+  prefs_need_updating=true;
+}
+
+/**
+ * prefs_ip(void)
+ * Preferences menu for IP address
+ */
+void prefs_gateway(void)
+{
+  prefs_display("gateway (x.x.x.x) or return for none: ");
+  prefs_get_address();
+  config.gateway = parse_dotted_quad(temp_ip_address);
   prefs_select(" ok");
   prefs_need_updating=true;
 }
@@ -356,12 +396,20 @@ void prefs_ethernet(void)
       prefs_ip();
       break;
     case 'n':
+      prefs_select("netmask");
+      prefs_netmask();
       break;
     case 'g':
+      prefs_select("gateway");
+      prefs_gateway();
       break;
     case 'w':
+      prefs_select("dns");
+      prefs_dns();
       break;
     case 's':
+      prefs_select("save");
+      prefs_save();
       break;
     case 'e':
       prefs_running=false;
@@ -377,12 +425,12 @@ void prefs_display(const char* text)
 {
   uint8_t c;
 
-  c=tgi_getcolor();
-
-  tgi_setcolor(TGI_COLOR_WHITE);
-
-  ShowPLATO((unsigned char*)text, strlen(text));
+  TTYLoc.x=0;
+  TTYLoc.y=0;
   
+  c=tgi_getcolor();
+  tgi_setcolor(TGI_COLOR_WHITE);
+  ShowPLATO((unsigned char*)text, strlen(text));
   tgi_setcolor(c);
 }
 
@@ -410,19 +458,22 @@ unsigned char prefs_get_key_matching(const char* matches)
  */
 unsigned char prefs_get_key_matching1(const char* matches)
 {
-  unsigned char ch;
+  unsigned char ch=0;
   unsigned char i;
   
   for (;;)
     {
       ch=cgetc();
 
-      if ((ch==0x14) || (ch==0x0d))
-	return ch;
+      if (ch==0x0d)
+	return 0x0d;
+      else if (ch==0x14)
+	return 0x08; /* convert PETSCII DEL to ASCII BS */
       
       for (i=0;i<strlen(matches);++i)
 	{
-	  return ch;
+	  if (ch==matches[i])
+	    return ch;
 	}
     }
 }
@@ -462,5 +513,8 @@ void prefs_select(const char* text)
  */
 void prefs_done(void)
 {
+  TTY=TTYSave;
   prefs_clear();
+  TTYLoc.x=TTYLocSave.x;
+  TTYLoc.y=TTYLocSave.y;
 }
