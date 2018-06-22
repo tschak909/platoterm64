@@ -87,3 +87,11 @@ void keyboard_main(void)
       lastkey=key;
 }
 
+/**
+ * keyboard_clear() - Clear the keyboard buffer
+ */
+void keyboard_clear(void)
+{
+  POKE(0xCB,0x40);
+  POKE(0x28D,0x00);
+}

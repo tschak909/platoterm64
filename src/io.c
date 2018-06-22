@@ -9,6 +9,7 @@
 
 #include <serial.h>
 #include <stdint.h>
+#include <peekpoke.h>
 #include "io.h"
 #include "protocol.h"
 #include "config.h"
@@ -17,6 +18,7 @@
 
 static uint8_t ch=0;
 static uint8_t lastch=0;
+static uint8_t io_res;
 
 extern ConfigInfo config;
 
@@ -33,27 +35,44 @@ static struct ser_params params = {
  */
 void io_init(void)
 {
-  uint8_t res;
-  res=ser_load_driver(config.driver_ser);
+  io_res=ser_load_driver(config.driver_ser);
 
-  if (res!=SER_ERR_OK)
+  if (io_res!=SER_ERR_OK)
     {
-      /* printf("ser_install returned: %d\n",res); */
+      POKE(0xD020,2);
+      /* printf("ser_install returned: %d\n",io_res); */
       return;
     }
 
-  params.baudrate = config.baud;
-  
-  res=ser_open(&params);
+  io_open();
 
-  if (res!=SER_ERR_OK)
+}
+
+/**
+ * io_open() - Open the device
+ */
+void io_open(void)
+{
+  if (config.io_mode == IO_MODE_SERIAL)
     {
-      /* printf("ser_open returned: %d\n",res); */
-      return;
+      params.baudrate = config.baud;
+      
+      io_res=ser_open(&params);
+      
+      if (io_res!=SER_ERR_OK)
+	{
+	  POKE(0xD020,2);
+	  /* printf("ser_open returned: %d\n",io_res); */
+	  return;
+	}
+      
+      // Needed to enable up2400. Ignored with swlink.
+      ser_ioctl(1, NULL);
     }
-
-  // Needed to enable up2400. Ignored with swlink.
-  ser_ioctl(1, NULL);
+  else if (config.io_mode == IO_MODE_ETHERNET)
+    {
+      // Not implemented, yet.
+    }
 }
 
 /**

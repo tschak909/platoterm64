@@ -15,7 +15,9 @@
 #include <string.h>
 #include <serial.h>
 #include <mouse.h>
+#include "io.h"
 #include "screen.h"
+#include "keyboard.h"
 #include "prefs.h"
 #include "protocol.h"
 #include "terminal.h"
@@ -39,6 +41,7 @@ static char temp_ip_address[17];
  */
 void prefs_run(void)
 {
+  keyboard_clear();
   TTYSave=TTY;
   TTYLocSave.x = TTYLoc.x;
   TTYLocSave.y = TTYLoc.y;
@@ -117,6 +120,7 @@ void prefs_save(void)
   prefs_display("saving preferences...");
   config_save();
   prefs_need_updating=true;
+  prefs_select("ok");
   prefs_clear();
 }
 
@@ -522,15 +526,19 @@ void prefs_update(void)
   unsigned char retv;
   
   // Close any serial drivers.
+  prefs_clear();
   prefs_display("closing serial driver...");
   ser_close();
+  prefs_clear();
   prefs_display("unloading serial driver...");
   ser_unload();
+  prefs_clear();
 
   // Close any touch drivers
   prefs_display("unloading touch driver...");
   mouse_unload();
-
+  prefs_clear();
+  
   if (config.io_mode == IO_MODE_SERIAL)
     {
       prefs_display("loading serial driver...");
@@ -551,6 +559,8 @@ void prefs_update(void)
       prefs_select("");
     }
 
+  io_open();
+  
   prefs_display("loading touch driver...");
   retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
   if (retv==MOUSE_ERR_OK)

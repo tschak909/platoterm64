@@ -16,6 +16,11 @@
 void io_init(void);
 
 /**
+ * io_open() - Open the device
+ */
+void io_open(void);
+
+/**
  * io_send_byte(b) - Send specified byte out
  */
 void io_send_byte(uint8_t b);

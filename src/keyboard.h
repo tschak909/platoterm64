@@ -23,4 +23,9 @@ void keyboard_out(uint8_t platoKey);
  */
 void keyboard_main(void);
 
+/**
+ * keyboard_clear() - Clear the keyboard buffer
+ */
+void keyboard_clear(void);
+
 #endif
