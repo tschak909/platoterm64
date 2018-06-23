@@ -51,7 +51,7 @@ static const uint8_t KEYBOARD_TO_PLATO[] = {
   PKEY_y, /* Y */
   PKEY_g, /* G */
   PKEY_8, /* 8 */
-  PKEY_B, /* B */
+  PKEY_b, /* B */
   PKEY_h, /* H */
   PKEY_u, /* U */
   PKEY_v, /* V */
@@ -63,7 +63,7 @@ static const uint8_t KEYBOARD_TO_PLATO[] = {
   PKEY_k, /* K */
   PKEY_o, /* O */
   PKEY_n, /* N */
-  PKEY_DIVIDE, /* + */
+  PKEY_PLUS, /* + */
   PKEY_p, /* P */
   PKEY_l, /* L */
   PKEY_MINUS, /* - */
@@ -73,7 +73,7 @@ static const uint8_t KEYBOARD_TO_PLATO[] = {
   PKEY_COMMA, /* , */
   PKEY_NOKEY, /* STERLING */
   PKEY_ASTERISK, /* ASTERISK */
-  PKEY_BRACKET_RIGHT, /* ] */
+  PKEY_SEMICOLON, /* ; */
   PKEY_NOKEY, /* CLR/HOME */
   PKEY_NOKEY, /* UNUSED */
   PKEY_EQUALS, /* = */
@@ -135,13 +135,13 @@ static const uint8_t KEYBOARD_TO_PLATO_SHIFT[] = {
   PKEY_P, /* P */
   PKEY_L, /* L */
   PKEY_DIVIDE, /* - */ /* possible divide */
-  PKEY_PERIOD, /* . */
-  PKEY_2, /* : */
+  PKEY_GREATER_THAN, /* . */
+  PKEY_BRACKET_LEFT, /* : */
   PKEY_AT, /* @ */
   PKEY_LESS_THAN, /* , */
   PKEY_NOKEY, /* STERLING */
   PKEY_ASTERISK, /* ASTERISK */
-  PKEY_BRACKET_LEFT, /* ] */
+  PKEY_BRACKET_RIGHT, /* ] */
   PKEY_NOKEY, /* CLR/HOME */
   PKEY_NOKEY, /* UNUSED */
   PKEY_NOKEY, /* = */

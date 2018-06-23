@@ -113,8 +113,12 @@ void touch_allow(padBool allow)
     }
   else
     {
-      previous_mouse_x = mouse_data.pos.x;
-      previous_mouse_y = mouse_data.pos.y;
+      if (mouse_data.pos.x != screen_w && mouse_data.pos.y != screen_h)
+	{
+	  previous_mouse_x = mouse_data.pos.x;
+	  previous_mouse_y = mouse_data.pos.y;
+	  mouse_move(screen_w,screen_h);
+	}
     }
   TouchActive=allow;
 }

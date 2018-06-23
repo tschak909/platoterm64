@@ -119,7 +119,6 @@ void prefs_save(void)
 {
   prefs_display("saving preferences...");
   config_save();
-  prefs_need_updating=true;
   prefs_select("ok");
   prefs_clear();
 }

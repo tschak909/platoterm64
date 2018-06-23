@@ -219,7 +219,7 @@ static uint8_t ACCESS_KEYS[] = {
   PKEY_1, /* 0x97 1 r-embed */
   PKEY_5, /* 0x98 5 @ */
   PKEY_6, /* 0x99 6 arrow */
-  PKEY_DIVIDE, /* 0x9a + & */
+  PKEY_PLUS, /* 0x9a + & */
   0x26, /* 0x9b & interpunct */
   PKEY_COLON, /* 0x9c : ~ lower tilde */
   0x5f, /* 0x9d , delimiter */
