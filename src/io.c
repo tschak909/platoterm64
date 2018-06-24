@@ -7,6 +7,7 @@
  * io.c - Input/output functions (serial/ethernet)
  */
 
+#include <stdbool.h>
 #include <serial.h>
 #include <stdint.h>
 #include <peekpoke.h>
@@ -16,10 +17,12 @@
 
 #define NULL 0
 
+uint8_t xoff_enabled=false;
+
 static uint8_t ch=0;
 static uint8_t lastch=0;
 static uint8_t io_res;
-
+static uint8_t recv_buffer_size=0;
 extern ConfigInfo config;
 
 static struct ser_params params = {
@@ -96,6 +99,17 @@ void io_main(void)
  */
 void io_recv_serial(void)
 {
+  recv_buffer_size=PEEK(0x29B)-PEEK(0x29C)&0xff;
+  if (recv_buffer_size>175)
+    {
+      io_send_byte(XOFF);
+      xoff_enabled=true;
+    }
+  else if (recv_buffer_size<1 && xoff_enabled==true)
+    {
+      io_send_byte(XON);
+      xoff_enabled=false;
+    }
   if (ser_get(&ch)==SER_ERR_OK)
     {
       // Detect and strip IAC escapes (two consecutive bytes of 0xFF)

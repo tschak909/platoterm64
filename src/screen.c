@@ -7,6 +7,7 @@
  * screen.c - Display output functions
  */
 
+#include <stdbool.h>
 #include <c64.h>
 #include <tgi.h>
 #include <stdlib.h>
@@ -15,15 +16,17 @@
 #include "protocol.h"
 #include "font.h"
 #include "config.h"
+#include "io.h"
 
 uint8_t CharWide=8;
 uint8_t CharHigh=16;
 padPt TTYLoc;
 uint8_t pal[2];
 
-extern padBool FastText;
-extern void install_nmi_trampoline(void);
-extern ConfigInfo config;
+extern uint8_t xoff_enabled; /* io.c */
+extern padBool FastText; /* protocol.c */
+extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
+extern ConfigInfo config; /* config.c */
 
 /* X and Y tables used to scale 512x512 PLATO display to 320x192 */
 unsigned short scalex[]={
@@ -247,12 +250,20 @@ void screen_clear(void)
  */
 void screen_block_draw(padPt* Coord1, padPt* Coord2)
 {
+  // Block erase takes forever, manually assert flow control.
+  io_send_byte(XOFF);
+  xoff_enabled=true;
+
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(TGI_COLOR_BLACK);
   else
     tgi_setcolor(TGI_COLOR_WHITE);
   
   tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
+
+  // No need to assert XON, as it will be flipped back on when the
+  // Receive buffer drains enough.
+  
 }
 
 /**

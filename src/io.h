@@ -10,6 +10,9 @@
 #ifndef IO_H
 #define IO_H
 
+#define XON  0x11
+#define XOFF 0x13
+
 /**
  * io_init() - Set-up the I/O
  */
