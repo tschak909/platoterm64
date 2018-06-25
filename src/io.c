@@ -23,6 +23,7 @@ static uint8_t ch=0;
 static uint8_t lastch=0;
 static uint8_t io_res;
 static uint8_t recv_buffer_size=0;
+static uint8_t xoff_counter=0;
 extern ConfigInfo config;
 
 static struct ser_params params = {
@@ -100,16 +101,19 @@ void io_main(void)
 void io_recv_serial(void)
 {
   recv_buffer_size=PEEK(0x29B)-PEEK(0x29C)&0xff;
-  if (recv_buffer_size>175)
+  if (recv_buffer_size>200 && xoff_enabled==false)
     {
       io_send_byte(XOFF);
+      xoff_counter=200;
       xoff_enabled=true;
     }
-  else if (recv_buffer_size<1 && xoff_enabled==true)
+
+  if (xoff_enabled==true && xoff_counter==0)
     {
       io_send_byte(XON);
       xoff_enabled=false;
     }
+
   if (ser_get(&ch)==SER_ERR_OK)
     {
       // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
@@ -121,6 +125,8 @@ void io_recv_serial(void)
 	{
 	  lastch=ch;
 	  ShowPLATO(&ch,1);
+	  if (xoff_counter>0)
+	    --xoff_counter;
 	}
     }
 }

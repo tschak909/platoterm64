@@ -9,13 +9,16 @@
 
 #include <stdint.h>
 #include <peekpoke.h>
+#include <stdbool.h>
 #include "keyboard.h"
 #include "key.h"
 #include "screen.h"
 #include "protocol.h"
 #include "prefs.h"
+#include "io.h"
 
 static uint8_t lastkey;
+extern uint8_t xoff_enabled;
 
 /**
  * keyboard_out - If platoKey < 0x7f, pass off to protocol
@@ -67,6 +70,18 @@ void keyboard_main(void)
   else if (key==0x05 && lastkey!=0x05)
     {
       prefs_run();
+    }
+  else if (key==0x06 && lastkey!=0x06)
+    {
+      if (xoff_enabled==true)
+	{
+	  xoff_enabled=false;
+	  io_send_byte(XON);
+	}
+      else
+	{
+	  io_send_byte(XOFF);
+	}
     }
   
   if (key!=lastkey)

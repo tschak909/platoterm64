@@ -263,6 +263,9 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
 
   // No need to assert XON, as it will be flipped back on when the
   // Receive buffer drains enough.
+
+  io_send_byte(XON);
+  xoff_enabled=false;
   
 }
 
@@ -358,10 +361,12 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       goto chardraw_with_fries;
     }
 
+  y=scaley[(Coord->y)+14&0x1FF];
+
   /* the diet chardraw routine - fast text output. */
   for (i=0;i<count;++i)
     {
-      y=scaley[(Coord->y)+14&0x1FF];
+
       a=*ch;
       ++ch;
       a+=offset;
