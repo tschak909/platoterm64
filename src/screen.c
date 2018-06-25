@@ -403,10 +403,11 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     {
       a=*ch;
       ++ch;
-      a=a+offset;
+      a+=offset;
+      p=&font[fontptr[a]];
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
-  	  b=font[fontptr[a]+j];
+  	  b=*p;
 
 	  if (Rotate)
 	    {
@@ -451,8 +452,9 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	      b<<=1;
   	    }
 
-	  y += deltaY;
+	  y+=deltaY;
 	  x-=width;
+	  ++p;
   	}
 
       Coord->x+=width;
