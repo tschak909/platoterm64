@@ -304,8 +304,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t k; /* horizontal loop counter */
   uint8_t a; /* current character byte */
   int8_t b; /* current character row bit signed */
-  uint8_t width=CharWide;
-  uint8_t height=CharHigh;
+  uint8_t width=5;
+  uint8_t height=6;
   uint16_t deltaX=1;
   uint16_t deltaY=1;
   uint8_t mainColor=TGI_COLOR_WHITE;
@@ -342,6 +342,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   else
     mainColor=TGI_COLOR_WHITE;
 
+  x=scalex[(Coord->x&0x1FF)];
   y=scaley[(Coord->y)+14&0x1FF];
   
   if (FastText==padF)
@@ -359,7 +360,6 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
   	  b=*p;
-  	  x=scalex[(Coord->x&0x1FF)];
 
   	  for (k=0;k<FONT_SIZE_X;++k)
   	    {
@@ -374,11 +374,13 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	    }
 
 	  ++y;
+	  x-=width;
 	  ++p;
   	}
 
       Coord->x+=width;
-      y-=6;
+      x+=width;
+      y-=height;
     }
 
   return;
@@ -388,6 +390,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     {
       deltaX = deltaY = 2;
       width<<=1;
+      height<<=1;
     }
   
   if (Rotate)
@@ -398,14 +401,12 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   for (i=0;i<count;++i)
     {
-      y=scaley[(Coord->y)+14&0x1FF];
       a=*ch;
       ++ch;
       a=a+offset;
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
   	  b=font[fontptr[a]+j];
-  	  x=scalex[(Coord->x&0x1FF)];
 
 	  if (Rotate)
 	    {
@@ -451,9 +452,12 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	    }
 
 	  y += deltaY;
+	  x-=width;
   	}
 
       Coord->x+=width;
+      x+=width;
+      y-=height;
     }
 
 }
@@ -466,6 +470,7 @@ void screen_tty_char(padByte theChar)
   if ((theChar >= 0x20) && (theChar < 0x7F)) {
     screen_char_draw(&TTYLoc, &theChar, 1);
     /* TTYLoc.x += CharWide; */
+    TTYLoc.x += 3;
   }
   else if ((theChar == 0x0b)) /* Vertical Tab */
     {
