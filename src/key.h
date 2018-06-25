@@ -256,7 +256,7 @@ static const uint8_t KEYBOARD_TO_PLATO_CS[] = {
   PKEY_INTERSECT, /* G */
   PKEY_NOKEY, /* 8 */
   PKEY_BACK1, /* B */
-  PKEY_HELP, /* H */
+  PKEY_HELP1, /* H */
   PKEY_NOKEY, /* U */
   PKEY_NOKEY, /* V */
   PKEY_NOKEY, /* 9 */
