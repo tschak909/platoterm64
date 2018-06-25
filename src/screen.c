@@ -341,6 +341,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     mainColor=TGI_COLOR_BLACK;
   else
     mainColor=TGI_COLOR_WHITE;
+
+  y=scaley[(Coord->y)+14&0x1FF];
   
   if (FastText==padF)
     {
@@ -350,7 +352,6 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   /* the diet chardraw routine - fast text output. */
   for (i=0;i<count;++i)
     {
-      y=scaley[(Coord->y)+14&0x1FF];
       a=*ch;
       ++ch;
       a+=offset;
@@ -377,6 +378,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	}
 
       Coord->x+=width;
+      y-=6;
     }
 
   return;
