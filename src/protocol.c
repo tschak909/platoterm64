@@ -151,7 +151,7 @@ InitTTY (void)
 void
 InitPLATO (void)
 {
-  Key (0x382);			/* master reset key */
+  // Key (0x382);			/* master reset key */
   if (TTY)
     InitPLATOx ();
 }

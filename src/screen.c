@@ -251,9 +251,10 @@ void screen_clear(void)
 void screen_block_draw(padPt* Coord1, padPt* Coord2)
 {
   // Block erase takes forever, manually assert flow control.
-  io_send_byte(XOFF);
-  xoff_enabled=true;
 
+  io_send_byte(0x13);
+  xoff_enabled=true;
+  
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(TGI_COLOR_BLACK);
   else
@@ -261,10 +262,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   
   tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
 
-  // No need to assert XON, as it will be flipped back on when the
-  // Receive buffer drains enough.
-
-  io_send_byte(XON);
+  io_send_byte(0x11);
   xoff_enabled=false;
   
 }

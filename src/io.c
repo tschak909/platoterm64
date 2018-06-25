@@ -17,13 +17,15 @@
 
 #define NULL 0
 
-uint8_t xoff_enabled=false;
+#define XOFF_THRESHOLD 192
+#define XON_THRESHOLD  24
+
+uint8_t xoff_enabled;
 
 static uint8_t ch=0;
 static uint8_t lastch=0;
 static uint8_t io_res;
 static uint8_t recv_buffer_size=0;
-static uint8_t xoff_counter=0;
 extern ConfigInfo config;
 
 static struct ser_params params = {
@@ -40,11 +42,11 @@ static struct ser_params params = {
 void io_init(void)
 {
   io_res=ser_load_driver(config.driver_ser);
-
+  xoff_enabled=false;
+  
   if (io_res!=SER_ERR_OK)
     {
       POKE(0xD020,2);
-      /* printf("ser_install returned: %d\n",io_res); */
       return;
     }
 
@@ -66,7 +68,6 @@ void io_open(void)
       if (io_res!=SER_ERR_OK)
 	{
 	  POKE(0xD020,2);
-	  /* printf("ser_open returned: %d\n",io_res); */
 	  return;
 	}
       
@@ -84,7 +85,8 @@ void io_open(void)
  */
 void io_send_byte(uint8_t b)
 {
-  ser_put(b);
+  if ((xoff_enabled==false) || (b==0x11))
+    ser_put(b);
 }
 
 /**
@@ -101,16 +103,16 @@ void io_main(void)
 void io_recv_serial(void)
 {
   recv_buffer_size=PEEK(0x29B)-PEEK(0x29C)&0xff;
-  if (recv_buffer_size>200 && xoff_enabled==false)
+  if (recv_buffer_size>XOFF_THRESHOLD && xoff_enabled==false)
     {
-      io_send_byte(XOFF);
-      xoff_counter=200;
+      POKE(0xD020,0);
+      ser_put(0x13);
       xoff_enabled=true;
     }
-
-  if (xoff_enabled==true && xoff_counter==0)
+  else if (recv_buffer_size<XON_THRESHOLD && xoff_enabled==true)
     {
-      io_send_byte(XON);
+      POKE(0xD020,14);
+      ser_put(0x11);
       xoff_enabled=false;
     }
 
@@ -125,8 +127,6 @@ void io_recv_serial(void)
 	{
 	  lastch=ch;
 	  ShowPLATO(&ch,1);
-	  if (xoff_counter>0)
-	    --xoff_counter;
 	}
     }
 }
