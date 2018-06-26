@@ -17,8 +17,8 @@
 
 #define NULL 0
 
-#define XOFF_THRESHOLD 192
-#define XON_THRESHOLD  24
+#define XOFF_THRESHOLD 160
+#define XON_THRESHOLD  16
 
 uint8_t xoff_enabled;
 
