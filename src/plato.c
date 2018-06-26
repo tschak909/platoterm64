@@ -38,7 +38,8 @@ void main(void)
   /* touch_init(); */
   terminal_init();
   greeting();
-
+  screen_beep();
+  
   already_started=true;
   
   // And do the terminal
