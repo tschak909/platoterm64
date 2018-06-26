@@ -342,6 +342,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   else
     mainColor=TGI_COLOR_WHITE;
 
+  tgi_setcolor(mainColor);
+
   x=scalex[(Coord->x&0x1FF)];
   y=scaley[(Coord->y)+14&0x1FF];
   
@@ -351,34 +353,201 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     }
 
   /* the diet chardraw routine - fast text output. */
+  
   for (i=0;i<count;++i)
     {
       a=*ch;
       ++ch;
       a+=offset;
       p=&font[fontptr[a]];
-      for (j=0;j<FONT_SIZE_Y;++j)
-  	{
-  	  b=*p;
 
-  	  for (k=0;k<FONT_SIZE_X;++k)
-  	    {
-  	      if (b<0) /* check sign bit. */
-		{
-		  tgi_setcolor(mainColor);
-		  tgi_setpixel(x,y);
-		}
+      // Line 1
+      b=*p;
 
-	      ++x;
-  	      b<<=1;
-  	    }
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
 
-	  ++y;
-	  x-=width;
-	  ++p;
-  	}
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
 
-      Coord->x+=width;
+      ++y;
+      x-=width;
+      ++p;
+
+      // Line 2
+      b=*p;
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      ++y;
+      x-=width;
+      ++p;
+
+      // Line 3
+      b=*p;
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      ++y;
+      x-=width;
+      ++p;
+
+      // Line 4
+      b=*p;
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      ++y;
+      x-=width;
+      ++p;
+
+      // Line 5
+      b=*p;
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      ++y;
+      x-=width;
+      ++p;
+
+      // Line 6
+      b=*p;
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+      
+      if (b<0)
+	tgi_setpixel(x,y);
+      ++x;
+      b<<=1;
+
+      ++y;
+      x-=width;
+      ++p;
+      
       x+=width;
       y-=height;
     }
@@ -471,8 +640,7 @@ void screen_tty_char(padByte theChar)
 {
   if ((theChar >= 0x20) && (theChar < 0x7F)) {
     screen_char_draw(&TTYLoc, &theChar, 1);
-    /* TTYLoc.x += CharWide; */
-    TTYLoc.x += 3;
+    TTYLoc.x += CharWide;
   }
   else if ((theChar == 0x0b)) /* Vertical Tab */
     {
