@@ -541,15 +541,7 @@ void prefs_update(void)
   if (config.io_mode == IO_MODE_SERIAL)
     {
       prefs_display("loading serial driver...");
-      retv = ser_load_driver(config.driver_ser);
-      if (retv==SER_ERR_OK)
-	{
-	  prefs_select("ok");
-	}
-      else
-	{
-	  prefs_select("error");
-	}
+      io_open();
     }
   else if (config.io_mode == IO_MODE_ETHERNET)
     {

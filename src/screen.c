@@ -229,7 +229,7 @@ void screen_update_colors(void)
  */
 void screen_wait(void)
 {
-  waitvsync();
+  /* waitvsync(); */
 }
 
 

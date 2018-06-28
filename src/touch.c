@@ -98,7 +98,6 @@ void touch_init(void)
 {
   mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
   mouse_show();
-  touch_hide();
 }
 
 /**
@@ -106,20 +105,20 @@ void touch_init(void)
  */
 void touch_allow(padBool allow)
 {
-  // If mouse is off screen (due to previously being moved off screen, move onscreen to make visible.
-  if (allow)
-    {
-      mouse_move(previous_mouse_x,previous_mouse_y);
-    }
-  else
-    {
-      if (mouse_data.pos.x != screen_w && mouse_data.pos.y != screen_h)
-	{
-	  previous_mouse_x = mouse_data.pos.x;
-	  previous_mouse_y = mouse_data.pos.y;
-	  mouse_move(screen_w,screen_h);
-	}
-    }
+  /* // If mouse is off screen (due to previously being moved off screen, move onscreen to make visible. */
+  /* if (allow) */
+  /*   { */
+  /*     mouse_move(previous_mouse_x,previous_mouse_y); */
+  /*   } */
+  /* else */
+  /*   { */
+  /*     if (mouse_data.pos.x != screen_w && mouse_data.pos.y != screen_h) */
+  /* 	{ */
+  /* 	  previous_mouse_x = mouse_data.pos.x; */
+  /* 	  previous_mouse_y = mouse_data.pos.y; */
+  /* 	  mouse_move(screen_w,screen_h); */
+  /* 	} */
+  /*   } */
   TouchActive=allow;
 }
 
@@ -132,15 +131,6 @@ void touch_main(void)
   padPt coord;
   
   mouse_info(&mouse_data);
-
-  /* If touch screen isn't active, don't let the mouse be used. */
-  if (TouchActive==0)
-    {
-      previous_mouse_x = mouse_data.pos.x;
-      previous_mouse_y = mouse_data.pos.y;
-      mouse_move(screen_w,screen_h);
-      return;
-    }
   
   if (mouse_data.buttons == lastbuttons)
     return; /* debounce */
