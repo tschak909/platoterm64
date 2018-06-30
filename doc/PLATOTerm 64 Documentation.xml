@@ -1039,8 +1039,7 @@ or press LAB for additional options.</screen></para>
                     <title>PLATO Keys on the Commodore Keyboard</title>
                     <mediaobject>
                         <imageobject>
-                            <imagedata fileref="images/c64-plato-keyboard.png" scalefit="1"
-                                scale="50" align="center"/>
+                            <imagedata fileref="images/c64-plato-keyboard.png" scalefit="1" scale="50" align="center"/>
                         </imageobject>
                     </mediaobject>
                 </figure>
@@ -1106,8 +1105,7 @@ or press LAB for additional options.</screen></para>
                                 notesfile from other users.</para>
                         </listitem>
                         <listitem>
-                            <para>The top right of the display, contains the <emphasis role="bold"
-                                    >menu label</emphasis>, such as MAIN MENU, or NOTES, in order to
+                            <para>The top right of the display, contains the <emphasis role="bold">menu label</emphasis>, such as MAIN MENU, or NOTES, in order to
                                 indicate where the user is within the menu system.</para>
                         </listitem>
                         <listitem>
@@ -1164,7 +1162,7 @@ or press LAB for additional options.</screen></para>
                         <title>Bulletins</title>
                         <mediaobject>
                             <imageobject>
-                                <imagedata fileref="images/irata_bulletins.PNG" align="center" scalefit="1" />
+                                <imagedata fileref="images/irata_bulletins.PNG" align="center" scalefit="1"/>
                             </imageobject>
                         </mediaobject>
                     </figure>
@@ -1177,5 +1175,17 @@ or press LAB for additional options.</screen></para>
                 </sect2>
             </sect1>
         </chapter>
+        <appendix>
+            <title>Keyboard Chart</title>
+            <figure>
+                <title>PLATO to Commodore Keyboard</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="images/c64-plato-keyboard-vert.png" align="center"
+                            scalefit="1" scale="75"/>
+                </imageobject>
+            </mediaobject>
+            </figure>
+        </appendix>
     </part>
 </book>
