@@ -48,6 +48,7 @@ void prefs_run(void)
   TTY=true;
   prefs_running=true;
   prefs_need_updating=false;
+  prefs_clear();
   while (prefs_running)
     {
       switch (config.io_mode)
