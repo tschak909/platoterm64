@@ -14,8 +14,6 @@
 static padBool TouchActive;
 
 static struct mouse_info mouse_data;
-static uint16_t previous_mouse_x;
-static uint16_t previous_mouse_y;
 static uint16_t screen_w;
 static uint16_t screen_h;
 

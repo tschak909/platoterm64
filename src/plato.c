@@ -7,9 +7,7 @@
  * plato.c - main program
  */
 
-#include <serial.h>
 #include <stdbool.h>
-#include "protocol.h"
 #include "terminal.h"
 #include "welcome.h"
 #include "screen.h"
