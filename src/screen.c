@@ -330,6 +330,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint16_t* py;
   uint8_t i; /* current character counter */
   uint8_t a; /* current character byte */
+  uint8_t j,k; /* loop counters */
   int8_t b; /* current character row bit signed */
   uint8_t width=5;
   uint8_t height=6;
@@ -389,200 +390,34 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       ++ch;
       a+=offset;
       p=&font[fontptr[a]];
-
-      // Line 1
-      b=*p;
-
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
       
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
+      for (j=0;j<FONT_SIZE_Y;++j)
+  	{
+  	  b=*p;
+	  
+  	  for (k=0;k<FONT_SIZE_X;++k)
+  	    {
+  	      if (b<0) /* check sign bit. */
+		{
+		  tgi_setcolor(mainColor);
+		  tgi_setpixel(x,y);
+		}
 
-      ++y;
-      x-=width;
-      ++p;
+	      ++x;
+  	      b<<=1;
+  	    }
 
-      // Line 2
-      b=*p;
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
+	  ++y;
+	  x-=width;
+	  ++p;
+  	}
 
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 3
-      b=*p;
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 4
-      b=*p;
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 5
-      b=*p;
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 6
-      b=*p;
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	tgi_setpixel(x,y);
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-      
       x+=width;
       y-=height;
     }
 
   return;
-  
+
  chardraw_with_fries:
   if (Rotate)
     {
@@ -602,7 +437,6 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       deltaX = deltaY = 2;
       width<<=1;
       height<<=1;
-      goto bold_chardraw_with_fries;
     }
   
   for (i=0;i<count;++i)
@@ -611,644 +445,65 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       ++ch;
       a+=offset;
       p=&font[fontptr[a]];
+      for (j=0;j<FONT_SIZE_Y;++j)
+  	{
+  	  b=*p;
 
-      tgi_setcolor(altColor);
-      tgi_bar(x,y,x+width,y+height); // Take care of all the zero bits at once.
-      tgi_setcolor(mainColor);
+	  if (Rotate)
+	    {
+	      px=&y;
+	      py=&x;
+	    }
+	  else
+	    {
+	      px=&x;
+	      py=&y;
+	    }
 
-      // Line 1
-      b=*p;
+  	  for (k=0;k<FONT_SIZE_X;++k)
+  	    {
+  	      if (b<0) /* check sign bit. */
+		{
+		  tgi_setcolor(mainColor);
+		  if (ModeBold)
+		    {
+		      tgi_setpixel(*px+1,*py);
+		      tgi_setpixel(*px,*py+1);
+		      tgi_setpixel(*px+1,*py+1);
+		    }
+		  tgi_setpixel(*px,*py);
+		}
+	      else
+		{
+		  if (CurMode==ModeInverse || CurMode==ModeRewrite)
+		    {
+		      tgi_setcolor(altColor);
+		      if (ModeBold)
+			{
+			  tgi_setpixel(*px+1,*py);
+			  tgi_setpixel(*px,*py+1);
+			  tgi_setpixel(*px+1,*py+1);
+			}
+		      tgi_setpixel(*px,*py); 
+		    }
+		}
 
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
+	      x += deltaX;
+  	      b<<=1;
+  	    }
 
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
+	  y+=deltaY;
+	  x-=width;
+	  ++p;
+  	}
 
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 2
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 3
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 4
-      b=*p;
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 5
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      // Line 6
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	}
-      ++x;
-      b<<=1;
-
-      ++y;
-      x-=width;
-      ++p;
-
-      x+=width;
-      y-=height;
-    }
-
-  return; // Done with chardraw_with_fries
-  
- bold_chardraw_with_fries:
-  for (i=0;i<count;++i)
-    {
-      a=*ch;
-      ++ch;
-      a+=offset;
-      p=&font[fontptr[a]];
-
-      tgi_setcolor(altColor);
-      tgi_bar(x,y,x+width,y+height); // Take care of all the zero bits at once.
-      tgi_setcolor(mainColor);
-
-      // Line 1
-      b=*p;
-
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      y+=deltaY;
-      x-=width;
-      ++p;
-
-      // Line 2
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      y+=deltaY;
-      x-=width;
-      ++p;
-
-      // Line 3
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      y+=deltaY;
-      x-=width;
-      ++p;
-
-      // Line 4
-      b=*p;
-      if (b<0)
-	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      y+=deltaY;
-      x-=width;
-      ++p;
-
-      // Line 5
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      y+=deltaY;
-      x-=width;
-      ++p;
-
-      // Line 6
-      b=*p;
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-      
-      if (b<0)
-      	{
-	  tgi_setpixel(x,y);
-	  tgi_setpixel(*px+1,*py);
-	  tgi_setpixel(*px,*py+1);
-	  tgi_setpixel(*px+1,*py+1);
-	}
-      x+=deltaX;
-      b<<=1;
-
-      y+=deltaY;
-      x-=width;
-      ++p;
-      
-      /* for (j=0;j<FONT_SIZE_Y;++j) */
-      /* 	{ */
-      /* 	  b=*p; */
-	  
-      /* 	  for (k=0;k<FONT_SIZE_X;++k) */
-      /* 	    { */
-      /* 	      if (b<0) /\* check sign bit. *\/ */
-      /* 		{ */
-      /* 		  if (ModeBold) */
-      /* 		    { */
-      /* 		      tgi_setpixel(*px+1,*py); */
-      /* 		      tgi_setpixel(*px,*py+1); */
-      /* 		      tgi_setpixel(*px+1,*py+1); */
-      /* 		    } */
-      /* 		  tgi_setpixel(*px,*py); */
-      /* 		} */
-
-      /* 	      x += deltaX; */
-      /* 	      b<<=1; */
-      /* 	    } */
-
-      /* 	  y+=deltaY; */
-      /* 	  x-=width; */
-      /* 	  ++p; */
-      /* 	} */
-
+      Coord->x+=width;
       x+=width;
       y-=height;
     }
 
   return;
+  
 }
 
 /**
