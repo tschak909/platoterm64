@@ -7,17 +7,16 @@
  * config.c - Configuration routines
  */
 
-#include <c64.h>
-#include <cbm.h>
+#include <atari.h>
 #include <serial.h>
 #include <stdbool.h>
 #include <string.h>
 #include "../config.h"
 
-extern ConfigInfo config;
+#define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_ATRRDEV
+#define CONFIG_DEFAULT_MOUSE_DRIVER CONFIG_MOUSE_DRIVER_ATRJOY
 
-#define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_UP2400
-#define CONFIG_DEFAULT_MOUSE_DRIVER CONFIG_MOUSE_DRIVER_1351
+extern ConfigInfo config;
 
 /**
  * config_set_defaults()

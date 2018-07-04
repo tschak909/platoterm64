@@ -14,5 +14,22 @@
  */
 void system_wait_frame(void)
 {
-  // Not implemented yet.
+  // TODO: Not implemented yet.
+}
+
+/**
+ * System specific screen initialization hook.
+ * called after tgi_init.
+ */ 
+void system_screen_init_hook(void)
+{
+  // Nothing here yet
+}
+
+/**
+ * System specific beep
+ */
+void system_screen_beep(void)
+{
+  // TODO: Not implemented yet.
 }

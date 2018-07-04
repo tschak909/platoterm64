@@ -15,4 +15,15 @@
  */
 void system_wait_frame(void);
 
+/**
+ * System specific screen initialization hook.
+ * called after tgi_init.
+ */ 
+void system_screen_init_hook(void);
+
+/**
+ * System specific beep
+ */
+void system_screen_beep(void);
+
 #endif /* SYSTEM_H */

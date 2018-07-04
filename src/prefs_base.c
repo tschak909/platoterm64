@@ -28,14 +28,15 @@
 extern ConfigInfo config;
 
 static uint8_t prefs_running;
-static uint8_t prefs_need_updating;
-static uint8_t ch;
 static padBool TTYSave;
 static padPt TTYLocSave;
 extern padBool TTY;
 extern padPt TTYLoc;
 
 static char temp_ip_address[17];
+
+uint8_t ch;
+uint8_t prefs_need_updating;
 
 /**
  * Run the preferences menu
@@ -126,44 +127,6 @@ void prefs_save(void)
 }
 
 /**
- * prefs_touch(void)
- * Preferences for selecting touch driver
- */
-void prefs_touch(void)
-{
-  prefs_display("1)351 i)nkwell j)oy k)oala b)ack: ");
-
-  ch=prefs_get_key_matching("1ijkb");
-
-  switch(ch)
-    {
-    case '1':
-      prefs_select("1351");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_1351);
-      prefs_need_updating=true;
-      break;
-    case 'i':
-      prefs_select("inkwell");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_INKWELL);
-      prefs_need_updating=true;
-      break;
-    case 'j':
-      prefs_select("joystick");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_JOY);
-      prefs_need_updating=true;
-      break;
-    case 'k':
-      prefs_select("koala");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_POT);
-      prefs_need_updating=true;
-      break;
-    case 'b':
-      prefs_select("back");
-      break;
-    }
-}
-
-/**
  * prefs_baud(void)
  * Preferences for selecting serial baud rate
  */
@@ -203,34 +166,6 @@ void prefs_baud(void)
     case 'w':
       prefs_select("38400");
       config.baud=SER_BAUD_38400;
-      prefs_need_updating=true;
-      break;
-    case 'b':
-      prefs_select("back");
-      break;
-    }
-}
-
-/**
- * prefs_driver(void)
- * Preferences menu to select serial driver
- */
-void prefs_driver(void)
-{
-  prefs_display("driver - s)wiftlink232 u)serport2400 b)ack: ");
-  
-  ch=prefs_get_key_matching("sub");
-
-  switch(ch)
-    {
-    case 's':
-      prefs_select("swiftlink232");
-      strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK);
-      prefs_need_updating=true;
-      break;
-    case 'u':
-      prefs_select("userport2400");
-      strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_UP2400);
       prefs_need_updating=true;
       break;
     case 'b':

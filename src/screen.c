@@ -8,7 +8,6 @@
  */
 
 #include <stdbool.h>
-#include <c64.h>
 #include <tgi.h>
 #include <stdlib.h>
 #include <peekpoke.h>
@@ -17,10 +16,7 @@
 #include "font.h"
 #include "config.h"
 #include "io.h"
-
-#define outb(addr,val)        (*(addr)) = (val)
-#define outw(addr,val)        (*(addr)) = (val)
-
+#include "system.h"
 
 uint8_t CharWide=8;
 uint8_t CharHigh=16;
@@ -29,7 +25,6 @@ uint8_t pal[2];
 
 extern uint8_t xoff_enabled; /* io.c */
 extern padBool FastText; /* protocol.c */
-extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 extern ConfigInfo config; /* config.c */
 
 /* X and Y tables used to scale 512x512 PLATO display to 320x192 */
@@ -174,7 +169,7 @@ void screen_init(void)
 {
   tgi_install(tgi_static_stddrv);
   tgi_init();
-  install_nmi_trampoline();
+  system_screen_init_hook();
   config.color_foreground=TGI_COLOR_LIGHTBLUE;
   config.color_background=TGI_COLOR_BLUE;
   config.color_border=TGI_COLOR_LIGHTBLUE;
@@ -229,29 +224,15 @@ void screen_update_colors(void)
  */
 void screen_wait(void)
 {
-  /* waitvsync(); */
+  system_wait_frame();
 }
-
 
 /**
  * screen_beep(void) - Beep the terminal
  */
 void screen_beep(void)
 {
-  // My feeble attempt at a beep.
-  outw(&SID.v1.freq,0x22cd);
-  outw(&SID.v1.pw,0x0800);
-  outb(&SID.v1.ad,0x33);
-  outb(&SID.v1.sr,0xF0);
-  outb(&SID.amp,0x5F);
-  outw(&SID.flt_freq,0xF0F0);
-  outb(&SID.flt_ctrl,0xF2);
-  outb(&SID.v1.ctrl,0x11);
-  waitvsync();
-  waitvsync();
-  waitvsync();
-  waitvsync();
-  outb(&SID.v1.ctrl,0);
+  system_screen_beep();
 }
 
 /**
