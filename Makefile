@@ -35,7 +35,7 @@ ASFLAGS =
  
 # Additional linker flags and options.
 # Default: none
-LDFLAGS = c64-tgimousedata.o
+LDFLAGS =
  
 # Path to the directory containing C and ASM sources.
 # Default: src
@@ -338,16 +338,16 @@ zap:
 love:
 	@echo "Not war, eh?"
 
-dist: $(PROGRAM)
-	c1541 -format "platoterm64,01" d64 dist/platoterm64-1_0.d64
-	c1541 -attach dist/platoterm64-1_0.d64 -write plato.c64 platoterm
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/gpl-3.0 gpl-3.0
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-1351.mou mou-1351
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-inkwell.mou mou-inkwell
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-joy.mou mou-joy
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-pot.mou mou-pot
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-swlink.ser ser-swlink
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-up2400.ser ser-up2400
+dist-c64: $(PROGRAM)
+	c1541 -format "platoterm64,01" d64 dist.c64/platoterm64-1_0.d64
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write plato.c64 platoterm
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/gpl-3.0 gpl-3.0
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-1351.mou mou-1351
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-inkwell.mou mou-inkwell
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-joy.mou mou-joy
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-pot.mou mou-pot
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-swlink.ser ser-swlink
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-up2400.ser ser-up2400
 
 ###################################################################
 ###  Place your additional targets in the additional Makefiles  ###
