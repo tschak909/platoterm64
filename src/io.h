@@ -43,4 +43,9 @@ void io_recv_serial(void);
  */
 void io_done(void);
 
+/**
+ * Return the serial buffer size
+ */
+uint8_t io_serial_buffer_size(void);
+
 #endif /* IO_H */

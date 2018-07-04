@@ -46,7 +46,7 @@ void io_init(void)
   
   if (io_res!=SER_ERR_OK)
     {
-      POKE(0xD020,2);
+      
       return;
     }
 
@@ -67,7 +67,6 @@ void io_open(void)
       
       if (io_res!=SER_ERR_OK)
 	{
-	  POKE(0xD020,2);
 	  return;
 	}
       
@@ -102,16 +101,14 @@ void io_main(void)
  */
 void io_recv_serial(void)
 {
-  recv_buffer_size=PEEK(0x29B)-PEEK(0x29C)&0xff;
+  recv_buffer_size=io_serial_buffer_size();
   if (recv_buffer_size>XOFF_THRESHOLD && xoff_enabled==false)
     {
-      POKE(0xD020,0);
       ser_put(0x13);
       xoff_enabled=true;
     }
   else if (recv_buffer_size<XON_THRESHOLD && xoff_enabled==true)
     {
-      POKE(0xD020,14);
       ser_put(0x11);
       xoff_enabled=false;
     }
