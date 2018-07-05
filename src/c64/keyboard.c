@@ -12,7 +12,7 @@
 #include "../screen.h"
 #include "../prefs.h"
 #include "../keyboard.h"
-#include "../key.h"
+#include "key.h"
 
 static uint8_t lastkey;
 extern uint8_t xoff_enabled;
