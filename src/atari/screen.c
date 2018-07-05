@@ -151,6 +151,14 @@ uint16_t scaley[]={
 };
 
 /**
+ * screen_init_hook()
+ * Called after tgi_init to set any special features, e.g. nmi trampolines.
+ */
+void screen_init_hook(void)
+{
+}
+
+/**
  * screen_cycle_foreground()
  * Go to the next foreground color in palette
  */
@@ -189,4 +197,20 @@ void screen_update_colors(void)
   pal[1]=config.color_foreground;
   tgi_setpalette(pal);
   POKE(0xD020,config.color_border);
+}
+
+/**
+ * Wait(void) - Sleep for approx 16.67ms
+ */
+void screen_wait(void)
+{
+  // TODO: function to do one vblank wait
+}
+
+/**
+ * screen_beep(void) - Beep the terminal
+ */
+void screen_beep(void)
+{
+  // My feeble attempt at a beep.
 }

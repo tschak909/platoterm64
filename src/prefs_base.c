@@ -23,7 +23,6 @@
 #include "terminal.h"
 #include "config.h"
 #include "ip65.h"
-#include "system.h"
 
 extern ConfigInfo config;
 
@@ -447,7 +446,7 @@ void prefs_select(const char* text)
   
   for (i=0;i<100;i++)
     {
-      system_wait_frame();
+      screen_wait();
     }
 
   prefs_clear();
