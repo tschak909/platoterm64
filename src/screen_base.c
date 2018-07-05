@@ -16,7 +16,6 @@
 #include "font.h"
 #include "config.h"
 #include "io.h"
-#include "system.h"
 
 uint8_t CharWide=8;
 uint8_t CharHigh=16;
@@ -37,29 +36,13 @@ void screen_init(void)
 {
   tgi_install(tgi_static_stddrv);
   tgi_init();
-  system_screen_init_hook();
+  screen_init_hook();
   config.color_foreground=TGI_COLOR_LIGHTBLUE;
   config.color_background=TGI_COLOR_BLUE;
   config.color_border=TGI_COLOR_LIGHTBLUE;
   screen_update_colors();
   tgi_setpalette(pal);
   tgi_clear();
-}
-
-/**
- * Wait(void) - Sleep for approx 16.67ms
- */
-void screen_wait(void)
-{
-  system_wait_frame();
-}
-
-/**
- * screen_beep(void) - Beep the terminal
- */
-void screen_beep(void)
-{
-  system_screen_beep();
 }
 
 /**

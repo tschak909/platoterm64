@@ -338,7 +338,7 @@ zap:
 love:
 	@echo "Not war, eh?"
 
-dist-c64: $(PROGRAM)
+dist-c64: $(PROGRAM).c64
 	c1541 -format "platoterm64,01" d64 dist.c64/platoterm64-1_0.d64
 	c1541 -attach dist.c64/platoterm64-1_0.d64 -write plato.c64 platoterm
 	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/gpl-3.0 gpl-3.0

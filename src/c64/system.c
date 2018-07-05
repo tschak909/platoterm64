@@ -10,11 +10,6 @@
 #include <cbm.h>
 #include <c64.h>
 
-#define outb(addr,val)        (*(addr)) = (val)
-#define outw(addr,val)        (*(addr)) = (val)
-
-extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
-
 /**
  * Wait one frame of time
  */
