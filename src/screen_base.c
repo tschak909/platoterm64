@@ -13,7 +13,6 @@
 #include <peekpoke.h>
 #include "screen.h"
 #include "protocol.h"
-#include "font.h"
 #include "config.h"
 #include "io.h"
 
@@ -28,6 +27,11 @@ extern ConfigInfo config; /* config.c */
 
 extern unsigned short scalex[];
 extern unsigned short scaley[];
+
+extern uint8_t font[];
+extern uint16_t fontptr[];
+extern uint8_t FONT_SIZE_X;
+extern uint8_t FONT_SIZE_Y;
 
 /**
  * screen_init() - Set up the screen
