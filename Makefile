@@ -349,6 +349,9 @@ dist-c64: $(PROGRAM).c64
 	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-swlink.ser ser-swlink
 	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-up2400.ser ser-up2400
 
+dist-atari: $(PROGRAM).atari
+	cp plato.atari dist.atari/plato.com
+
 ###################################################################
 ###  Place your additional targets in the additional Makefiles  ###
 ### in the same directory - their names have to end with ".mk"! ###
