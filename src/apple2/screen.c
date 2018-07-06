@@ -7,8 +7,7 @@
  * screen.c - Display output functions
  */
 
-#include <c64.h>
-#include <cbm.h>
+#include <apple2.h>
 #include <peekpoke.h>
 #include <tgi.h>
 #include <stdint.h>

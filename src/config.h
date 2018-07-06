@@ -29,6 +29,10 @@
 #define CONFIG_MOUSE_DRIVER_ATRTRK "atrtrk.mou"
 #define CONFIG_MOUSE_DRIVER_ATRTT "atrtt.mou"
 
+/* Apple2 Driver Defines */
+#define CONFIG_SERIAL_DRIVER_SSC "a2.ssc.ser"
+#define CONFIG_MOUSE_DRIVER_STDMOU "a2.stdmou.mou"
+
 typedef struct configInfo
 {
   unsigned char io_mode;

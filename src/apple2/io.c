@@ -7,8 +7,7 @@
  * io.c - Input/output functions (serial/ethernet) (apple2 specific)
  */
 
-#include <cbm.h>
-#include <c64.h>
+#include <apple2.h>
 #include <peekpoke.h>
 #include <stdint.h>
 

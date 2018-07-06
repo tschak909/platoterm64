@@ -41,11 +41,11 @@ void screen_init(void)
   tgi_install(tgi_static_stddrv);
   tgi_init();
   screen_init_hook();
-  config.color_foreground=TGI_COLOR_LIGHTBLUE;
-  config.color_background=TGI_COLOR_BLUE;
-  config.color_border=TGI_COLOR_LIGHTBLUE;
-  screen_update_colors();
-  tgi_setpalette(pal);
+  /* config.color_foreground=TGI_COLOR_LIGHTBLUE; */
+  /* config.color_background=TGI_COLOR_BLUE; */
+  /* config.color_border=TGI_COLOR_LIGHTBLUE; */
+  /* screen_update_colors(); */
+  /* tgi_setpalette(pal); */
   tgi_clear();
 }
 
