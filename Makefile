@@ -9,7 +9,7 @@
  
 # Space or comma separated list of cc65 supported target platforms to build for.
 # Default: c64 (lowercase!)
-TARGETS := c64,atari,apple2
+TARGETS := c64,c128,atari,apple2
  
 # Name of the final, single-file executable.
 # Default: name of the current dir with target name appended
@@ -348,6 +348,16 @@ dist-c64: $(PROGRAM).c64
 	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-pot.mou mou-pot
 	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-swlink.ser ser-swlink
 	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-up2400.ser ser-up2400
+
+dist-c128: $(PROGRAM).c128
+	c1541 -format "platoterm128,01" d64 dist.c128/platoterm128-1_0.d64
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write plato.c128 platoterm
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/gpl-3.0 gpl-3.0
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-1351.mou mou-1351
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-inkwell.mou mou-inkwell
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-joy.mou mou-joy
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-pot.mou mou-pot
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-swlink.ser ser-swlink
 
 dist-atari: $(PROGRAM).atari
 	cp plato.atari dist.atari/plato.com

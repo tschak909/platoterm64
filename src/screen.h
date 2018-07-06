@@ -18,6 +18,12 @@
 void screen_init(void);
 
 /**
+ * screen_load_driver()
+ * Load the TGI driver
+ */
+void screen_load_driver(void);
+
+/**
  * screen_init_hook()
  * Called after tgi_init to set any special features, e.g. nmi trampolines.
  */

@@ -7,6 +7,8 @@
  * screen.c - Display output functions
  */
 
+#include <c128.h>
+#include <cbm.h>
 #include <peekpoke.h>
 #include <tgi.h>
 #include <stdint.h>
@@ -15,12 +17,18 @@
 extern uint8_t pal[2];
 extern ConfigInfo config; 
 
+#define outb(addr,val)        (*(addr)) = (val)
+#define outw(addr,val)        (*(addr)) = (val)
+
+extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
+
 /**
  * screen_init_hook()
  * Called after tgi_init to set any special features, e.g. nmi trampolines.
  */
 void screen_init_hook(void)
 {
+  install_nmi_trampoline();
 }
 
 /**
@@ -29,7 +37,7 @@ void screen_init_hook(void)
  */
 void screen_load_driver(void)
 {
-  tgi_install(tgi_static_stddrv);
+  tgi_install(&c128_vdc2_tgi);
 }
 
 /**
@@ -39,7 +47,6 @@ void screen_load_driver(void)
 void screen_cycle_foreground(void)
 {
   ++config.color_foreground;
-  config.color_foreground&=0x0f;
 }
 
 /**
@@ -49,7 +56,6 @@ void screen_cycle_foreground(void)
 void screen_cycle_background(void)
 {
   ++config.color_background;
-  config.color_background&=0x0f;
 }
 
 /**
@@ -59,7 +65,6 @@ void screen_cycle_background(void)
 void screen_cycle_border(void)
 {
   ++config.color_border;
-  config.color_border&=0x0f;
 }
 
 /**
@@ -70,7 +75,6 @@ void screen_update_colors(void)
   pal[0]=config.color_background;
   pal[1]=config.color_foreground;
   tgi_setpalette(pal);
-  POKE(0xD020,config.color_border);
 }
 
 /**
@@ -78,7 +82,7 @@ void screen_update_colors(void)
  */
 void screen_wait(void)
 {
-  // TODO: function to do one vblank wait
+  waitvsync();
 }
 
 /**
@@ -87,4 +91,17 @@ void screen_wait(void)
 void screen_beep(void)
 {
   // My feeble attempt at a beep.
+  outw(&SID.v1.freq,0x22cd);
+  outw(&SID.v1.pw,0x0800);
+  outb(&SID.v1.ad,0x33);
+  outb(&SID.v1.sr,0xF0);
+  outb(&SID.amp,0x5F);
+  outw(&SID.flt_freq,0xF0F0);
+  outb(&SID.flt_ctrl,0xF2);
+  outb(&SID.v1.ctrl,0x11);
+  waitvsync();
+  waitvsync();
+  waitvsync();
+  waitvsync();
+  outb(&SID.v1.ctrl,0);
 }

@@ -23,6 +23,15 @@ extern ConfigInfo config;
 extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 
 /**
+ * screen_load_driver()
+ * Load the TGI driver
+ */
+void screen_load_driver(void)
+{
+  tgi_install(tgi_static_stddrv);
+}
+
+/**
  * screen_init_hook()
  * Called after tgi_init to set any special features, e.g. nmi trampolines.
  */

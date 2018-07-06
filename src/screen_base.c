@@ -38,7 +38,7 @@ extern uint8_t FONT_SIZE_Y;
  */
 void screen_init(void)
 {
-  tgi_install(tgi_static_stddrv);
+  screen_load_driver();
   tgi_init();
   screen_init_hook();
   /* config.color_foreground=TGI_COLOR_LIGHTBLUE; */
