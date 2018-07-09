@@ -127,8 +127,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t a; /* current character byte */
   uint8_t j,k; /* loop counters */
   int8_t b; /* current character row bit signed */
-  uint8_t width=5;
-  uint8_t height=6;
+  uint8_t width=FONT_SIZE_X;
+  uint8_t height=FONT_SIZE_Y;
   uint16_t deltaX=1;
   uint16_t deltaY=1;
   uint8_t mainColor=TGI_COLOR_WHITE;
