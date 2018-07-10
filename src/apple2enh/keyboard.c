@@ -8,13 +8,16 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <peekpoke.h>
+#include <conio.h>
 #include "../screen.h"
 #include "../prefs.h"
 #include "../keyboard.h"
 #include "key.h"
 
-static uint8_t lastkey;
+static uint8_t ch;
+static uint8_t is_escape=false;
 extern uint8_t xoff_enabled;
 
 /**
@@ -22,6 +25,19 @@ extern uint8_t xoff_enabled;
  */
 void keyboard_main(void)
 {
+  if (kbhit())
+    {
+      ch=cgetc();
+      if (ch=0x1B) // ESC
+	is_escape=true;
+      else if (is_escape)
+	{
+	  keyboard_out(esc_key_to_pkey[ch]);
+	  is_escape=false;
+	}
+      else
+	keyboard_out(key_to_pkey[ch]);
+    }
 }
 
 /**

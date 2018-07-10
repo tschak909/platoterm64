@@ -359,14 +359,14 @@ dist-c128: $(PROGRAM).c128
 	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-pot.mou mou-pot
 	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-swlink.ser ser-swlink
 
-dist-apple2enh: $(PROGRAM).c128
-	cp bootable.po dist.po
-	java -jar ac.jar -p dist.po plato.system sys <plato.system
-	java -jar ac.jar -p dist.po license.system sys <license.system
-	java -jar ac.jar -as dist.po plato < ../plato.apple2enh
-	java -jar ac.jar -as dist.po license < license
-	java -jar ac.jar -p dist.po a2.ssc.ser rel 0 <a2e.ssc.ser
-	java -jar ac.jar -p dist.po a2.stdmou.mou rel 0 <a2e.stdmou.mou
+dist-apple2enh: $(PROGRAM).apple2enh
+	cp dist.apple2enh/bootable.po dist.apple2enh/dist.po
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po plato.system sys <dist.apple2enh/plato.system
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po license.system sys <dist.apple2enh/license.system
+	java -jar dist.apple2enh/ac.jar -as dist.apple2enh/dist.po plato <plato.apple2enh
+	java -jar dist.apple2enh/ac.jar -as dist.apple2enh/dist.po license <dist.apple2enh/license
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po a2.ssc.ser rel 0 <dist.apple2enh/a2e.ssc.ser
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po a2.stdmou.mou rel 0 <dist.apple2enh/a2e.stdmou.mou
 
 dist-atari: $(PROGRAM).atari
 	cp plato.atari dist.atari/plato.com

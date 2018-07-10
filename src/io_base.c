@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <serial.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <peekpoke.h>
 #include "io.h"
 #include "protocol.h"
@@ -46,7 +47,7 @@ void io_init(void)
   
   if (io_res!=SER_ERR_OK)
     {
-      
+      exit(0);
       return;
     }
 
@@ -67,6 +68,7 @@ void io_open(void)
       
       if (io_res!=SER_ERR_OK)
 	{
+	  exit(0);
 	  return;
 	}
       
