@@ -24,9 +24,9 @@ extern ConfigInfo config;
  */
 void config_set_defaults(void)
 {
-  config.io_mode = IO_MODE_SERIAL;
+  config.io_mode = IO_MODE_ETHERNET;
   config.baud = SER_BAUD_2400;
-  config.use_dhcp = false;
+  config.use_dhcp = true;
   config.ip_address=0;
   config.netmask=0;
   config.gateway=0;
