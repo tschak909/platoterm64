@@ -106,13 +106,13 @@ void io_recv_serial(void)
   recv_buffer_size=io_serial_buffer_size();
   if (recv_buffer_size>XOFF_THRESHOLD && xoff_enabled==false)
     {
-      ser_put(0x13);
-      xoff_enabled=true;
+      // Ask modem to stop receiving
+      io_recv_serial_flow_off();
     }
   else if (recv_buffer_size<XON_THRESHOLD && xoff_enabled==true)
     {
-      ser_put(0x11);
-      xoff_enabled=false;
+      // Ask modem to start receiving
+      io_recv_serial_flow_on();
     }
 
   if (ser_get(&ch)==SER_ERR_OK)
