@@ -19,7 +19,7 @@
 #define NULL 0
 
 #define XOFF_THRESHOLD 250
-#define XON_THRESHOLD  100
+#define XON_THRESHOLD  16
 
 uint8_t xoff_enabled;
 
@@ -86,8 +86,7 @@ void io_open(void)
  */
 void io_send_byte(uint8_t b)
 {
-  if ((xoff_enabled==false) || (b==0x11))
-    ser_put(b);
+  ser_put(b);
 }
 
 /**

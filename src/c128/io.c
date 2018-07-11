@@ -27,6 +27,8 @@ uint8_t io_serial_buffer_size(void)
  */
 void io_recv_serial_flow_off(void)
 {
+  // Assume userport for now
+  POKE(0xDD01,0);
 }
 
 /**
@@ -34,4 +36,6 @@ void io_recv_serial_flow_off(void)
  */
 void io_recv_serial_flow_on(void)
 {
+  // Assume userport for now
+  POKE(0xDD01,1);
 }
