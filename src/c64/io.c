@@ -11,6 +11,7 @@
 #include <c64.h>
 #include <peekpoke.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 extern uint8_t xoff_enabled;
 
@@ -28,7 +29,8 @@ uint8_t io_serial_buffer_size(void)
 void io_recv_serial_flow_off(void)
 {
   // for now, assume user port.
-  POKE(0xDD01,1);
+  xoff_enabled=true;
+  POKE(0xDD01,0);
 }
 
 /**
@@ -37,5 +39,6 @@ void io_recv_serial_flow_off(void)
 void io_recv_serial_flow_on(void)
 {
   // For now, assume user port.
-  POKE(0xDD01,0);
+  xoff_enabled=false;
+  POKE(0xDD01,1);
 }

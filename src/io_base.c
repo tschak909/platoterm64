@@ -18,14 +18,11 @@
 
 #define NULL 0
 
-#define XOFF_THRESHOLD 250
-#define XON_THRESHOLD  16
-
 uint8_t xoff_enabled;
 
 static uint8_t ch=0;
-static uint8_t lastch=0;
 static uint8_t io_res;
+static uint8_t* recv_buffer;
 static uint8_t recv_buffer_size=0;
 extern ConfigInfo config;
 
@@ -51,6 +48,8 @@ void io_init(void)
       return;
     }
 
+  recv_buffer=malloc(2048);
+  
   io_open();
 
 }
@@ -102,31 +101,48 @@ void io_main(void)
  */
 void io_recv_serial(void)
 {
-  recv_buffer_size=io_serial_buffer_size();
-  if (recv_buffer_size>XOFF_THRESHOLD && xoff_enabled==false)
-    {
-      // Ask modem to stop receiving
-      io_recv_serial_flow_off();
-    }
-  else if (recv_buffer_size<XON_THRESHOLD && xoff_enabled==true)
-    {
-      // Ask modem to start receiving
-      io_recv_serial_flow_on();
-    }
 
-  if (ser_get(&ch)==SER_ERR_OK)
+  // Drain primary serial FIFO as fast as possible.
+  if (xoff_enabled==false)
     {
-      // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
-      if (ch==0xFF && lastch == 0xFF)
+      // We have to isolate this drain, because paradoxically, when CTS is low
+      // we will never get out of this loop.
+      while (ser_get(&ch)!=SER_ERR_NO_DATA)
 	{
-	  lastch=0x00;
-	}
-      else
-	{
-	  lastch=ch;
-	  ShowPLATO(&ch,1);
+	  recv_buffer[recv_buffer_size++]=ch;
 	}
     }
+  
+  io_recv_serial_flow_off();
+  ShowPLATO(recv_buffer,recv_buffer_size);
+  recv_buffer_size=0;
+  io_recv_serial_flow_on();
+  
+  /* recv_buffer_size=io_serial_buffer_size(); */
+  /* if (recv_buffer_size>XOFF_THRESHOLD && xoff_enabled==false) */
+  /*   { */
+  /*     // Ask modem to stop receiving */
+  /*     io_recv_serial_flow_off(); */
+  /*   } */
+  /* else if (recv_buffer_size<XON_THRESHOLD && xoff_enabled==true) */
+  /*   { */
+  /*     // Ask modem to start receiving */
+  /*     io_recv_serial_flow_on(); */
+  /*   } */
+
+  /* if (ser_get(&ch)==SER_ERR_OK) */
+  /*   { */
+  /*     // Detect and strip IAC escapes (two consecutive bytes of 0xFF) */
+  /*     if (ch==0xFF && lastch == 0xFF) */
+  /* 	{ */
+  /* 	  lastch=0x00; */
+  /* 	} */
+  /*     else */
+  /* 	{ */
+  /* 	  lastch=ch; */
+  /* 	  ShowPLATO(&ch,1); */
+  /* 	} */
+  /*   } */
 }
 
 /**
@@ -136,4 +152,5 @@ void io_done(void)
 {
   ser_close();
   ser_uninstall();
+  free(recv_buffer);
 }
