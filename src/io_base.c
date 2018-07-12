@@ -103,46 +103,29 @@ void io_recv_serial(void)
 {
 
   // Drain primary serial FIFO as fast as possible.
-  if (xoff_enabled==false)
+  while (ser_get(&ch)!=SER_ERR_NO_DATA)
     {
-      // We have to isolate this drain, because paradoxically, when CTS is low
-      // we will never get out of this loop.
-      while (ser_get(&ch)!=SER_ERR_NO_DATA)
-	{
-	  recv_buffer[recv_buffer_size++]=ch;
-	}
+      recv_buffer[recv_buffer_size++]=ch;
     }
   
-  io_recv_serial_flow_off();
+  if (xoff_enabled==false)
+    {
+      if (recv_buffer_size>2000)
+  	{
+  	  io_recv_serial_flow_off();
+  	}
+    }
+  else /* xoff_enabled==true */
+    {
+      if (recv_buffer_size<64)
+  	{
+  	  io_recv_serial_flow_on();
+  	}
+    }
+
   ShowPLATO(recv_buffer,recv_buffer_size);
   recv_buffer_size=0;
-  io_recv_serial_flow_on();
   
-  /* recv_buffer_size=io_serial_buffer_size(); */
-  /* if (recv_buffer_size>XOFF_THRESHOLD && xoff_enabled==false) */
-  /*   { */
-  /*     // Ask modem to stop receiving */
-  /*     io_recv_serial_flow_off(); */
-  /*   } */
-  /* else if (recv_buffer_size<XON_THRESHOLD && xoff_enabled==true) */
-  /*   { */
-  /*     // Ask modem to start receiving */
-  /*     io_recv_serial_flow_on(); */
-  /*   } */
-
-  /* if (ser_get(&ch)==SER_ERR_OK) */
-  /*   { */
-  /*     // Detect and strip IAC escapes (two consecutive bytes of 0xFF) */
-  /*     if (ch==0xFF && lastch == 0xFF) */
-  /* 	{ */
-  /* 	  lastch=0x00; */
-  /* 	} */
-  /*     else */
-  /* 	{ */
-  /* 	  lastch=ch; */
-  /* 	  ShowPLATO(&ch,1); */
-  /* 	} */
-  /*   } */
 }
 
 /**

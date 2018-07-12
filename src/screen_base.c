@@ -63,9 +63,7 @@ void screen_clear(void)
 void screen_block_draw(padPt* Coord1, padPt* Coord2)
 {
   // Block erase takes forever, manually assert flow control.
-
-  io_send_byte(0x13);
-  xoff_enabled=true;
+  io_recv_serial_flow_off(); 
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(TGI_COLOR_BLACK);
@@ -74,8 +72,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   
   tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
 
-  io_send_byte(0x11);
-  xoff_enabled=false;
+  io_recv_serial_flow_on();
   
 }
 

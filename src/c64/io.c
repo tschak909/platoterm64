@@ -30,7 +30,7 @@ void io_recv_serial_flow_off(void)
 {
   // for now, assume user port.
   xoff_enabled=true;
-  POKE(0xDD01,PEEK(0xDD01)&0x02);
+  POKE(0xDD01,PEEK(0xDD01)&~0x02);
 }
 
 /**
