@@ -116,6 +116,7 @@ void io_recv_serial(void)
 
   if (ser_get(&ch)==SER_ERR_OK)
     {
+      POKE(0xD020,recv_buffer_size);
       // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
       if (ch==0xFF && lastch == 0xFF)
 	{
