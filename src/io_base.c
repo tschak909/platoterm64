@@ -18,12 +18,14 @@
 
 #define NULL 0
 
+#define HANG for (;;) {}
+
 uint8_t xoff_enabled;
 
 static uint8_t ch=0;
 static uint8_t io_res;
-static uint8_t* recv_buffer;
-static uint8_t recv_buffer_size=0;
+static uint8_t recv_buffer[1024];
+static uint16_t recv_buffer_size=0;
 extern ConfigInfo config;
 
 static struct ser_params params = {
@@ -47,8 +49,6 @@ void io_init(void)
       exit(0);
       return;
     }
-
-  recv_buffer=malloc(2048);
   
   io_open();
 
@@ -64,7 +64,7 @@ void io_open(void)
       params.baudrate = config.baud;
       
       io_res=ser_open(&params);
-      
+
       if (io_res!=SER_ERR_OK)
 	{
 	  exit(0);
@@ -135,5 +135,4 @@ void io_done(void)
 {
   ser_close();
   ser_uninstall();
-  free(recv_buffer);
 }
