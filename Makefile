@@ -369,7 +369,8 @@ dist-apple2enh: $(PROGRAM).apple2enh
 	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po a2.stdmou.mou rel 0 <dist.apple2enh/a2e.stdmou.mou
 
 dist-atari: $(PROGRAM).atari
-	cp plato.atari dist.atari/plato.com
+	cp plato.atari dist.atari/files/plato.com
+	dir2atr -b Dos25 720 dist.atari/plato.atr dist.atari/files
 
 ###################################################################
 ###  Place your additional targets in the additional Makefiles  ###
