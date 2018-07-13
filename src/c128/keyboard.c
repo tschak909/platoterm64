@@ -4,7 +4,7 @@
  * 
  * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
  *
- * keyboard.c - Keyboard functions (c64)
+ * keyboard.c - Keyboard functions (c128)
  */
 
 #include <stdint.h>
@@ -22,8 +22,8 @@ extern uint8_t xoff_enabled;
  */
 void keyboard_main(void)
 {
-  uint8_t key=PEEK(0xCB);
-  uint8_t modifier=PEEK(0x28D);
+  uint8_t key=PEEK(212);
+  uint8_t modifier=PEEK(211);
 
   // Handle Function keys
   if (key==0x04 && lastkey!=0x04)
@@ -71,6 +71,4 @@ void keyboard_main(void)
  */
 void keyboard_clear(void)
 {
-  POKE(0xCB,0x40);
-  POKE(0x28D,0x00);
 }
