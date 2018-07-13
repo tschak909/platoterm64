@@ -7,9 +7,7 @@
  * plato.c - main program
  */
 
-#include <serial.h>
 #include <stdbool.h>
-#include "protocol.h"
 #include "terminal.h"
 #include "welcome.h"
 #include "screen.h"
@@ -17,17 +15,18 @@
 #include "keyboard.h"
 #include "io.h"
 #include "config.h"
-#include "splash.h"
 #include "prefs.h"
 
 uint8_t already_started=false;
+extern padByte splash[];
+extern short splash_size;
 
 /**
  * greeting(void) - Show terminal greeting
  */
 void greeting(void)
 {
-  ShowPLATO(splash,sizeof(splash));
+  ShowPLATO(splash,splash_size);
   prefs_display("platoterm64 ready - f3 for setup");
   terminal_initial_position();
 }

@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <serial.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <peekpoke.h>
 #include "io.h"
 #include "protocol.h"
@@ -17,14 +18,11 @@
 
 #define NULL 0
 
-#define XOFF_THRESHOLD 160
-#define XON_THRESHOLD  16
-
 uint8_t xoff_enabled;
 
 static uint8_t ch=0;
-static uint8_t lastch=0;
 static uint8_t io_res;
+static uint8_t* recv_buffer;
 static uint8_t recv_buffer_size=0;
 extern ConfigInfo config;
 
@@ -46,10 +44,12 @@ void io_init(void)
   
   if (io_res!=SER_ERR_OK)
     {
-      POKE(0xD020,2);
+      exit(0);
       return;
     }
 
+  recv_buffer=malloc(2048);
+  
   io_open();
 
 }
@@ -67,7 +67,7 @@ void io_open(void)
       
       if (io_res!=SER_ERR_OK)
 	{
-	  POKE(0xD020,2);
+	  exit(0);
 	  return;
 	}
       
@@ -85,8 +85,7 @@ void io_open(void)
  */
 void io_send_byte(uint8_t b)
 {
-  if ((xoff_enabled==false) || (b==0x11))
-    ser_put(b);
+  ser_put(b);
 }
 
 /**
@@ -102,33 +101,31 @@ void io_main(void)
  */
 void io_recv_serial(void)
 {
-  recv_buffer_size=PEEK(0x29B)-PEEK(0x29C)&0xff;
-  if (recv_buffer_size>XOFF_THRESHOLD && xoff_enabled==false)
+
+  // Drain primary serial FIFO as fast as possible.
+  while (ser_get(&ch)!=SER_ERR_NO_DATA)
     {
-      POKE(0xD020,0);
-      ser_put(0x13);
-      xoff_enabled=true;
+      recv_buffer[recv_buffer_size++]=ch;
     }
-  else if (recv_buffer_size<XON_THRESHOLD && xoff_enabled==true)
+  
+  if (xoff_enabled==false)
     {
-      POKE(0xD020,14);
-      ser_put(0x11);
-      xoff_enabled=false;
+      if (recv_buffer_size>2000)
+  	{
+  	  io_recv_serial_flow_off();
+  	}
+    }
+  else /* xoff_enabled==true */
+    {
+      if (recv_buffer_size<64)
+  	{
+  	  io_recv_serial_flow_on();
+  	}
     }
 
-  if (ser_get(&ch)==SER_ERR_OK)
-    {
-      // Detect and strip IAC escapes (two consecutive bytes of 0xFF)
-      if (ch==0xFF && lastch == 0xFF)
-	{
-	  lastch=0x00;
-	}
-      else
-	{
-	  lastch=ch;
-	  ShowPLATO(&ch,1);
-	}
-    }
+  ShowPLATO(recv_buffer,recv_buffer_size);
+  recv_buffer_size=0;
+  
 }
 
 /**
@@ -138,4 +135,5 @@ void io_done(void)
 {
   ser_close();
   ser_uninstall();
+  free(recv_buffer);
 }

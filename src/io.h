@@ -39,8 +39,24 @@ void io_main(void);
 void io_recv_serial(void);
 
 /**
+ * io_recv_serial_flow_off() - Tell modem to stop receiving.
+ */
+void io_recv_serial_flow_off(void);
+
+/**
+ * io_recv_serial_flow_on() - Tell modem to stop receiving.
+ */
+void io_recv_serial_flow_on(void);
+
+
+/**
  * io_done() - Called to close I/O
  */
 void io_done(void);
+
+/**
+ * Return the serial buffer size
+ */
+uint8_t io_serial_buffer_size(void);
 
 #endif /* IO_H */

@@ -13,16 +13,25 @@
 #define IO_MODE_SERIAL        0
 #define IO_MODE_ETHERNET      1
 
-#define CONFIG_SERIAL_DRIVER_SWIFTLINK "ser-swlink"
-#define CONFIG_SERIAL_DRIVER_UP2400 "ser-up2400"
-
+/* C64/128 Driver defines */
 #define CONFIG_MOUSE_DRIVER_1351 "mou-1351"
 #define CONFIG_MOUSE_DRIVER_JOY "mou-joy"
 #define CONFIG_MOUSE_DRIVER_INKWELL "mou-inkwell"
 #define CONFIG_MOUSE_DRIVER_POT "mou-pot"
+#define CONFIG_SERIAL_DRIVER_SWIFTLINK "ser-swlink"
+#define CONFIG_SERIAL_DRIVER_UP2400 "ser-up2400"
 
-#define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_UP2400
-#define CONFIG_DEFAULT_MOUSE_DRIVER CONFIG_MOUSE_DRIVER_1351
+/* Atari Driver defines */
+#define CONFIG_SERIAL_DRIVER_ATRRDEV "atrrdev.ser"
+#define CONFIG_MOUSE_DRIVER_ATRAMI "atrami.mou"
+#define CONFIG_MOUSE_DRIVER_ATRJOY "atrjoy.mou"
+#define CONFIG_MOUSE_DRIVER_ATRST "atrst.mou"
+#define CONFIG_MOUSE_DRIVER_ATRTRK "atrtrk.mou"
+#define CONFIG_MOUSE_DRIVER_ATRTT "atrtt.mou"
+
+/* Apple2 Driver Defines */
+#define CONFIG_SERIAL_DRIVER_SSC "a2.ssc.ser"
+#define CONFIG_MOUSE_DRIVER_STDMOU "a2.stdmou.mou"
 
 typedef struct configInfo
 {

@@ -26,6 +26,8 @@ static DataType PType,		/* Mode type */
 static uint16_t Phase;		/* Phase of current type */
 static padWord theWord;		/* Data received for various data types */
 static padByte theChar;
+static padByte rawChar;
+static padByte lastChar;
 static padRGB theColor;
 static uint16_t LowX,		/* Previous coordinates received */
   HiX, LowY, HiY;
@@ -771,183 +773,194 @@ ShowPLATO (padByte *buff, uint16_t count)
 {
   while (count--)
     {
-      theChar = *buff++ & 0x7F;
-      if (TTY)
+      theChar = *buff++;
+      if (lastChar==0xFF && theChar==0xFF)
 	{
-	  if (!EscFlag)
-	    screen_tty_char (theChar);
-	  else if (theChar == 0x02)
-	    InitPLATOx ();
-	}
-      else if (EscFlag)
-	{
-	  switch (theChar)
-	    {
-	    case 0x03:
-	      InitTTY ();
-	      break;
-
-	    case 0x0C:
-	      screen_clear ();
-	      break;
-
-	    case 0x11:
-	      CurMode = ModeInverse;
-	      SetFast();
-	      break;
-	    case 0x12:
-	      CurMode = ModeWrite;
-	      SetFast();
-	      break;
-	    case 0x13:
-	      CurMode = ModeErase;
-	      SetFast();
-	      break;
-	    case 0x14:
-	      CurMode = ModeRewrite;
-	      SetFast();
-	      break;
-
-	    case 0x32:
-	      SetCommand (mLoadCoord, tCoord);
-	      break;
-
-	    case 0x40:
-	      Superx ();
-	      break;
-	    case 0x41:
-	      Subx ();
-	      break;
-
-	    case 0x42:
-	      CurMem = M0;
-	      break;
-	    case 0x43:
-	      CurMem = M1;
-	      break;
-	    case 0x44:
-	      CurMem = M2;
-	      break;
-	    case 0x45:
-	      CurMem = M3;
-	      break;
-
-	    case 0x4A:
-	      Rotate = false;
-	      SetFast();
-	      break;
-	    case 0x4B:
-	      Rotate = true;
-	      SetFast();
-	      break;
-	    case 0x4C:
-	      Reverse = false;
-	      SetFast();
-	      break;
-	    case 0x4D:
-	      Reverse = true;
-	      SetFast();
-	      break;
-	    case 0x4E:
-	      ModeBold = false;
-	      SetFast();
-	      break;
-	    case 0x4F:
-	      ModeBold = true;
-	      SetFast();
-	      break;
-
-	    case 0x50:
-	      SetMode (mLoadChar, tWord);
-	      break;
-	    case 0x51:
-	      SetCommand (mSSF, tWord);
-	      break;
-	    case 0x52:
-	      SetCommand (mExternal, tWord);
-	      break;
-	    case 0x53:
-	      SetMode (mLoadMem, tWord);
-	      break;
-	    case 0x54:
-	      SetMode (mMode5, tWord);
-	      break;
-	    case 0x55:
-	      SetMode (mMode6, tWord);
-	      break;
-	    case 0x56:
-	      SetMode (mMode7, tWord);
-	      break;
-	    case 0x57:
-	      SetCommand (mLoadAddr, tWord);
-	      break;
-	    case 0x59:
-	      SetCommand (mLoadEcho, tWord);
-	      break;
-
-	    case 0x5A:
-	      Marginx ();
-	      break;
-
-	    case 0x61:
-	      SetCommand (mFore, tColor);
-	      break;
-	    case 0x62:
-	      SetCommand (mBack, tColor);
-	      break;
-	    case 0x63:
-	      SetCommand (mPaint, tPaint);
-	      break;
-	    }
-	}
-      else if (theChar < 0x20)
-	{
-	  if (charCount > 0)
-	    {
-	      screen_char_draw (&charCoord, charBuff, charCount);
-	      charCount = 0;
-	    }
-	  switch (theChar)
-	    {
-	    case 0x00:
-	      screen_wait();
-	    case 0x08:
-	      BSx ();
-	      break;
-	    case 0x09:
-	      HTx ();
-	      break;
-	    case 0x0A:
-	      LFx ();
-	      break;
-	    case 0x0B:
-	      VTx ();
-	      break;
-	    case 0x0C:
-	      FFx ();
-	      break;
-	    case 0x0D:
-	      CRx ();
-	      break;
-
-	    case 0x19:
-	      SetMode (mBlock, tCoord);
-	      break;
-	    case 0x1C:
-	      SetMode (mPoint, tCoord);
-	      break;
-	    case 0x1D:
-	      SetMode (mLine, tCoord);
-	      break;
-	    case 0x1F:
-	      SetMode (mAlpha, tByte);
-	      break;
-	    }
+	  // Drop this character, it is an escaped TELNET IAC.
+	  lastChar=0;
 	}
       else
-	DataChar ();
-
-      EscFlag = (theChar == 0x1B);
+	{
+	  rawChar=theChar;
+	  theChar &=0x7F;
+	  if (TTY)
+	    {
+	      if (!EscFlag)
+		screen_tty_char (theChar);
+	      else if (theChar == 0x02)
+		InitPLATOx ();
+	    }
+	  else if (EscFlag)
+	    {
+	      switch (theChar)
+		{
+		case 0x03:
+		  InitTTY ();
+		  break;
+		  
+		case 0x0C:
+		  screen_clear ();
+		  break;
+		  
+		case 0x11:
+		  CurMode = ModeInverse;
+		  SetFast();
+		  break;
+		case 0x12:
+		  CurMode = ModeWrite;
+		  SetFast();
+		  break;
+		case 0x13:
+		  CurMode = ModeErase;
+		  SetFast();
+		  break;
+		case 0x14:
+		  CurMode = ModeRewrite;
+		  SetFast();
+		  break;
+		  
+		case 0x32:
+		  SetCommand (mLoadCoord, tCoord);
+		  break;
+		  
+		case 0x40:
+		  Superx ();
+		  break;
+		case 0x41:
+		  Subx ();
+		  break;
+		  
+		case 0x42:
+		  CurMem = M0;
+		  break;
+		case 0x43:
+		  CurMem = M1;
+		  break;
+		case 0x44:
+		  CurMem = M2;
+		  break;
+		case 0x45:
+		  CurMem = M3;
+		  break;
+		  
+		case 0x4A:
+		  Rotate = false;
+		  SetFast();
+		  break;
+		case 0x4B:
+		  Rotate = true;
+		  SetFast();
+		  break;
+		case 0x4C:
+		  Reverse = false;
+		  SetFast();
+		  break;
+		case 0x4D:
+		  Reverse = true;
+		  SetFast();
+		  break;
+		case 0x4E:
+		  ModeBold = false;
+		  SetFast();
+		  break;
+		case 0x4F:
+		  ModeBold = true;
+		  SetFast();
+		  break;
+		  
+		case 0x50:
+		  SetMode (mLoadChar, tWord);
+		  break;
+		case 0x51:
+		  SetCommand (mSSF, tWord);
+		  break;
+		case 0x52:
+		  SetCommand (mExternal, tWord);
+		  break;
+		case 0x53:
+		  SetMode (mLoadMem, tWord);
+		  break;
+		case 0x54:
+		  SetMode (mMode5, tWord);
+		  break;
+		case 0x55:
+		  SetMode (mMode6, tWord);
+		  break;
+		case 0x56:
+		  SetMode (mMode7, tWord);
+		  break;
+		case 0x57:
+		  SetCommand (mLoadAddr, tWord);
+		  break;
+		case 0x59:
+		  SetCommand (mLoadEcho, tWord);
+		  break;
+		  
+		case 0x5A:
+		  Marginx ();
+		  break;
+		  
+		case 0x61:
+		  SetCommand (mFore, tColor);
+		  break;
+		case 0x62:
+		  SetCommand (mBack, tColor);
+		  break;
+		case 0x63:
+		  SetCommand (mPaint, tPaint);
+		  break;
+		}
+	    }
+	  else if (theChar < 0x20)
+	    {
+	      if (charCount > 0)
+		{
+		  screen_char_draw (&charCoord, charBuff, charCount);
+		  charCount = 0;
+		}
+	      switch (theChar)
+		{
+		case 0x00:
+		  screen_wait();
+		case 0x08:
+		  BSx ();
+		  break;
+		case 0x09:
+		  HTx ();
+		  break;
+		case 0x0A:
+		  LFx ();
+		  break;
+		case 0x0B:
+		  VTx ();
+		  break;
+		case 0x0C:
+		  FFx ();
+		  break;
+		case 0x0D:
+		  CRx ();
+		  break;
+		  
+		case 0x19:
+		  SetMode (mBlock, tCoord);
+		  break;
+		case 0x1C:
+		  SetMode (mPoint, tCoord);
+		  break;
+		case 0x1D:
+		  SetMode (mLine, tCoord);
+		  break;
+		case 0x1F:
+		  SetMode (mAlpha, tByte);
+		  break;
+		}
+	    }
+	  else
+	    DataChar ();
+	  
+	  EscFlag = (theChar == 0x1B);
+	  lastChar=rawChar;
+	}
     }
   if (charCount > 0)
     {

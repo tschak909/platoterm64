@@ -9,7 +9,7 @@
  
 # Space or comma separated list of cc65 supported target platforms to build for.
 # Default: c64 (lowercase!)
-TARGETS := c64
+TARGETS := c64,c128,atari,apple2enh
  
 # Name of the final, single-file executable.
 # Default: name of the current dir with target name appended
@@ -35,7 +35,7 @@ ASFLAGS =
  
 # Additional linker flags and options.
 # Default: none
-LDFLAGS = c64-tgimousedata.o
+LDFLAGS =
  
 # Path to the directory containing C and ASM sources.
 # Default: src
@@ -338,16 +338,39 @@ zap:
 love:
 	@echo "Not war, eh?"
 
-dist: $(PROGRAM)
-	c1541 -format "platoterm64,01" d64 dist/platoterm64-1_0.d64
-	c1541 -attach dist/platoterm64-1_0.d64 -write plato.c64 platoterm
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/gpl-3.0 gpl-3.0
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-1351.mou mou-1351
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-inkwell.mou mou-inkwell
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-joy.mou mou-joy
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-pot.mou mou-pot
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-swlink.ser ser-swlink
-	c1541 -attach dist/platoterm64-1_0.d64 -write dist/c64-up2400.ser ser-up2400
+dist-c64: $(PROGRAM).c64
+	c1541 -format "platoterm64,01" d64 dist.c64/platoterm64-1_0.d64
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write plato.c64 platoterm
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/gpl-3.0 gpl-3.0
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-1351.mou mou-1351
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-inkwell.mou mou-inkwell
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-joy.mou mou-joy
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-pot.mou mou-pot
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-swlink.ser ser-swlink
+	c1541 -attach dist.c64/platoterm64-1_0.d64 -write dist.c64/c64-up2400.ser ser-up2400
+
+dist-c128: $(PROGRAM).c128
+	c1541 -format "platoterm128,01" d64 dist.c128/platoterm128-1_0.d64
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write plato.c128 platoterm
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/gpl-3.0 gpl-3.0
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-1351.mou mou-1351
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-inkwell.mou mou-inkwell
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-joy.mou mou-joy
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-pot.mou mou-pot
+	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-swlink.ser ser-swlink
+
+dist-apple2enh: $(PROGRAM).apple2enh
+	cp dist.apple2enh/bootable.po dist.apple2enh/dist.po
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po plato.system sys <dist.apple2enh/plato.system
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po license.system sys <dist.apple2enh/license.system
+	java -jar dist.apple2enh/ac.jar -as dist.apple2enh/dist.po plato <plato.apple2enh
+	java -jar dist.apple2enh/ac.jar -as dist.apple2enh/dist.po license <dist.apple2enh/license
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po a2.ssc.ser rel 0 <dist.apple2enh/a2e.ssc.ser
+	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po a2.stdmou.mou rel 0 <dist.apple2enh/a2e.stdmou.mou
+
+dist-atari: $(PROGRAM).atari
+	cp plato.atari dist.atari/files/plato.com
+	dir2atr -b Dos25 720 dist.atari/plato.atr dist.atari/files
 
 ###################################################################
 ###  Place your additional targets in the additional Makefiles  ###

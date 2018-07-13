@@ -18,6 +18,18 @@
 void screen_init(void);
 
 /**
+ * screen_load_driver()
+ * Load the TGI driver
+ */
+void screen_load_driver(void);
+
+/**
+ * screen_init_hook()
+ * Called after tgi_init to set any special features, e.g. nmi trampolines.
+ */
+void screen_init_hook(void);
+
+/**
  * screen_cycle_foreground()
  * Go to the next foreground color in palette
  */
