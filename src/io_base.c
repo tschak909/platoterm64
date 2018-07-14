@@ -112,7 +112,7 @@ void io_recv_serial(void)
     }
   else /* xoff_enabled==true */
     {
-      if (io_serial_buffer_size()<XON_THRESHOLD)
+      if (xoff_enabled==true && io_serial_buffer_size()<XON_THRESHOLD)
   	{
   	  io_recv_serial_flow_on();
   	}
