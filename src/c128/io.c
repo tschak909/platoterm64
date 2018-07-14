@@ -29,7 +29,7 @@ uint8_t io_serial_buffer_size_swiftlink(void);
  */
 void io_init_funcptrs(void)
 {
-    if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK))
+    if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK)==0)
     {
       io_serial_buffer_size=io_serial_buffer_size_swiftlink;
       io_recv_serial_flow_off=io_recv_serial_flow_off_swiftlink;

@@ -28,7 +28,7 @@ uint8_t io_serial_buffer_size_atari(void);
  */
 void io_init_funcptrs(void)
 {
-  if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_ATRRDEV))
+  if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_ATRRDEV)==0)
     {
       io_serial_buffer_size=io_serial_buffer_size_atari;
       io_recv_serial_flow_off=io_recv_serial_flow_off_atari;

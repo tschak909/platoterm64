@@ -18,11 +18,9 @@
 
 #define NULL 0
 
-#define HANG for (;;) {}
-
 uint8_t xoff_enabled;
 
-void (*io_serial_buffer_size)(void);
+uint8_t (*io_serial_buffer_size)(void);
 void (*io_recv_serial_flow_off)(void);
 void (*io_recv_serial_flow_on)(void);
 
@@ -31,6 +29,9 @@ static uint8_t io_res;
 static uint8_t recv_buffer[1024];
 static uint16_t recv_buffer_size=0;
 extern ConfigInfo config;
+
+#define XON_THRESHOLD 16
+#define XOFF_THRESHOLD 160
 
 static struct ser_params params = {
   SER_BAUD_38400,
@@ -104,14 +105,14 @@ void io_recv_serial(void)
   
   if (xoff_enabled==false)
     {
-      if (recv_buffer_size>2000)
+      if (io_serial_buffer_size()>XOFF_THRESHOLD)
   	{
   	  io_recv_serial_flow_off();
   	}
     }
   else /* xoff_enabled==true */
     {
-      if (recv_buffer_size<64)
+      if (io_serial_buffer_size()<XON_THRESHOLD)
   	{
   	  io_recv_serial_flow_on();
   	}
