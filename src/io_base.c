@@ -22,6 +22,10 @@
 
 uint8_t xoff_enabled;
 
+void (*io_serial_buffer_size)(void);
+void (*io_recv_serial_flow_off)(void);
+void (*io_recv_serial_flow_on)(void);
+
 static uint8_t ch=0;
 static uint8_t io_res;
 static uint8_t recv_buffer[1024];
@@ -44,11 +48,7 @@ void io_init(void)
   io_res=ser_load_driver(config.driver_ser);
   xoff_enabled=false;
   
-  if (io_res!=SER_ERR_OK)
-    {
-      exit(0);
-      return;
-    }
+  io_init_funcptrs();
   
   io_open();
 
@@ -65,12 +65,6 @@ void io_open(void)
       
       io_res=ser_open(&params);
 
-      if (io_res!=SER_ERR_OK)
-	{
-	  exit(0);
-	  return;
-	}
-      
       // Needed to enable up2400. Ignored with swlink.
       ser_ioctl(1, NULL);
     }

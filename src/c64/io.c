@@ -15,10 +15,21 @@
 
 extern uint8_t xoff_enabled;
 
+void io_recv_serial_flow_off_user_port(void);
+void io_recv_serial_flow_on_user_port(void);
+uint8_t io_serial_buffer_size_user_port(void);
+
+/**
+ * io_init_funcptrs() - Set up I/O function pointers
+ */
+void io_init_funcptrs(void)
+{
+}
+
 /**
  * Return the serial buffer size
  */
-uint8_t io_serial_buffer_size(void)
+uint8_t io_serial_buffer_size_user_port(void)
 {
   return PEEK(0x29B)-PEEK(0x29C)&0xff;
 }
@@ -26,7 +37,7 @@ uint8_t io_serial_buffer_size(void)
 /**
  * io_recv_serial_flow_off() - Tell modem to stop receiving.
  */
-void io_recv_serial_flow_off(void)
+void io_recv_serial_flow_off_user_port(void)
 {
   // for now, assume user port.
   xoff_enabled=true;
@@ -36,7 +47,7 @@ void io_recv_serial_flow_off(void)
 /**
  * io_recv_serial_flow_on() - Tell modem to stop receiving.
  */
-void io_recv_serial_flow_on(void)
+void io_recv_serial_flow_on_user_port(void)
 {
   // For now, assume user port.
   xoff_enabled=false;

@@ -33,6 +33,9 @@ extern uint16_t fontptr[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
 
+extern void (*io_recv_serial_flow_on)(void);
+extern void (*io_recv_serial_flow_off)(void);
+
 /**
  * screen_init() - Set up the screen
  */

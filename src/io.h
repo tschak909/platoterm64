@@ -19,6 +19,11 @@
 void io_init(void);
 
 /**
+ * io_init_funcptrs() - Set up I/O function pointers
+ */
+void io_init_funcptrs(void);
+
+/**
  * io_open() - Open the device
  */
 void io_open(void);
@@ -38,25 +43,10 @@ void io_main(void);
  */
 void io_recv_serial(void);
 
-/**
- * io_recv_serial_flow_off() - Tell modem to stop receiving.
- */
-void io_recv_serial_flow_off(void);
-
-/**
- * io_recv_serial_flow_on() - Tell modem to stop receiving.
- */
-void io_recv_serial_flow_on(void);
-
 
 /**
  * io_done() - Called to close I/O
  */
 void io_done(void);
-
-/**
- * Return the serial buffer size
- */
-uint8_t io_serial_buffer_size(void);
 
 #endif /* IO_H */
