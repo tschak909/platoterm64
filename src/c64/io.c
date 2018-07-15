@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <serial.h>
 #include "../config.h"
 
 extern uint8_t xoff_enabled;
@@ -49,6 +50,15 @@ void io_init_funcptrs(void)
       io_recv_serial_flow_on=io_recv_serial_flow_on_swiftlink;
     }
 }
+
+/**
+ * io_send_byte(b) - Send specified byte out
+ */
+void io_send_byte(uint8_t b)
+{
+  ser_put(b);
+}
+
 
 /********* USER PORT *****************************/
 

@@ -11,6 +11,7 @@
 #include <peekpoke.h>
 #include <stdint.h>
 #include <string.h>
+#include <serial.h>
 #include "../config.h"
 
 extern uint8_t xoff_enabled;
@@ -18,6 +19,8 @@ extern ConfigInfo config;
 extern uint8_t (*io_serial_buffer_size)(void);
 extern void (*io_recv_serial_flow_off)(void);
 extern void (*io_recv_serial_flow_on)(void);
+
+static uint8_t send_delay=0; /* We need a send delay for apple2, wtf? */
 
 void io_recv_serial_flow_off_ssc(void);
 void io_recv_serial_flow_on_ssc(void);
@@ -33,6 +36,18 @@ void io_init_funcptrs(void)
       io_serial_buffer_size=io_serial_buffer_size_ssc;
       io_recv_serial_flow_off=io_recv_serial_flow_off_ssc;
       io_recv_serial_flow_on=io_recv_serial_flow_on_ssc;
+    }
+}
+
+/**
+ * io_send_byte(b) - Send specified byte out
+ */
+void io_send_byte(uint8_t b)
+{
+  ser_put(b);
+  for (send_delay=0;send_delay<200;send_delay++)
+    {
+      // sit and spin.
     }
 }
 
