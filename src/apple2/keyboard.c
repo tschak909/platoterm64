@@ -28,15 +28,17 @@ void keyboard_main(void)
   if (kbhit())
     {
       ch=cgetc();
-      if (ch=0x1B) // ESC
+      if (ch==0x1B) // ESC
 	is_escape=true;
-      else if (is_escape)
+      else if (is_escape==true)
 	{
 	  keyboard_out(esc_key_to_pkey[ch]);
 	  is_escape=false;
 	}
       else
-	keyboard_out(key_to_pkey[ch]);
+	{
+	  keyboard_out(key_to_pkey[ch]);
+	}
     }
 }
 

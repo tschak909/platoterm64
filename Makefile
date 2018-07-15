@@ -9,7 +9,7 @@
  
 # Space or comma separated list of cc65 supported target platforms to build for.
 # Default: c64 (lowercase!)
-TARGETS := c64,c128,atari,apple2enh
+TARGETS := c64,c128,atari,apple2
  
 # Name of the final, single-file executable.
 # Default: name of the current dir with target name appended
@@ -359,14 +359,14 @@ dist-c128: $(PROGRAM).c128
 	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-pot.mou mou-pot
 	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-swlink.ser ser-swlink
 
-dist-apple2enh: $(PROGRAM).apple2enh
-	cp dist.apple2enh/bootable.po dist.apple2enh/dist.po
-	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po plato.system sys <dist.apple2enh/plato.system
-	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po license.system sys <dist.apple2enh/license.system
-	java -jar dist.apple2enh/ac.jar -as dist.apple2enh/dist.po plato <plato.apple2enh
-	java -jar dist.apple2enh/ac.jar -as dist.apple2enh/dist.po license <dist.apple2enh/license
-	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po a2.ssc.ser rel 0 <dist.apple2enh/a2e.ssc.ser
-	java -jar dist.apple2enh/ac.jar -p dist.apple2enh/dist.po a2.stdmou.mou rel 0 <dist.apple2enh/a2e.stdmou.mou
+dist-apple2: $(PROGRAM).apple2
+	cp dist.apple2/bootable.po dist.apple2/dist.po
+	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po plato.system sys <dist.apple2/plato.system
+	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po license.system sys <dist.apple2/license.system
+	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po plato <plato.apple2
+	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po license <dist.apple2/license
+	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.ssc.ser rel 0 <dist.apple2/a2.ssc.ser
+	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.stdmou.mou rel 0 <dist.apple2/a2.stdmou.mou
 
 dist-atari: $(PROGRAM).atari
 	cp plato.atari dist.atari/files/plato.com

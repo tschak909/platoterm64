@@ -76,14 +76,6 @@ void io_open(void)
 }
 
 /**
- * io_send_byte(b) - Send specified byte out
- */
-void io_send_byte(uint8_t b)
-{
-  ser_put(b);
-}
-
-/**
  * io_main() - The IO main loop
  */
 void io_main(void)
