@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include "../io.h"
 #include "../config.h"
 
 extern uint8_t xoff_enabled;
@@ -89,6 +90,7 @@ void io_recv_serial_flow_on_user_port(void)
  */
 uint8_t io_serial_buffer_size_swiftlink(void)
 {
+  return PEEK(0xF9)-PEEK(0xF8);
 }
 
 /**
@@ -96,6 +98,8 @@ uint8_t io_serial_buffer_size_swiftlink(void)
  */
 void io_recv_serial_flow_off_swiftlink(void)
 {
+  io_send_byte(0x13);
+  xoff_enabled=true;
 }
 
 /**
@@ -103,4 +107,6 @@ void io_recv_serial_flow_off_swiftlink(void)
  */
 void io_recv_serial_flow_on_swiftlink(void)
 {
+  io_send_byte(0x11);
+  xoff_enabled=false;
 }
