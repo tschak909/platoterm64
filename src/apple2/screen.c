@@ -20,6 +20,9 @@ extern ConfigInfo config;
 
 extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 
+static uint8_t bp=0;
+static uint8_t bd=0;
+
 /**
  * screen_load_driver()
  * Load the TGI driver
@@ -57,5 +60,11 @@ void screen_wait(void)
  */
 void screen_beep(void)
 {
-  // Use the monitor routine
+  for (bd=0;bd<75;++bd)
+    {
+      POKE(0xC030,0);
+      for (bp=0;bp<75;++bp)
+	{
+	}
+    }
 }

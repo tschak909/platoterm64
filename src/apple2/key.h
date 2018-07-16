@@ -23,8 +23,8 @@ unsigned char key_to_pkey[]={
     PKEY_EDIT, /* 0x05 CTRL-E */
     PKEY_FONT, /* 0x06 CTRL-F */
     PKEY_DIVIDE, /* 0x07 CTRL-G */
-    PKEY_HELP, /* 0x08 CTRL-H */
-    PKEY_NOKEY, /* 0x09 CTRL-I */
+    PKEY_ERASE, /* 0x08 CTRL-H */
+    PKEY_HELP, /* 0x09 CTRL-I */
     PKEY_NOKEY, /* 0x0a CTRL-J */
     PKEY_NOKEY, /* 0x0b CTRL-K */
     PKEY_LAB, /* 0x0c CTRL-L */
@@ -47,7 +47,7 @@ unsigned char key_to_pkey[]={
     PKEY_NOKEY, /* 0x1d */
     PKEY_NOKEY, /* 0x1e */
     PKEY_NOKEY, /* 0x1f */
-    PKEY_NOKEY, /* 0x20 SPACE */
+    PKEY_SPACE, /* 0x20 SPACE */
     PKEY_EXCLAMATION, /* 0x21 ! */
     PKEY_QUOTE, /* 0x22 " */
     PKEY_POUND, /* 0x23 # */
@@ -273,7 +273,6 @@ unsigned char esc_key_to_pkey[]={
     PKEY_NOKEY, /* 0x7c | */
     PKEY_NOKEY, /* 0x7d } */
     PKEY_NOKEY, /* 0x7e ~ */
-    PKEY_ERASE1, /* 0x7f DEL */
 };
 
 #endif /* KEY_H */

@@ -365,6 +365,7 @@ dist-apple2: $(PROGRAM).apple2
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po license.system sys <dist.apple2/license.system
 	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po plato <plato.apple2
 	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po license <dist.apple2/license
+	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po a2s <dist.apple2/a2_scan
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.ssc.ser rel 0 <dist.apple2/a2.ssc.ser
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.stdmou.mou rel 0 <dist.apple2/a2.stdmou.mou
 
