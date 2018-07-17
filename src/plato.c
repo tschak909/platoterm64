@@ -27,7 +27,7 @@ extern short splash_size;
 void greeting(void)
 {
   ShowPLATO(splash,splash_size);
-  prefs_display("platoterm64 ready - f3 for setup");
+  prefs_display("platoterm ready - f3 for setup");
   terminal_initial_position();
 }
 
