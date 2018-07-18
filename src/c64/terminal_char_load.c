@@ -7,12 +7,17 @@
  * terminal_char_load.c - Character set loading routine for 5x6 font.
  */
 
+#include <string.h>
 #include "../terminal.h"
 #include "../protocol.h"
 
 static const unsigned char MASKTAB[]={
   0x7F,0xBF,0xDF,0xEF,0xF7,0xFB,0xFD,0xFE
-}; 
+};
+
+static const unsigned char BITTAB[]={
+  0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01
+};
 
 static const unsigned char TAB_0_5[]={
   0x00,0x00,0x00,0x01,0x01,0x01,0x02,0x02,
@@ -36,11 +41,18 @@ static const unsigned char TAB_0_25[]={
   0,5,10,15,20,25
 };
 
+static unsigned char transposed_char[16]={
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+
 /**
  * terminal_char_load - Store a character into the user definable
  * character set.
  */
 void terminal_char_load(padWord charnum, charData theChar)
 {
+  /* Transpose horizontal word into vertical byte. */
+  memset(&transposed_char,0,sizeof(transposed_char));
+  
 }
 
