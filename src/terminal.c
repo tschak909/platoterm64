@@ -158,14 +158,6 @@ void terminal_mem_load(padWord addr, padWord value)
 }
 
 /**
- * terminal_char_load - Store a character into the user definable
- * character set.
- */
-void terminal_char_load(padWord charnum, charData theChar)
-{
-}
-
-/**
  * Mode5, 6, and 7 are basically stubbed.
  */
 void terminal_mode_5(padWord value)
