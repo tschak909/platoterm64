@@ -7,6 +7,7 @@
  * screen_base.c - Display output functions (base)
  */
 
+#include <string.h>
 #include <stdbool.h>
 #include <tgi.h>
 #include <stdlib.h>
@@ -29,6 +30,7 @@ extern unsigned short scalex[];
 extern unsigned short scaley[];
 
 extern uint8_t font[];
+extern uint8_t fontm23[];
 extern uint16_t fontptr[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
@@ -134,20 +136,25 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t mainColor=TGI_COLOR_WHITE;
   uint8_t altColor=TGI_COLOR_BLACK;
   uint8_t *p;
+  uint8_t* curfont;
   
   switch(CurMem)
     {
     case M0:
+      curfont=font;
       offset=-32;
       break;
     case M1:
+      curfont=font;
       offset=64;
       break;
     case M2:
-      /* TODO: custom charsets */
+      curfont=fontm23;
+      offset=-32;
       break;
     case M3:
-      /* TODO: custom charsets */
+      curfont=fontm23;
+      offset=32;      
       break;
     }
 
@@ -184,7 +191,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       a=*ch;
       ++ch;
       a+=offset;
-      p=&font[fontptr[a]];
+      p=&curfont[fontptr[a]];
       
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
@@ -239,7 +246,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       a=*ch;
       ++ch;
       a+=offset;
-      p=&font[fontptr[a]];
+      p=&curfont[fontptr[a]];
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
   	  b=*p;
