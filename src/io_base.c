@@ -31,7 +31,7 @@ static uint16_t recv_buffer_size=0;
 extern ConfigInfo config;
 
 #define XON_THRESHOLD 16
-#define XOFF_THRESHOLD 160
+#define XOFF_THRESHOLD 250
 
 static struct ser_params params = {
   SER_BAUD_38400,

@@ -23,6 +23,7 @@ static unsigned char BTAB[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01}; // flip o
 static unsigned char BTAB_5[]={0x08,0x10,0x10,0x20,0x20,0x40,0x80,0x80}; // flip one bit on for the 5x6 matrix (OR)
 
 static unsigned char TAB_0_5[]={0x05,0x05,0x05,0x04,0x04,0x04,0x03,0x03,0x02,0x02,0x01,0x01,0x01,0x00,0x00,0x00};
+static unsigned char TAB_0_5i[]={0x00,0x00,0x00,0x01,0x01,0x01,0x02,0x02,0x03,0x03,0x04,0x04,0x04,0x05,0x05,0x05};
 
 static unsigned char TAB_0_4[]={0x00,0x00,0x01,0x02,0x02,0x03,0x03,0x04}; // return 0..4 given index 0 to 7
 
@@ -44,25 +45,10 @@ static unsigned char TAB_0_25[]={0,5,10,15,20,25}; // Given index 0 of 5, return
 
 static unsigned char pix_cnt;     // total # of pixels
 static unsigned char curr_word;   // current word
-static unsigned char u,v,w;       // loop counters
+static unsigned char u,v;       // loop counters
 
 extern unsigned char fontm23[768];
 extern unsigned short fontptr[160];
-
-/* /\** */
-/*  * log - send data to printer */
-/*  *\/ */
-/* void log(const char* format, ...) */
-/* { */
-/*   char outputbuff[256]; */
-/*   va_list args; */
-/*   cbm_open(4,4,CBM_WRITE,""); */
-/*   va_start(args, format); */
-/*   vsprintf(outputbuff,format,args); */
-/*   cbm_write(4,outputbuff,strlen(outputbuff)); */
-/*   va_end(args); */
-/*   cbm_close(4); */
-/* } */
 
 /**
  * terminal_char_load - Store a character into the user definable
@@ -95,25 +81,25 @@ void terminal_char_load(padWord charnum, charData theChar)
   if ((54 <= pix_cnt) && (pix_cnt < 85))
     {
       // Algorithm A - approx Half of pixels are set
-      for (v=6; v-->0; )
+      for (u=6; u-->0; )
   	{
-  	  for (w=5; w-->0; )
+  	  for (v=5; v-->0; )
   	    {
-  	      if (PIX_WEIGHTS[TAB_0_25[v]+w] >= PIX_THRESH[TAB_0_25[v]+w])
-  		fontm23[fontptr[charnum]+v]|=BTAB[w];
+  	      if (PIX_WEIGHTS[TAB_0_25[u]+v] >= PIX_THRESH[TAB_0_25[u]+v])
+  		fontm23[fontptr[charnum]+u]|=BTAB[v];
   	    }
   	}
     }
   else if ((pix_cnt < 54) || (pix_cnt >= 85))
     {
       // Algorithm B - Sparsely or heavily populated bitmaps
-      for (v=16; v-->0; )
+      for (u=16; u-->0; )
 	{
-	  for (w=8; w-->0; )
+	  for (v=8; v-->0; )
 	    {
-	      if (char_data[v] & (1<<w))
+	      if (char_data[u] & (1<<v))
 		{
-		  fontm23[fontptr[charnum]+TAB_0_5[v]]|=BTAB_5[w];
+		  fontm23[fontptr[charnum]+TAB_0_5i[u]]|=BTAB_5[v];
 		}
 	    }
 	}
