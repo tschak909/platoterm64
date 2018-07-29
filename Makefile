@@ -351,13 +351,13 @@ dist-c64: $(PROGRAM).c64
 
 dist-c128: $(PROGRAM).c128
 	c1541 -format "platoterm128,01" d64 dist.c128/platoterm128-1_0.d64
-	c1541 -attach dist.c128/platoterm128-1_0.d128 -write plato.c128 platoterm
-	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/gpl-3.0 gpl-3.0
-	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-1351.mou mou-1351
-	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-inkwell.mou mou-inkwell
-	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-joy.mou mou-joy
-	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-pot.mou mou-pot
-	c1541 -attach dist.c128/platoterm128-1_0.d128 -write dist.c128/c128-swlink.ser ser-swlink
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write plato.c128 platoterm
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/gpl-3.0 gpl-3.0
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-1351.mou mou-1351
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-inkwell.mou mou-inkwell
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-joy.mou mou-joy
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-pot.mou mou-pot
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-swlink.ser ser-swlink
 
 dist-apple2: $(PROGRAM).apple2
 	cp dist.apple2/bootable.po dist.apple2/dist.po
