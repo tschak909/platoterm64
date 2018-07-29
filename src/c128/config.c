@@ -16,7 +16,7 @@
 
 extern ConfigInfo config;
 
-#define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_UP2400
+#define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_SWIFTLINK
 #define CONFIG_DEFAULT_MOUSE_DRIVER CONFIG_MOUSE_DRIVER_1351
 
 /**
@@ -26,7 +26,7 @@ extern ConfigInfo config;
 void config_set_defaults(void)
 {
   config.io_mode = IO_MODE_SERIAL;
-  config.baud = SER_BAUD_2400;
+  config.baud = SER_BAUD_9600;
   config.use_dhcp = false;
   config.ip_address=0;
   config.netmask=0;
