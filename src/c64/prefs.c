@@ -33,7 +33,7 @@ void prefs_touch(void)
 {
   prefs_display("1)351 i)nkwell j)oy k)oala b)ack: ");
 
-  ch=prefs_get_key_matching("1ijkb");
+  ch=prefs_get_key_matching("1ijkbIJKB");
 
   switch(ch)
     {
@@ -71,7 +71,7 @@ void prefs_driver(void)
 {
   prefs_display("driver - s)wiftlink232 u)serport2400 b)ack: ");
   
-  ch=prefs_get_key_matching("sub");
+  ch=prefs_get_key_matching("subSUB");
 
   switch(ch)
     {

@@ -15,6 +15,7 @@
 #include <string.h>
 #include <serial.h>
 #include <mouse.h>
+#include <ctype.h>
 #include "io.h"
 #include "screen.h"
 #include "keyboard.h"
@@ -82,7 +83,7 @@ void prefs_serial(void)
 {
   prefs_display("i)nterface d)river b)aud t)ouch s)ave e)xit: ");
 
-  ch=prefs_get_key_matching("idbtse");
+  ch=prefs_get_key_matching("idbtseIDBTSE");
 
   switch(ch)
     {
@@ -133,7 +134,7 @@ void prefs_baud(void)
 {
   prefs_display("3)00 1)200 2)400 9)600 q)19200 w)38400 b)ack: ");
   
-  ch=prefs_get_key_matching("3129qwb");
+  ch=prefs_get_key_matching("3129qwbQWB");
 
   switch(ch)
     {
@@ -181,7 +182,7 @@ void prefs_interface(void)
 {
   prefs_display("interface - e)thernet s)erial b)ack: ");
 
-  ch=prefs_get_key_matching("esb");
+  ch=prefs_get_key_matching("esbESB");
 
   switch(ch)
     {
@@ -209,7 +210,7 @@ void prefs_dhcp(void)
 {
   prefs_display("dhcp - y)es n)o b)ack: ");
 
-  ch=prefs_get_key_matching("ynb");
+  ch=prefs_get_key_matching("ynbYNB");
 
   switch(ch)
     {
@@ -324,7 +325,7 @@ void prefs_ethernet(void)
 {
   prefs_display("i)nterface d)hcp p)ip n)etmask g)ateway w)dns s)save e)xit: ");
 
-  ch=prefs_get_key_matching("idpngwse");
+  ch=prefs_get_key_matching("idpngwseIDPNGWSE");
 
   switch(ch)
     {
@@ -396,7 +397,7 @@ unsigned char prefs_get_key_matching(const char* matches)
   
   while (true)
     {
-      ch=cgetc();
+      ch=tolower(cgetc());
       for (i=0;i<strlen(matches);++i)
 	{
 	  if (ch==matches[i])

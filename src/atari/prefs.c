@@ -33,7 +33,7 @@ void prefs_touch(void)
 {
   prefs_display("a)miga j)oy k)oala s)t t)rkball b)ack: ");
 
-  ch=prefs_get_key_matching("ajkstb");
+  ch=prefs_get_key_matching("ajkstbAJKSTB");
 
   switch(ch)
     {
@@ -76,12 +76,12 @@ void prefs_driver(void)
 {
   prefs_display("driver - r)device b)ack: ");
   
-  ch=prefs_get_key_matching("rb");
+  ch=prefs_get_key_matching("rbRB");
 
   switch(ch)
     {
-    case 's':
-      prefs_select("swiftlink232");
+    case 'r':
+      prefs_select("rdevice");
       strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_ATRRDEV);
       prefs_need_updating=true;
       break;

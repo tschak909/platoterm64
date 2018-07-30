@@ -33,7 +33,7 @@ void prefs_touch(void)
 {
   prefs_display("m)ouse b)ack: ");
 
-  ch=prefs_get_key_matching("mb");
+  ch=prefs_get_key_matching("mbMB");
 
   switch(ch)
     {
@@ -56,7 +56,7 @@ void prefs_driver(void)
 {
   prefs_display("driver - s)sc b)ack: ");
   
-  ch=prefs_get_key_matching("sb");
+  ch=prefs_get_key_matching("sbSB");
 
   switch(ch)
     {
