@@ -17,6 +17,8 @@
 #include "io.h"
 #include "plato_key.h"
 
+extern padBool TTY;
+
 /**
  * keyboard_out - If platoKey < 0x7f, pass off to protocol
  * directly. Otherwise, platoKey is an access key, and the
@@ -38,3 +40,10 @@ void keyboard_out(uint8_t platoKey)
   return;
 }
 
+/**
+ * keyboard_out_tty - keyboard output to serial I/O in TTY mode
+ */
+void keyboard_out_tty(char ch)
+{
+  io_send_byte(ch);
+}

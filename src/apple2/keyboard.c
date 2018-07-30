@@ -14,11 +14,13 @@
 #include "../screen.h"
 #include "../prefs.h"
 #include "../keyboard.h"
+#include "../protocol.h"
 #include "key.h"
 
 static uint8_t ch;
 static uint8_t is_escape=false;
 extern uint8_t xoff_enabled;
+extern padBool TTY;
 
 /**
  * keyboard_main - Handle the keyboard presses
@@ -32,6 +34,10 @@ void keyboard_main(void)
 	is_escape=true;
       else if (ch==0x1A) // CTRL-Z for prefs
 	prefs_run();
+      else if (TTY)
+	{
+	  keyboard_out_tty(ch);
+	}
       else if (is_escape==true)
 	{
 	  keyboard_out(esc_key_to_pkey[ch]);

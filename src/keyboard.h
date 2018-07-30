@@ -28,4 +28,9 @@ void keyboard_main(void);
  */
 void keyboard_clear(void);
 
+/**
+ * keyboard_out_tty - keyboard output to serial I/O in TTY mode
+ */
+void keyboard_out_tty(char ch);
+
 #endif

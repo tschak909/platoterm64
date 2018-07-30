@@ -9,13 +9,17 @@
 
 #include <stdint.h>
 #include <peekpoke.h>
+#include <conio.h>
 #include "../screen.h"
 #include "../prefs.h"
 #include "../keyboard.h"
+#include "../protocol.h"
 #include "key.h"
 
+static uint8_t ttych;
 static uint8_t lastkey;
 extern uint8_t xoff_enabled;
+extern padBool TTY;
 
 /**
  * keyboard_main - Handle the keyboard presses
@@ -47,23 +51,33 @@ void keyboard_main(void)
     {
       prefs_run();
     }
-  
-  if (key!=lastkey)
-    {  
-      if (modifier==MODIFIER_NONE)
-	keyboard_out(KEYBOARD_TO_PLATO[key]);
-      else if (modifier==MODIFIER_SHIFT)
-	keyboard_out(KEYBOARD_TO_PLATO_SHIFT[key]);
-      else if (modifier==MODIFIER_COMMO)
-	keyboard_out(KEYBOARD_TO_PLATO_COMMO[key]);
-      else if (modifier==MODIFIER_COMMO_SHIFT)
-	keyboard_out(KEYBOARD_TO_PLATO_CS[key]);
-      else if (modifier==MODIFIER_CTRL)
-	keyboard_out(KEYBOARD_TO_PLATO_CTRL[key]);
-      else if (modifier==MODIFIER_CTRL_SHIFT)
-	keyboard_out(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
+  else if (TTY)
+    {
+      if (kbhit())
+	{
+	  ttych=cgetc();
+	  keyboard_out_tty(ttych);
+	}
     }
-      lastkey=key;
+  else
+    {
+      if (key!=lastkey)
+	{  
+	  if (modifier==MODIFIER_NONE)
+	    keyboard_out(KEYBOARD_TO_PLATO[key]);
+	  else if (modifier==MODIFIER_SHIFT)
+	    keyboard_out(KEYBOARD_TO_PLATO_SHIFT[key]);
+	  else if (modifier==MODIFIER_COMMO)
+	    keyboard_out(KEYBOARD_TO_PLATO_COMMO[key]);
+	  else if (modifier==MODIFIER_COMMO_SHIFT)
+	    keyboard_out(KEYBOARD_TO_PLATO_CS[key]);
+	  else if (modifier==MODIFIER_CTRL)
+	    keyboard_out(KEYBOARD_TO_PLATO_CTRL[key]);
+	  else if (modifier==MODIFIER_CTRL_SHIFT)
+	    keyboard_out(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
+	}
+    }
+  lastkey=key;
 }
 
 /**
