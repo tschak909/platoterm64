@@ -30,6 +30,8 @@ void keyboard_main(void)
       ch=cgetc();
       if (ch==0x1B) // ESC
 	is_escape=true;
+      else if (ch==0x1A) // CTRL-Z for prefs
+	prefs_run();
       else if (is_escape==true)
 	{
 	  keyboard_out(esc_key_to_pkey[ch]);
