@@ -369,13 +369,20 @@ void prefs_ethernet(void)
 void prefs_display(const char* text)
 {
   uint8_t c;
-
+#if !defined(__C64__) || !defined(__C128__)
+  unsigned char* capped_text;
+#endif
   TTYLoc.x=0;
   TTYLoc.y=0;
   
   c=tgi_getcolor();
   tgi_setcolor(TGI_COLOR_WHITE);
+#if !defined(__C64__) || !defined(__C128__)
+  capped_text=strupr((unsigned char* )text);
+  ShowPLATO((unsigned char*)capped_text, strlen(text));
+#else
   ShowPLATO((unsigned char*)text, strlen(text));
+#endif
   tgi_setcolor(c);
 }
 

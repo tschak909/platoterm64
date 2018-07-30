@@ -11,6 +11,11 @@
 #define PREFS_H
 
 /**
+ * Show PLATOTERM READY - Press '<key>' for setup.
+ */
+void prefs_show_greeting(void);
+
+/**
  * Run the preferences menu
  */
 void prefs_run(void);

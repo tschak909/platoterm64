@@ -18,6 +18,14 @@ extern uint8_t ch;
 extern uint8_t prefs_need_updating;
 
 /**
+ * Show PLATOTERM READY - Press '<key>' for setup.
+ */
+void prefs_show_greeting(void)
+{
+  prefs_display("platoterm ready - <ctrl>-z for setup");
+}
+
+/**
  * prefs_touch(void)
  * Preferences for selecting touch driver
  */
