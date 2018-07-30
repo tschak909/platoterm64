@@ -29,6 +29,7 @@ extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 void screen_init_hook(void)
 {
   install_nmi_trampoline();
+  fast();
 }
 
 /**
@@ -90,18 +91,18 @@ void screen_wait(void)
  */
 void screen_beep(void)
 {
-  // My feeble attempt at a beep.
-  outw(&SID.v1.freq,0x22cd);
-  outw(&SID.v1.pw,0x0800);
-  outb(&SID.v1.ad,0x33);
-  outb(&SID.v1.sr,0xF0);
-  outb(&SID.amp,0x5F);
-  outw(&SID.flt_freq,0xF0F0);
-  outb(&SID.flt_ctrl,0xF2);
-  outb(&SID.v1.ctrl,0x11);
-  waitvsync();
-  waitvsync();
-  waitvsync();
-  waitvsync();
-  outb(&SID.v1.ctrl,0);
+  /* // My feeble attempt at a beep. */
+  /* outw(&SID.v1.freq,0x22cd); */
+  /* outw(&SID.v1.pw,0x0800); */
+  /* outb(&SID.v1.ad,0x33); */
+  /* outb(&SID.v1.sr,0xF0); */
+  /* outb(&SID.amp,0x5F); */
+  /* outw(&SID.flt_freq,0xF0F0); */
+  /* outb(&SID.flt_ctrl,0xF2); */
+  /* outb(&SID.v1.ctrl,0x11); */
+  /* waitvsync(); */
+  /* waitvsync(); */
+  /* waitvsync(); */
+  /* waitvsync(); */
+  /* outb(&SID.v1.ctrl,0); */
 }
