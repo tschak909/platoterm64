@@ -51,6 +51,7 @@ void io_send_byte(uint8_t b)
  */
 uint8_t io_serial_buffer_size_swiftlink(void)
 {
+  return 255;
 }
 
 /**

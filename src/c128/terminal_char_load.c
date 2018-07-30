@@ -34,7 +34,7 @@ void terminal_char_load(padWord charnum, charData theChar)
 	{
 	  if (theChar[curr_word] & 1<<u)
 	    {
-	      fontm23[u^0x0f&0x0f]|=BTAB[curr_word];
+	      fontm23[fontptr[charnum]+u^0x0f&0x0f]|=BTAB[curr_word];
 	    }
 	}
     }
