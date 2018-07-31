@@ -29,8 +29,21 @@ extern ConfigInfo config;
 static uint8_t prefs_running;
 static padBool TTYSave;
 static padPt TTYLocSave;
+static uint8_t CharWideSave;
+static uint8_t CharHighSave;
+static uint8_t CurMemSave;
+static DispMode CurModeSave;
+static padBool ModeBoldSave;
+static padBool RotateSave;
+static padBool ReverseSave;
 extern padBool TTY;
 extern padPt TTYLoc;
+extern uint8_t CharWide;
+extern uint8_t CharHigh;
+extern DispMode CurMode;
+extern padBool ModeBold;
+extern padBool Rotate;
+extern padBool Reverse;
 
 /* static char temp_ip_address[17]; */
 
@@ -48,6 +61,15 @@ void prefs_run(void)
   TTYSave=TTY;
   TTYLocSave.x = TTYLoc.x;
   TTYLocSave.y = TTYLoc.y;
+  CharWideSave=CharWide;
+  CharHighSave=CharHigh;
+  CharWide=8;
+  CharHigh=16;
+  CurMem=M0;
+  CurModeSave=CurMode;
+  ModeBoldSave=ModeBold;
+  RotateSave=Rotate;
+  ReverseSave=Reverse;
   TTY=true;
   prefs_running=true;
   touch_prefs_updated=false;
@@ -555,6 +577,12 @@ void prefs_update(void)
 void prefs_done(void)
 {
   TTY=TTYSave;
+  CharWide=CharWideSave;
+  CharHigh=CharHighSave;
+  CurMem=CurMemSave;
+  ModeBold=ModeBoldSave;
+  Rotate=RotateSave;
+  Reverse=ReverseSave;
   prefs_clear();
   TTYLoc.x=TTYLocSave.x;
   TTYLoc.y=TTYLocSave.y;
