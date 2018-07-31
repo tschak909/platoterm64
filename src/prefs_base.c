@@ -486,16 +486,18 @@ void prefs_update(void)
     {
       prefs_display("loading serial driver...");
       io_open();
+      prefs_clear();
     }
   else if (config.io_mode == IO_MODE_ETHERNET)
     {
       // Come back here and implement ethernet specific stuff
       prefs_display("ethernet not implemented, yet.");
       prefs_select("");
+      prefs_clear();
     }
 
   io_open();
-  
+  prefs_clear();
   prefs_display("loading touch driver...");
   retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
   if (retv==MOUSE_ERR_OK)
