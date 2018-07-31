@@ -474,17 +474,22 @@ void prefs_update(void)
   ser_close();
   prefs_clear();
   prefs_display("unloading serial driver...");
+  ser_uninstall();
   ser_unload();
   prefs_clear();
 
   // Close any touch drivers
   prefs_display("unloading touch driver...");
   mouse_unload();
+  mouse_uninstall();
   prefs_clear();
   
   if (config.io_mode == IO_MODE_SERIAL)
     {
       prefs_display("loading serial driver...");
+      ser_load_driver(config.driver_ser);
+      
+      io_init_funcptrs();
       io_open();
       prefs_clear();
     }
@@ -496,7 +501,6 @@ void prefs_update(void)
       prefs_clear();
     }
 
-  io_open();
   prefs_clear();
   prefs_display("loading touch driver...");
   retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);

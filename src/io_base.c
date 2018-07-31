@@ -52,7 +52,6 @@ void io_init(void)
   io_init_funcptrs();
   
   io_open();
-
 }
 
 /**
