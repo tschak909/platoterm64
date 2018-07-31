@@ -145,6 +145,137 @@ unsigned char key_to_pkey[]={
     PKEY_ERASE, /* 0x7f DEL */
 };
 
+unsigned char shiftlock_key_to_pkey[]={
+    PKEY_NOKEY, /* 0x00 NUL */
+    PKEY_ANS, /* 0x01 CTRL-A */
+    PKEY_BACK, /* 0x02 CTRL-B */
+    PKEY_COPY, /* 0x03 CTRL-C */
+    PKEY_DATA, /* 0x04 CTRL-D */
+    PKEY_EDIT, /* 0x05 CTRL-E */
+    PKEY_FONT, /* 0x06 CTRL-F */
+    PKEY_DIVIDE, /* 0x07 CTRL-G */
+    PKEY_ERASE, /* 0x08 CTRL-H */
+    PKEY_HELP, /* 0x09 CTRL-I */
+    PKEY_NOKEY, /* 0x0a CTRL-J */
+    PKEY_NOKEY, /* 0x0b CTRL-K */
+    PKEY_LAB, /* 0x0c CTRL-L */
+    PKEY_NEXT, /* 0x0d CTRL-M */
+    PKEY_NEXT, /* 0x0e CTRL-N */
+    PKEY_NOKEY, /* 0x0f CTRL-O */
+    PKEY_SUPER, /* 0x10 CTRL-P */
+    PKEY_SQUARE, /* 0x11 CTRL-Q */
+    PKEY_ERASE, /* 0x12 CTRL-R */
+    PKEY_STOP, /* 0x13 CTRL-S */
+    PKEY_TERM, /* 0x14 CTRL-T */
+    PKEY_NOKEY, /* 0x15 CTRL-U */
+    PKEY_NOKEY, /* 0x16 CTRL-V */
+    PKEY_NOKEY, /* 0x17 CTRL-W */
+    PKEY_MULTIPLY, /* 0x18 CTRL-X */
+    PKEY_SUB, /* 0x19 CTRL-Y */
+    PKEY_NOKEY, /* 0x1a CTRL-Z */
+    PKEY_NOKEY, /* 0x1b ESC */
+    PKEY_NOKEY, /* 0x1c */
+    PKEY_NOKEY, /* 0x1d */
+    PKEY_NOKEY, /* 0x1e */
+    PKEY_NOKEY, /* 0x1f */
+    PKEY_SPACE, /* 0x20 SPACE */
+    PKEY_EXCLAMATION, /* 0x21 ! */
+    PKEY_QUOTE, /* 0x22 " */
+    PKEY_POUND, /* 0x23 # */
+    PKEY_DOLLAR, /* 0x24 $ */
+    PKEY_PERCENT, /* 0x25 % */
+    PKEY_AMPERSAND, /* 0x26 & */
+    PKEY_APOSTROPHE, /* 0x27 ' */
+    PKEY_PARENTHESIS_LEFT, /* 0x28 ( */
+    PKEY_PARENTHESIS_RIGHT, /* 0x29 ) */
+    PKEY_ASTERISK, /* 0x2a * */
+    PKEY_PLUS, /* 0x2b + */
+    PKEY_COMMA, /* 0x2c , */
+    PKEY_MINUS, /* 0x2d - */
+    PKEY_PERIOD, /* 0x2e . */
+    PKEY_SLASH, /* 0x2f / */
+    PKEY_0, /* 0x30 0 */
+    PKEY_1, /* 0x31 1 */
+    PKEY_2, /* 0x32 2 */
+    PKEY_3, /* 0x33 3 */
+    PKEY_4, /* 0x34 4 */
+    PKEY_5, /* 0x35 5 */
+    PKEY_6, /* 0x36 6 */
+    PKEY_7, /* 0x37 7 */
+    PKEY_8, /* 0x38 8 */
+    PKEY_9, /* 0x39 9 */
+    PKEY_COLON, /* 0x3a : */
+    PKEY_SEMICOLON, /* 0x3b ; */
+    PKEY_LESS_THAN, /* 0x3c < */
+    PKEY_EQUALS, /* 0x3d = */
+    PKEY_GREATER_THAN, /* 0x3e > */
+    PKEY_QUESTION_MARK, /* 0x3f ? */
+    PKEY_AT, /* 0x40 @ */
+    PKEY_a, /* 0x41 A */
+    PKEY_b, /* 0x42 B */
+    PKEY_c, /* 0x43 C */
+    PKEY_d, /* 0x44 D */
+    PKEY_e, /* 0x45 E */
+    PKEY_f, /* 0x46 F */
+    PKEY_g, /* 0x47 G */
+    PKEY_h, /* 0x48 H */
+    PKEY_i, /* 0x49 I */
+    PKEY_j, /* 0x4a J */
+    PKEY_k, /* 0x4b K */
+    PKEY_l, /* 0x4c L */
+    PKEY_m, /* 0x4d M */
+    PKEY_n, /* 0x4e N */
+    PKEY_o, /* 0x4f O */
+    PKEY_p, /* 0x50 P */
+    PKEY_q, /* 0x51 Q */
+    PKEY_r, /* 0x52 R */
+    PKEY_s, /* 0x53 S */
+    PKEY_t, /* 0x54 T */
+    PKEY_u, /* 0x55 U */
+    PKEY_v, /* 0x56 V */
+    PKEY_w, /* 0x57 W */
+    PKEY_x, /* 0x58 X */
+    PKEY_y, /* 0x59 Y */
+    PKEY_z, /* 0x5a Z */
+    PKEY_BRACKET_LEFT, /* 0x5b [ */
+    PKEY_SLASH, /* 0x5c / */
+    PKEY_BRACKET_RIGHT, /* 0x5d ] */
+    PKEY_CIRCUMFLEX, /* 0x5e ^ */
+    PKEY_UNDERSCORE, /* 0x5f _ */
+    PKEY_GRAVE, /* 0x60 ` */
+    PKEY_A, /* 0x61 a */
+    PKEY_B, /* 0x62 b */
+    PKEY_C, /* 0x63 c */
+    PKEY_D, /* 0x64 d */
+    PKEY_E, /* 0x65 e */
+    PKEY_F, /* 0x66 f */
+    PKEY_G, /* 0x67 g */
+    PKEY_H, /* 0x68 h */
+    PKEY_I, /* 0x69 i */
+    PKEY_J, /* 0x6a j */
+    PKEY_K, /* 0x6b k */
+    PKEY_L, /* 0x6c l */
+    PKEY_M, /* 0x6d m */
+    PKEY_N, /* 0x6e n */
+    PKEY_O, /* 0x6f o */
+    PKEY_P, /* 0x70 p */
+    PKEY_Q, /* 0x71 q */
+    PKEY_R, /* 0x72 r */
+    PKEY_S, /* 0x73 s */
+    PKEY_T, /* 0x74 t */
+    PKEY_U, /* 0x75 u */
+    PKEY_V, /* 0x76 v */
+    PKEY_W, /* 0x77 w */
+    PKEY_X, /* 0x78 x */
+    PKEY_Y, /* 0x79 y */
+    PKEY_Z, /* 0x7a z */
+    PKEY_LEFT_CURLY_BRACE, /* 0x7b { */
+    PKEY_BAR, /* 0x7c | */
+    PKEY_RIGHT_CURLY_BRACE, /* 0x7d } */
+    PKEY_TILDE, /* 0x7e ~ */
+    PKEY_ERASE, /* 0x7f DEL */
+};
+
 unsigned char esc_key_to_pkey[]={
     PKEY_NOKEY, /* 0x00 NUL */
     PKEY_NOKEY, /* 0x01 CTRL-A */

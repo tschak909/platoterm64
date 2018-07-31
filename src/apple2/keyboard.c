@@ -18,6 +18,7 @@
 #include "key.h"
 
 static uint8_t ch;
+static uint8_t shift_lock=false;
 static uint8_t is_escape=false;
 extern uint8_t xoff_enabled;
 extern padBool TTY;
@@ -30,7 +31,18 @@ void keyboard_main(void)
   if (kbhit())
     {
       ch=cgetc();
-      if (ch==0x1B) // ESC
+      if (is_escape==true && ch==0x1B) // ESC
+	{
+	  screen_beep();
+
+	  if (shift_lock==true)
+	    shift_lock=false;
+	  else
+	    shift_lock=true;
+	  
+	  is_escape=false;
+	}
+      else if (is_escape==false && ch==0x1B)
 	is_escape=true;
       else if (ch==0x1A) // CTRL-Z for prefs
 	prefs_run();
@@ -42,6 +54,10 @@ void keyboard_main(void)
 	{
 	  keyboard_out(esc_key_to_pkey[ch]);
 	  is_escape=false;
+	}
+      else if (shift_lock==true)
+	{
+	  keyboard_out(shiftlock_key_to_pkey[ch]);
 	}
       else
 	{
