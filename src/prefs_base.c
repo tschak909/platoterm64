@@ -37,6 +37,8 @@ static char temp_ip_address[17];
 
 uint8_t ch;
 uint8_t prefs_need_updating;
+uint8_t touch_prefs_updated;
+uint8_t io_prefs_updated;
 
 /**
  * Run the preferences menu
@@ -49,6 +51,8 @@ void prefs_run(void)
   TTYLocSave.y = TTYLoc.y;
   TTY=true;
   prefs_running=true;
+  touch_prefs_updated=false;
+  io_prefs_updated=false;
   prefs_need_updating=false;
   prefs_clear();
   while (prefs_running)
@@ -141,31 +145,37 @@ void prefs_baud(void)
     case '3':
       prefs_select("300");
       config.baud=SER_BAUD_300;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case '1':
       prefs_select("1200");
       config.baud=SER_BAUD_1200;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case '2':
       prefs_select("2400");
       config.baud=SER_BAUD_2400;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case '9':
       prefs_select("9600");
       config.baud=SER_BAUD_9600;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'q':
       prefs_select("19200");
       config.baud=SER_BAUD_19200;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'w':
       prefs_select("38400");
       config.baud=SER_BAUD_38400;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'b':
@@ -189,11 +199,13 @@ void prefs_interface(void)
     case 'e':
       prefs_select("ethernet");
       config.io_mode=IO_MODE_ETHERNET;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 's':
       prefs_select("serial");
       config.io_mode=IO_MODE_SERIAL;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'b':
@@ -217,11 +229,13 @@ void prefs_dhcp(void)
     case 'y':
       prefs_select("yes");
       config.use_dhcp=true;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'n':
       prefs_select("no");
       config.use_dhcp=false;
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'b':
@@ -275,6 +289,7 @@ void prefs_ip(void)
   prefs_get_address();
   config.ip_address = parse_dotted_quad(temp_ip_address);
   prefs_select(" ok");
+  io_prefs_updated=true;
   prefs_need_updating=true;
 }
 
@@ -288,6 +303,7 @@ void prefs_dns(void)
   prefs_get_address();
   config.dns = parse_dotted_quad(temp_ip_address);
   prefs_select(" ok");
+  io_prefs_updated=true;
   prefs_need_updating=true;
 }
 
@@ -301,6 +317,7 @@ void prefs_netmask(void)
   prefs_get_address();
   config.netmask = parse_dotted_quad(temp_ip_address);
   prefs_select(" ok");
+  io_prefs_updated=true;
   prefs_need_updating=true;
 }
 
@@ -314,6 +331,7 @@ void prefs_gateway(void)
   prefs_get_address();
   config.gateway = parse_dotted_quad(temp_ip_address);
   prefs_select(" ok");
+  io_prefs_updated=true;
   prefs_need_updating=true;
 }
 
@@ -366,6 +384,8 @@ void prefs_ethernet(void)
 /**
  * prefs_display(text)
  * Display a line of the preferences menu
+ * This routine contains some ifdefs to work around the fact that the commodore targets
+ * for CC65 remap ASCII passed in character strings.
  */
 void prefs_display(const char* text)
 {
@@ -439,7 +459,7 @@ void prefs_clear(void)
   uint8_t c;
   c=tgi_getcolor();
   tgi_setcolor(TGI_COLOR_BLACK);
-  tgi_bar(0,185,319,191);
+  tgi_bar(0,185,319,192);
   tgi_setcolor(c);
   ShowPLATO("\n\v",2);
 }
@@ -467,24 +487,32 @@ void prefs_select(const char* text)
 void prefs_update(void)
 {
   unsigned char retv;
-  
-  // Close any serial drivers.
-  prefs_clear();
-  prefs_display("closing serial driver...");
-  ser_close();
-  prefs_clear();
-  prefs_display("unloading serial driver...");
-  ser_uninstall();
-  ser_unload();
-  prefs_clear();
 
-  // Close any touch drivers
-  prefs_display("unloading touch driver...");
-  mouse_unload();
-  mouse_uninstall();
+  if (io_prefs_updated==true)
+    {
+      // Close any serial drivers.
+      prefs_clear();
+      prefs_display("closing serial driver...");
+      ser_close();
+      prefs_clear();
+      prefs_display("unloading serial driver...");
+      ser_uninstall();
+      ser_unload();
+      prefs_clear();
+    }
+
   prefs_clear();
   
-  if (config.io_mode == IO_MODE_SERIAL)
+  if (touch_prefs_updated==true)
+    {
+      // Close any touch drivers
+      prefs_display("unloading touch driver...");
+      mouse_unload();
+      mouse_uninstall();
+      prefs_clear();
+    }
+
+  if (io_prefs_updated==true && config.io_mode == IO_MODE_SERIAL)
     {
       prefs_display("loading serial driver...");
       ser_load_driver(config.driver_ser);
@@ -492,8 +520,8 @@ void prefs_update(void)
       io_init_funcptrs();
       io_open();
       prefs_clear();
-    }
-  else if (config.io_mode == IO_MODE_ETHERNET)
+    }  
+  else if (io_prefs_updated==true && config.io_mode == IO_MODE_ETHERNET)
     {
       // Come back here and implement ethernet specific stuff
       prefs_display("ethernet not implemented, yet.");
@@ -502,16 +530,21 @@ void prefs_update(void)
     }
 
   prefs_clear();
-  prefs_display("loading touch driver...");
-  retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
-  if (retv==MOUSE_ERR_OK)
+  
+  if (touch_prefs_updated==true)
     {
-      prefs_select("ok");
-      mouse_show();
-    }
-  else
-    {
-      prefs_select("error");
+      prefs_clear();
+      prefs_display("loading touch driver...");
+      retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
+      if (retv==MOUSE_ERR_OK)
+	{
+	  prefs_select("ok");
+	  mouse_show();
+	}
+      else
+	{
+	  prefs_select("error");
+	}
     }
 }
 

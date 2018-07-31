@@ -16,6 +16,8 @@
 extern ConfigInfo config;
 extern uint8_t ch;
 extern uint8_t prefs_need_updating;
+extern uint8_t touch_prefs_updated;
+extern uint8_t io_prefs_updated;
 
 /**
  * Show PLATOTERM READY - Press '<key>' for setup.
@@ -40,26 +42,31 @@ void prefs_touch(void)
     case 'a':
       prefs_select("amiga");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRAMI);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'j':
       prefs_select("joy");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRJOY);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'k':
       prefs_select("koala");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTT);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 's':
       prefs_select("st");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRST);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 't':
       prefs_select("trkball");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTRK);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'b':
@@ -83,6 +90,7 @@ void prefs_driver(void)
     case 'r':
       prefs_select("rdevice");
       strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_ATRRDEV);
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'b':

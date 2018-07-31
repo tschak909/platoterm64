@@ -16,6 +16,8 @@
 extern ConfigInfo config;
 extern uint8_t ch;
 extern uint8_t prefs_need_updating;
+extern uint8_t touch_prefs_updated;
+extern uint8_t io_prefs_updated;
 
 /**
  * Show PLATOTERM READY - Press '<key>' for setup.
@@ -40,21 +42,25 @@ void prefs_touch(void)
     case '1':
       prefs_select("1351");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_1351);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'i':
       prefs_select("inkwell");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_INKWELL);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'j':
       prefs_select("joystick");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_JOY);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'k':
       prefs_select("koala");
       strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_POT);
+      touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'b':
@@ -78,11 +84,13 @@ void prefs_driver(void)
     case 's':
       prefs_select("swiftlink232");
       strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK);
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'u':
       prefs_select("userport2400");
       strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_UP2400);
+      io_prefs_updated=true;
       prefs_need_updating=true;
       break;
     case 'b':
