@@ -23,7 +23,6 @@
 #include "protocol.h"
 #include "terminal.h"
 #include "config.h"
-#include "ip65.h"
 
 extern ConfigInfo config;
 
@@ -33,7 +32,7 @@ static padPt TTYLocSave;
 extern padBool TTY;
 extern padPt TTYLoc;
 
-static char temp_ip_address[17];
+/* static char temp_ip_address[17]; */
 
 uint8_t ch;
 uint8_t prefs_need_updating;
@@ -62,9 +61,9 @@ void prefs_run(void)
 	case IO_MODE_SERIAL:
 	  prefs_serial();
 	  break;
-	case IO_MODE_ETHERNET:
-	  prefs_ethernet();
-	  break;
+	/* case IO_MODE_ETHERNET: */
+	/*   prefs_ethernet(); */
+	/*   break; */
 	}
     }
 
@@ -192,16 +191,16 @@ void prefs_interface(void)
 {
   prefs_display("interface - e)thernet s)erial b)ack: ");
 
-  ch=prefs_get_key_matching("esbESB");
+  ch=prefs_get_key_matching("sbSB");
 
   switch(ch)
     {
-    case 'e':
-      prefs_select("ethernet");
-      config.io_mode=IO_MODE_ETHERNET;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
-      break;
+    /* case 'e': */
+    /*   prefs_select("ethernet"); */
+    /*   config.io_mode=IO_MODE_ETHERNET; */
+    /*   io_prefs_updated=true; */
+    /*   prefs_need_updating=true; */
+    /*   break; */
     case 's':
       prefs_select("serial");
       config.io_mode=IO_MODE_SERIAL;
@@ -214,172 +213,172 @@ void prefs_interface(void)
     }
 }
 
-/**
- * prefs_dhcp(void)
- * Preferences menu to enable/disable dhcp
- */
-void prefs_dhcp(void)
-{
-  prefs_display("dhcp - y)es n)o b)ack: ");
+/* /\** */
+/*  * prefs_dhcp(void) */
+/*  * Preferences menu to enable/disable dhcp */
+/*  *\/ */
+/* void prefs_dhcp(void) */
+/* { */
+/*   prefs_display("dhcp - y)es n)o b)ack: "); */
 
-  ch=prefs_get_key_matching("ynbYNB");
+/*   ch=prefs_get_key_matching("ynbYNB"); */
 
-  switch(ch)
-    {
-    case 'y':
-      prefs_select("yes");
-      config.use_dhcp=true;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
-      break;
-    case 'n':
-      prefs_select("no");
-      config.use_dhcp=false;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
-      break;
-    case 'b':
-      prefs_select("back");
-      break;
-    }
-}
+/*   switch(ch) */
+/*     { */
+/*     case 'y': */
+/*       prefs_select("yes"); */
+/*       config.use_dhcp=true; */
+/*       io_prefs_updated=true; */
+/*       prefs_need_updating=true; */
+/*       break; */
+/*     case 'n': */
+/*       prefs_select("no"); */
+/*       config.use_dhcp=false; */
+/*       io_prefs_updated=true; */
+/*       prefs_need_updating=true; */
+/*       break; */
+/*     case 'b': */
+/*       prefs_select("back"); */
+/*       break; */
+/*     } */
+/* } */
 
-/**
- * prefs_get_address()
- * get string with ip address numbers, terminated by return.
- */
-void prefs_get_address(void)
-{
-  unsigned char strp=0;
+/* /\** */
+/*  * prefs_get_address() */
+/*  * get string with ip address numbers, terminated by return. */
+/*  *\/ */
+/* void prefs_get_address(void) */
+/* { */
+/*   unsigned char strp=0; */
   
-  ch=0;
+/*   ch=0; */
 
-  while (ch != 0x0d)
-    {
-      ch=prefs_get_key_matching1("0123456789.");
-      if (ch==0x08) /* was translated from 0x14 to 0x08 */
-  	{
-	  if (strp>0)
-	    {
-	      --strp;
-	      temp_ip_address[strp]=0;
-	      ShowPLATO(&ch,1);
-	    }
-  	}
-      else if (ch==0x0d)
-	{
-	  // Don't append or show the CR
-	}
-      else
-  	{
-  	  temp_ip_address[strp]=ch;
-  	  ShowPLATO(&ch,1);
-	  ++strp;	  
-  	}
-    }
-}
+/*   while (ch != 0x0d) */
+/*     { */
+/*       ch=prefs_get_key_matching1("0123456789."); */
+/*       if (ch==0x08) /\* was translated from 0x14 to 0x08 *\/ */
+/*   	{ */
+/* 	  if (strp>0) */
+/* 	    { */
+/* 	      --strp; */
+/* 	      temp_ip_address[strp]=0; */
+/* 	      ShowPLATO(&ch,1); */
+/* 	    } */
+/*   	} */
+/*       else if (ch==0x0d) */
+/* 	{ */
+/* 	  // Don't append or show the CR */
+/* 	} */
+/*       else */
+/*   	{ */
+/*   	  temp_ip_address[strp]=ch; */
+/*   	  ShowPLATO(&ch,1); */
+/* 	  ++strp;	   */
+/*   	} */
+/*     } */
+/* } */
 
-/**
- * prefs_ip(void)
- * Preferences menu for IP address
- */
-void prefs_ip(void)
-{
-  prefs_display("ip address (x.x.x.x) or return for none: ");
-  prefs_get_address();
-  config.ip_address = parse_dotted_quad(temp_ip_address);
-  prefs_select(" ok");
-  io_prefs_updated=true;
-  prefs_need_updating=true;
-}
+/* /\** */
+/*  * prefs_ip(void) */
+/*  * Preferences menu for IP address */
+/*  *\/ */
+/* void prefs_ip(void) */
+/* { */
+/*   prefs_display("ip address (x.x.x.x) or return for none: "); */
+/*   prefs_get_address(); */
+/*   config.ip_address = parse_dotted_quad(temp_ip_address); */
+/*   prefs_select(" ok"); */
+/*   io_prefs_updated=true; */
+/*   prefs_need_updating=true; */
+/* } */
 
-/**
- * prefs_dns(void)
- * Preferences menu for dns
- */
-void prefs_dns(void)
-{
-  prefs_display("dns (x.x.x.x) or return for none: ");
-  prefs_get_address();
-  config.dns = parse_dotted_quad(temp_ip_address);
-  prefs_select(" ok");
-  io_prefs_updated=true;
-  prefs_need_updating=true;
-}
+/* /\** */
+/*  * prefs_dns(void) */
+/*  * Preferences menu for dns */
+/*  *\/ */
+/* void prefs_dns(void) */
+/* { */
+/*   prefs_display("dns (x.x.x.x) or return for none: "); */
+/*   prefs_get_address(); */
+/*   config.dns = parse_dotted_quad(temp_ip_address); */
+/*   prefs_select(" ok"); */
+/*   io_prefs_updated=true; */
+/*   prefs_need_updating=true; */
+/* } */
 
-/**
- * prefs_netmask(void)
- * Preferences menu for netmask
- */
-void prefs_netmask(void)
-{
-  prefs_display("netmask (x.x.x.x) or return for none: ");
-  prefs_get_address();
-  config.netmask = parse_dotted_quad(temp_ip_address);
-  prefs_select(" ok");
-  io_prefs_updated=true;
-  prefs_need_updating=true;
-}
+/* /\** */
+/*  * prefs_netmask(void) */
+/*  * Preferences menu for netmask */
+/*  *\/ */
+/* void prefs_netmask(void) */
+/* { */
+/*   prefs_display("netmask (x.x.x.x) or return for none: "); */
+/*   prefs_get_address(); */
+/*   config.netmask = parse_dotted_quad(temp_ip_address); */
+/*   prefs_select(" ok"); */
+/*   io_prefs_updated=true; */
+/*   prefs_need_updating=true; */
+/* } */
 
-/**
- * prefs_ip(void)
- * Preferences menu for IP address
- */
-void prefs_gateway(void)
-{
-  prefs_display("gateway (x.x.x.x) or return for none: ");
-  prefs_get_address();
-  config.gateway = parse_dotted_quad(temp_ip_address);
-  prefs_select(" ok");
-  io_prefs_updated=true;
-  prefs_need_updating=true;
-}
+/* /\** */
+/*  * prefs_ip(void) */
+/*  * Preferences menu for IP address */
+/*  *\/ */
+/* void prefs_gateway(void) */
+/* { */
+/*   prefs_display("gateway (x.x.x.x) or return for none: "); */
+/*   prefs_get_address(); */
+/*   config.gateway = parse_dotted_quad(temp_ip_address); */
+/*   prefs_select(" ok"); */
+/*   io_prefs_updated=true; */
+/*   prefs_need_updating=true; */
+/* } */
 
-/**
- * prefs_ethernet(void)
- * Preferences menu to show for ethernet devices.
- */
-void prefs_ethernet(void)
-{
-  prefs_display("i)nterface d)hcp p)ip n)etmask g)ateway w)dns s)save e)xit: ");
+/* /\** */
+/*  * prefs_ethernet(void) */
+/*  * Preferences menu to show for ethernet devices. */
+/*  *\/ */
+/* void prefs_ethernet(void) */
+/* { */
+/*   prefs_display("i)nterface d)hcp p)ip n)etmask g)ateway w)dns s)save e)xit: "); */
 
-  ch=prefs_get_key_matching("idpngwseIDPNGWSE");
+/*   ch=prefs_get_key_matching("idpngwseIDPNGWSE"); */
 
-  switch(ch)
-    {
-    case 'i':
-      prefs_select("interface");
-      prefs_interface();
-      break;
-    case 'd':
-      prefs_select("dhcp");
-      prefs_dhcp();
-      break;
-    case 'p':
-      prefs_select("ip");
-      prefs_ip();
-      break;
-    case 'n':
-      prefs_select("netmask");
-      prefs_netmask();
-      break;
-    case 'g':
-      prefs_select("gateway");
-      prefs_gateway();
-      break;
-    case 'w':
-      prefs_select("dns");
-      prefs_dns();
-      break;
-    case 's':
-      prefs_select("save");
-      prefs_save();
-      break;
-    case 'e':
-      prefs_running=false;
-      break;
-    }
-}
+/*   switch(ch) */
+/*     { */
+/*     case 'i': */
+/*       prefs_select("interface"); */
+/*       prefs_interface(); */
+/*       break; */
+/*     case 'd': */
+/*       prefs_select("dhcp"); */
+/*       prefs_dhcp(); */
+/*       break; */
+/*     case 'p': */
+/*       prefs_select("ip"); */
+/*       prefs_ip(); */
+/*       break; */
+/*     case 'n': */
+/*       prefs_select("netmask"); */
+/*       prefs_netmask(); */
+/*       break; */
+/*     case 'g': */
+/*       prefs_select("gateway"); */
+/*       prefs_gateway(); */
+/*       break; */
+/*     case 'w': */
+/*       prefs_select("dns"); */
+/*       prefs_dns(); */
+/*       break; */
+/*     case 's': */
+/*       prefs_select("save"); */
+/*       prefs_save(); */
+/*       break; */
+/*     case 'e': */
+/*       prefs_running=false; */
+/*       break; */
+/*     } */
+/* } */
 
 /**
  * prefs_display(text)
@@ -426,30 +425,30 @@ unsigned char prefs_get_key_matching(const char* matches)
     }
 }
 
-/**
- * TEMPORARY: Wait for a key matching input, return it.
- */
-unsigned char prefs_get_key_matching1(const char* matches)
-{
-  unsigned char ch=0;
-  unsigned char i;
+/* /\** */
+/*  * TEMPORARY: Wait for a key matching input, return it. */
+/*  *\/ */
+/* unsigned char prefs_get_key_matching1(const char* matches) */
+/* { */
+/*   unsigned char ch=0; */
+/*   unsigned char i; */
   
-  for (;;)
-    {
-      ch=cgetc();
+/*   for (;;) */
+/*     { */
+/*       ch=cgetc(); */
 
-      if (ch==0x0d)
-	return 0x0d;
-      else if (ch==0x14)
-	return 0x08; /* convert PETSCII DEL to ASCII BS */
+/*       if (ch==0x0d) */
+/* 	return 0x0d; */
+/*       else if (ch==0x14) */
+/* 	return 0x08; /\* convert PETSCII DEL to ASCII BS *\/ */
       
-      for (i=0;i<strlen(matches);++i)
-	{
-	  if (ch==matches[i])
-	    return ch;
-	}
-    }
-}
+/*       for (i=0;i<strlen(matches);++i) */
+/* 	{ */
+/* 	  if (ch==matches[i]) */
+/* 	    return ch; */
+/* 	} */
+/*     } */
+/* } */
 
 /**
  * erase prefs bar
@@ -521,13 +520,13 @@ void prefs_update(void)
       io_open();
       prefs_clear();
     }  
-  else if (io_prefs_updated==true && config.io_mode == IO_MODE_ETHERNET)
-    {
-      // Come back here and implement ethernet specific stuff
-      prefs_display("ethernet not implemented, yet.");
-      prefs_select("");
-      prefs_clear();
-    }
+  /* else if (io_prefs_updated==true && config.io_mode == IO_MODE_ETHERNET) */
+  /*   { */
+  /*     // Come back here and implement ethernet specific stuff */
+  /*     prefs_display("ethernet not implemented, yet."); */
+  /*     prefs_select(""); */
+  /*     prefs_clear(); */
+  /*   } */
 
   prefs_clear();
   
