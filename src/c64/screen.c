@@ -75,6 +75,7 @@ void screen_update_colors(void)
   pal[0]=config.color_background;
   pal[1]=config.color_foreground;
   tgi_setpalette(pal);
+  POKE(0xD020,config.color_border);
 }
 
 /**
