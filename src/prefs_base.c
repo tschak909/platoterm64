@@ -495,7 +495,10 @@ void prefs_update(void)
       ser_close();
       prefs_clear();
       prefs_display("unloading serial driver...");
+#if defined(__C64__)
+      // This is a workaround because I suspect up2400 incorrectly unloads itself.
       ser_uninstall();
+#endif
       ser_unload();
       prefs_clear();
     }
@@ -507,7 +510,6 @@ void prefs_update(void)
       // Close any touch drivers
       prefs_display("unloading touch driver...");
       mouse_unload();
-      mouse_uninstall();
       prefs_clear();
     }
 
