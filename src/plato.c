@@ -9,7 +9,6 @@
 
 #include <stdbool.h>
 #include "terminal.h"
-#include "welcome.h"
 #include "screen.h"
 #include "touch.h"
 #include "keyboard.h"
