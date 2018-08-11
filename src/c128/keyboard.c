@@ -1,7 +1,7 @@
 /**
- * PLATOTerm64 - A PLATO Terminal for the Commodore 64
+ * PLATOTerm128 - A PLATO Terminal for the Commodore 128
  * Based on Steve Peltz's PAD
- * 
+ *
  * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
  *
  * keyboard.c - Keyboard functions (c128)
@@ -16,9 +16,7 @@
 #include "../protocol.h"
 #include "key.h"
 
-static uint8_t ttych;
 static uint8_t lastkey;
-extern uint8_t xoff_enabled;
 extern padBool TTY;
 
 /**
@@ -26,55 +24,69 @@ extern padBool TTY;
  */
 void keyboard_main(void)
 {
-  uint8_t key=PEEK(212);
-  uint8_t modifier=PEEK(211);
+  uint8_t modifier=PEEK(0xD3)&0x0F;
+  uint8_t key=PEEK(0xD4);
 
-  // Handle Function keys
-  if (key==0x04 && lastkey!=0x04)
+  if (key<0x58)
     {
-      // Change colors
-      if (modifier==0x00)
+      // Handle Function keys
+      if (key==0x04)
 	{
-	  screen_cycle_background();
+	  if (lastkey!=key)
+	    {
+	      // Change colors
+	      switch (modifier)
+		{
+		case MODIFIER_NONE:	// f1
+		  screen_cycle_background();
+		  break;
+		case MODIFIER_SHIFT:	// f2
+		  screen_cycle_foreground();
+		  break;
+		case MODIFIER_COMMO:	// logo + f1
+		  screen_cycle_border();
+		}
+	      screen_update_colors();
+	      keyboard_clear();
+	    }
 	}
-      else if (modifier==0x01)
+      else if (key==0x05)		// f3
 	{
-	  screen_cycle_foreground();
+	  if (lastkey!=key)
+	    {
+	      prefs_run();
+	    }
 	}
-      else if (modifier==0x02)
+      // Handle other keys
+      else if (TTY)
 	{
-	  screen_cycle_border();
+	  if (kbhit())
+	    {
+	      keyboard_out_tty(cgetc());
+	    }
 	}
-      screen_update_colors();
-    }
-  else if (key==0x05 && lastkey!=0x05)
-    {
-      prefs_run();
-    }
-  else if (TTY)
-    {
-      if (kbhit())
+      else if (lastkey!=key)
 	{
-	  ttych=cgetc();
-	  keyboard_out_tty(ttych);
-	}
-    }
-  else
-    {
-      if (key!=lastkey)
-	{  
-	  if (modifier==MODIFIER_NONE)
-	    keyboard_out(KEYBOARD_TO_PLATO[key]);
-	  else if (modifier==MODIFIER_SHIFT)
-	    keyboard_out(KEYBOARD_TO_PLATO_SHIFT[key]);
-	  else if (modifier==MODIFIER_COMMO)
-	    keyboard_out(KEYBOARD_TO_PLATO_COMMO[key]);
-	  else if (modifier==MODIFIER_COMMO_SHIFT)
-	    keyboard_out(KEYBOARD_TO_PLATO_CS[key]);
-	  else if (modifier==MODIFIER_CTRL)
-	    keyboard_out(KEYBOARD_TO_PLATO_CTRL[key]);
-	  else if (modifier==MODIFIER_CTRL_SHIFT)
-	    keyboard_out(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
+	  switch (modifier)
+	    {
+	    case MODIFIER_NONE:
+	      keyboard_out(KEYBOARD_TO_PLATO[key]);
+	      break;
+	    case MODIFIER_SHIFT:
+	      keyboard_out(KEYBOARD_TO_PLATO_SHIFT[key]);
+	      break;
+	    case MODIFIER_COMMO:
+	      keyboard_out(KEYBOARD_TO_PLATO_COMMO[key]);
+	      break;
+	    case MODIFIER_COMMO_SHIFT:
+	      keyboard_out(KEYBOARD_TO_PLATO_CS[key]);
+	      break;
+	    case MODIFIER_CTRL:
+	      keyboard_out(KEYBOARD_TO_PLATO_CTRL[key]);
+	      break;
+	    case MODIFIER_CTRL_SHIFT:
+	      keyboard_out(KEYBOARD_TO_PLATO_CTRL_SHIFT[key]);
+	    }
 	}
     }
   lastkey=key;
@@ -85,4 +97,6 @@ void keyboard_main(void)
  */
 void keyboard_clear(void)
 {
+  POKE(0xD1,0);				// Stop a function-key string
+  POKE(0xD0,0);
 }
