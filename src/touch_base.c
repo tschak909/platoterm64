@@ -16,6 +16,7 @@ static padBool TouchActive;
 static struct mouse_info mouse_data;
 static uint16_t screen_w;
 static uint16_t screen_h;
+static uint8_t mouse_present=false;
 
 extern ConfigInfo config;
 extern uint16_t scaletx[];
@@ -26,8 +27,11 @@ extern uint16_t scalety[];
  */
 void touch_init(void)
 {
-  mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
-  mouse_show();
+  if (mouse_load_driver(&mouse_def_callbacks,config.driver_mou) == MOUSE_ERR_OK)
+    {
+      mouse_present=true;
+      mouse_show();
+    }
 }
 
 /**
@@ -59,6 +63,9 @@ void touch_main(void)
 {
   uint8_t lastbuttons;
   padPt coord;
+
+  if (mouse_present==false)
+    return;
   
   mouse_info(&mouse_data);
   
@@ -86,5 +93,6 @@ void touch_hide(void)
  */
 void touch_done(void)
 {
-  mouse_uninstall();
+  if (mouse_present==true)
+    mouse_uninstall();
 }
