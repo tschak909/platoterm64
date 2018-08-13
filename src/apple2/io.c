@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <serial.h>
+#include <stdbool.h>
 #include "../config.h"
 
 extern uint8_t xoff_enabled;

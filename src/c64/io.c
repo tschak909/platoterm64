@@ -109,7 +109,7 @@ void io_recv_serial_flow_on_user_port(void)
 uint8_t io_serial_buffer_size_swiftlink(void)
 {
   if (io_load_successful==false)
-    return;
+    return 0;
 
   return PEEK(0xF9)-PEEK(0xF8);
 }
