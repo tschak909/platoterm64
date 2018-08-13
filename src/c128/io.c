@@ -21,6 +21,7 @@ extern ConfigInfo config;
 extern uint8_t (*io_serial_buffer_size)(void);
 extern void (*io_recv_serial_flow_off)(void);
 extern void (*io_recv_serial_flow_on)(void);
+extern uint8_t io_load_successful;
 
 void io_recv_serial_flow_off_swiftlink(void);
 void io_recv_serial_flow_on_swiftlink(void);
@@ -31,7 +32,10 @@ uint8_t io_serial_buffer_size_swiftlink(void);
  */
 void io_init_funcptrs(void)
 {
-    if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK)==0)
+  if (io_load_successful==false)
+    return;
+  
+  if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK)==0)
     {
       io_serial_buffer_size=io_serial_buffer_size_swiftlink;
       io_recv_serial_flow_off=io_recv_serial_flow_off_swiftlink;
@@ -44,6 +48,9 @@ void io_init_funcptrs(void)
  */
 void io_send_byte(uint8_t b)
 {
+  if (io_load_successful==false)
+    return;
+  
   ser_put(b);
 }
 
@@ -52,6 +59,9 @@ void io_send_byte(uint8_t b)
  */
 uint8_t io_serial_buffer_size_swiftlink(void)
 {
+  if (io_load_successful==false)
+    return;
+
   return PEEK(0xF9)-PEEK(0xF8);
 }
 
@@ -60,6 +70,9 @@ uint8_t io_serial_buffer_size_swiftlink(void)
  */
 void io_recv_serial_flow_off_swiftlink(void)
 {
+  if (io_load_successful==false)
+    return;
+
   io_send_byte(0x13);
   xoff_enabled=true;
 }
@@ -69,6 +82,9 @@ void io_recv_serial_flow_off_swiftlink(void)
  */
 void io_recv_serial_flow_on_swiftlink(void)
 {
+  if (io_load_successful==false)
+    return;
+
   io_send_byte(0x11);
   xoff_enabled=false;
 }

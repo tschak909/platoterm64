@@ -15,10 +15,12 @@
 #include "io.h"
 #include "protocol.h"
 #include "config.h"
+#include "prefs.h"
 
 #define NULL 0
 
 uint8_t xoff_enabled;
+uint8_t io_load_successful=false;
 
 uint8_t (*io_serial_buffer_size)(void);
 void (*io_recv_serial_flow_off)(void);
@@ -46,12 +48,25 @@ static struct ser_params params = {
  */
 void io_init(void)
 {
+  prefs_display("serial driver loaded.");
   io_res=ser_load_driver(config.driver_ser);
+
+  if (io_res==SER_ERR_OK)
+    io_load_successful=true;
+  
   xoff_enabled=false;
+
+  if (io_load_successful)
+    {
+      io_init_funcptrs();
+      io_open();
+      prefs_display("serial driver loaded.");
+    }
+  else
+    {
+      prefs_display("error: could not load serial driver.");
+    }
   
-  io_init_funcptrs();
-  
-  io_open();
 }
 
 /**
@@ -62,8 +77,14 @@ void io_open(void)
   if (config.io_mode == IO_MODE_SERIAL)
     {
       params.baudrate = config.baud;
-      
+
       io_res=ser_open(&params);
+      
+      if (io_res!=SER_ERR_OK)
+	{
+	  io_load_successful=false;
+	  prefs_display("error: could not open serial port.");
+	}
 
       // Needed to enable up2400. Ignored with swlink.
       ser_ioctl(1, NULL);
@@ -88,6 +109,9 @@ void io_main(void)
 void io_recv_serial(void)
 {
 
+  if (io_load_successful==false)
+    return;
+  
   // Drain primary serial FIFO as fast as possible.
   while (ser_get(&ch)!=SER_ERR_NO_DATA)
     {
@@ -119,6 +143,9 @@ void io_recv_serial(void)
  */
 void io_done(void)
 {
+  if (io_load_successful==false)
+    return;
+  
   ser_close();
   ser_uninstall();
 }

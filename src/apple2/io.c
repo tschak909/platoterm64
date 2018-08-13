@@ -19,6 +19,7 @@ extern ConfigInfo config;
 extern uint8_t (*io_serial_buffer_size)(void);
 extern void (*io_recv_serial_flow_off)(void);
 extern void (*io_recv_serial_flow_on)(void);
+extern uint8_t io_load_successful;
 
 static uint8_t send_delay=0; /* We need a send delay for apple2, wtf? */
 
@@ -31,6 +32,9 @@ uint8_t io_serial_buffer_size_ssc(void);
  */
 void io_init_funcptrs(void)
 {
+  if (io_load_successful==false)
+    return;
+
   if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_SSC)==0)
     {
       io_serial_buffer_size=io_serial_buffer_size_ssc;
@@ -44,6 +48,9 @@ void io_init_funcptrs(void)
  */
 void io_send_byte(uint8_t b)
 {
+  if (io_load_successful==false)
+    return;
+
   ser_put(b);
   for (send_delay=0;send_delay<200;send_delay++)
     {
@@ -64,6 +71,8 @@ uint8_t io_serial_buffer_size_ssc(void)
  */
 void io_recv_serial_flow_off_ssc(void)
 {
+  if (io_load_successful==false)
+    return;
 }
 
 /**
@@ -71,4 +80,6 @@ void io_recv_serial_flow_off_ssc(void)
  */
 void io_recv_serial_flow_on_ssc(void)
 {
+  if (io_load_successful==false)
+    return;
 }

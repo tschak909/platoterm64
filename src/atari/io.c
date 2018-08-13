@@ -14,6 +14,7 @@
 #include <serial.h>
 #include "../config.h"
 
+extern uint8_t io_load_successful;
 extern uint8_t xoff_enabled;
 extern ConfigInfo config;
 extern uint8_t (*io_serial_buffer_size)(void);
@@ -29,6 +30,9 @@ uint8_t io_serial_buffer_size_atari(void);
  */
 void io_init_funcptrs(void)
 {
+  if (io_load_successful==false)
+    return;
+
   if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_ATRRDEV)==0)
     {
       io_serial_buffer_size=io_serial_buffer_size_atari;
@@ -42,6 +46,9 @@ void io_init_funcptrs(void)
  */
 void io_send_byte(uint8_t b)
 {
+  if (io_load_successful==false)
+    return;
+
   ser_put(b);
 }
 
@@ -58,6 +65,9 @@ uint8_t io_serial_buffer_size_atari(void)
  */
 void io_recv_serial_flow_off_atari(void)
 {
+  if (io_load_successful==false)
+    return;
+  
 }
 
 /**
@@ -65,4 +75,6 @@ void io_recv_serial_flow_off_atari(void)
  */
 void io_recv_serial_flow_on_atari(void)
 {
+  if (io_load_successful==false)
+    return;
 }
