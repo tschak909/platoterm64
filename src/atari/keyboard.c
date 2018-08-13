@@ -8,8 +8,14 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <peekpoke.h>
+#include "../prefs.h"
 
 static uint8_t lastkey;
+static uint8_t keyboard_start_pressed;
+static uint8_t keyboard_select_pressed;
+static uint8_t keyboard_option_pressed;
 extern uint8_t xoff_enabled;
 
 /**
@@ -17,7 +23,18 @@ extern uint8_t xoff_enabled;
  */
 void keyboard_main(void)
 {
+  /* // Read console keys, no need to read combos of these at present. */
+  /* if (PEEK(0xD01F)==6) */
+  /*   keyboard_start_pressed=true; */
+  /* else if (PEEK(0xD01F)==5) */
+  /*   keyboard_select_pressed=true; */
+  /* else if (PEEK(0xD01F)==3) */
+  /*   keyboard_option_pressed=true; */
 
+  /* // Process non-terminal keys */
+  /* if (keyboard_option_pressed==true) */
+  /*   prefs_run(); */
+  
 }
 
 /**

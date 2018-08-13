@@ -7,6 +7,7 @@
  * touch.c - Touchscreen functions
  */
 
+#include <stdbool.h>
 #include <mouse.h>
 #include "touch.h"
 #include "config.h"

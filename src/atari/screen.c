@@ -21,6 +21,7 @@ extern ConfigInfo config;
  */
 void screen_init_hook(void)
 {
+  POKE(0x22F,62); // Turn on P/M DMA for mouse cursor.
 }
 
 /**
