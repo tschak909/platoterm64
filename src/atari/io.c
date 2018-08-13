@@ -8,6 +8,7 @@
  */
 
 #include <atari.h>
+#include <stdbool.h>
 #include <peekpoke.h>
 #include <stdint.h>
 #include <string.h>
