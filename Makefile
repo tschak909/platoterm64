@@ -370,7 +370,7 @@ dist-apple2: $(PROGRAM).apple2
 
 dist-atari: $(PROGRAM).atari
 	cp plato.atari dist.atari/files/plato.com
-	dir2atr -b Dos25 720 dist.atari/plato.atr dist.atari/files
+	dir2atr -m -b MyDOS4534 720 dist.atari/plato.atr dist.atari/files
 
 ###################################################################
 ###  Place your additional targets in the additional Makefiles  ###
