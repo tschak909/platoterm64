@@ -369,7 +369,7 @@ dist-apple2: $(PROGRAM).apple2
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.stdmou.mou rel 0 <dist.apple2/a2.stdmou.mou
 
 dist-atari: $(PROGRAM).atari
-	cp plato.atari dist.atari/files/plato.com
+	cp plato.atari dist.atari/files/autorun.ar2
 	dir2atr -m -b MyDOS4534 720 dist.atari/plato.atr dist.atari/files
 
 ###################################################################
