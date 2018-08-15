@@ -71,9 +71,9 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   io_recv_serial_flow_off(); 
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(TGI_COLOR_BLACK);
+    tgi_setcolor(0);
   else
-    tgi_setcolor(TGI_COLOR_WHITE);
+    tgi_setcolor(1);
   
   tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
 
@@ -87,9 +87,9 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
 void screen_dot_draw(padPt* Coord)
 {
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(TGI_COLOR_BLACK);
+    tgi_setcolor(0);
   else
-    tgi_setcolor(TGI_COLOR_WHITE);
+    tgi_setcolor(1);
   
   tgi_setpixel(scalex[Coord->x],scaley[Coord->y]);
 }
@@ -105,9 +105,9 @@ void screen_line_draw(padPt* Coord1, padPt* Coord2)
   uint16_t y2=scaley[Coord2->y];
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(TGI_COLOR_BLACK);
+    tgi_setcolor(0);
   else
-    tgi_setcolor(TGI_COLOR_WHITE);
+    tgi_setcolor(1);
 
   /* if ((x1==x2) && (y1==y2)) */
   /*   tgi_setpixel(x1,y1);        // Avoid bug in tgi_line() */
@@ -133,8 +133,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t height=FONT_SIZE_Y;
   uint16_t deltaX=1;
   uint16_t deltaY=1;
-  uint8_t mainColor=TGI_COLOR_WHITE;
-  uint8_t altColor=TGI_COLOR_BLACK;
+  uint8_t mainColor=1;
+  uint8_t altColor=0;
   uint8_t *p;
   uint8_t* curfont;
   
@@ -160,17 +160,17 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   if (CurMode==ModeRewrite)
     {
-      altColor=TGI_COLOR_BLACK;
+      altColor=0;
     }
   else if (CurMode==ModeInverse)
     {
-      altColor=TGI_COLOR_WHITE;
+      altColor=1;
     }
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    mainColor=TGI_COLOR_BLACK;
+    mainColor=0;
   else
-    mainColor=TGI_COLOR_WHITE;
+    mainColor=1;
 
   tgi_setcolor(mainColor);
 
@@ -324,9 +324,9 @@ void screen_tty_char(padByte theChar)
   else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
     {
       TTYLoc.x -= CharWide;
-      tgi_setcolor(TGI_COLOR_BLACK);
+      tgi_setcolor(0);
       tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
-      tgi_setcolor(TGI_COLOR_WHITE);
+      tgi_setcolor(1);
     }
   else if (theChar == 0x0A)			/* line feed */
     TTYLoc.y -= CharHigh;

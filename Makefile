@@ -27,7 +27,7 @@ CONFIG  :=
  
 # Additional C compiler flags and options.
 # Default: none
-CFLAGS  = -Oris --static-locals
+CFLAGS  = -Oris --static-locals -D__SYSTEM_CHECK__=1
  
 # Additional assembler flags and options.
 # Default: none
@@ -35,7 +35,7 @@ ASFLAGS =
  
 # Additional linker flags and options.
 # Default: none
-LDFLAGS =
+LDFLAGS = -D__SYSTEM_CHECK__=1
  
 # Path to the directory containing C and ASM sources.
 # Default: src
