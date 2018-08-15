@@ -260,6 +260,6 @@ const unsigned char key_to_pkey[]={
     PKEY_NOKEY, /* 0xfc */
     PKEY_INTERSECT, /* 0xfd */
     PKEY_STOP1, /* 0xfe */
-    PKEY_TERM, /* 0xff */
+    PKEY_NOKEY, /* 0xff */
 };
 

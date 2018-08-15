@@ -415,7 +415,7 @@ void prefs_display(const char* text)
   unsigned char* capped_text;
 #endif
   TTYLoc.x=0;
-  TTYLoc.y=0;
+  TTYLoc.y=1;
   
   c=tgi_getcolor();
   tgi_setcolor(TGI_COLOR_WHITE);
