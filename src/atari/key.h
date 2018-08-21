@@ -139,16 +139,16 @@ const unsigned char key_to_pkey[]={
     PKEY_NOKEY, /* 0x83 */
     PKEY_NOKEY, /* 0x84 */
     PKEY_NOKEY, /* 0x85 */
-    PKEY_NOKEY, /* 0x86 */
-    PKEY_NOKEY, /* 0x87 */
+    PKEY_BACK1, /* 0x86 */
+    PKEY_DATA1, /* 0x87 */
     PKEY_NOKEY, /* 0x88 */
     PKEY_NOKEY, /* 0x89 */
     PKEY_NOKEY, /* 0x8a */
     PKEY_NOKEY, /* 0x8b */
     PKEY_NOKEY, /* 0x8c */
     PKEY_NOKEY, /* 0x8d */
-    PKEY_NOKEY, /* 0x8e */
-    PKEY_NOKEY, /* 0x8f */
+    PKEY_COPY1, /* 0x8e */
+    PKEY_LAB1, /* 0x8f */
     PKEY_NOKEY, /* 0x90 */
     PKEY_NOKEY, /* 0x91 */
     PKEY_COPY, /* 0x92 */

@@ -8,9 +8,14 @@
  */
 
 #include <stdbool.h>
+#include <string.h>
 #include <mouse.h>
 #include "touch.h"
 #include "config.h"
+
+#ifdef __ATARI__
+#include <atari.h>
+#endif
 
 static padBool TouchActive;
 
@@ -18,6 +23,7 @@ static struct mouse_info mouse_data;
 static uint16_t screen_w;
 static uint16_t screen_h;
 static uint8_t mouse_present=false;
+static uint8_t mou_res=0;
 
 extern ConfigInfo config;
 extern uint16_t scaletx[];
@@ -28,11 +34,40 @@ extern uint16_t scalety[];
  */
 void touch_init(void)
 {
+#ifdef __ATARI__
+  if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRJOY)==0)
+    {
+      mou_res = mouse_install(&mouse_def_callbacks,atrjoy_mou);
+    }
+  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRAMI)==0)
+    {
+      mou_res = mouse_install(&mouse_def_callbacks,atrami_mou);
+    }
+  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRST)==0)
+    {
+      mou_res = mouse_install(&mouse_def_callbacks,atrst_mou);
+    }
+  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTRK)==0)
+    {
+      mou_res = mouse_install(&mouse_def_callbacks,atrtrk_mou);
+    }
+  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTT)==0)
+    {
+      mou_res = mouse_install(&mouse_def_callbacks,atrtt_mou);
+    }
+
+  if (mou_res==MOUSE_ERR_OK)
+    {
+      mouse_present=true;
+      mouse_show();
+    }
+#else
   if (mouse_load_driver(&mouse_def_callbacks,config.driver_mou) == MOUSE_ERR_OK)
     {
       mouse_present=true;
       mouse_show();
     }
+#endif
 }
 
 /**

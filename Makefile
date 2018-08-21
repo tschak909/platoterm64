@@ -367,6 +367,8 @@ dist-apple2: $(PROGRAM).apple2
 	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po license <dist.apple2/license
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.ssc.ser rel 0 <dist.apple2/a2.ssc.ser
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.stdmou.mou rel 0 <dist.apple2/a2.stdmou.mou
+	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po stst <dist.apple2/stst
+	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po stst.system sys <dist.apple2/stst.system
 
 dist-atari: $(PROGRAM).atari
 	cp plato.atari dist.atari/files/autorun.ar2

@@ -10,6 +10,7 @@
 #include <peekpoke.h>
 #include <tgi.h>
 #include <stdint.h>
+#include <conio.h>
 #include "../config.h"
 
 extern uint8_t pal[2];
@@ -22,6 +23,7 @@ extern ConfigInfo config;
 void screen_init_hook(void)
 {
   POKE(0x22F,62); // Turn on P/M DMA for mouse cursor.
+  bordercolor(TGI_COLOR_BLUE);
 }
 
 /**

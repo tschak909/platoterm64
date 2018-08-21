@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 
     printf("unsigned int fontptr[]={\n");
     for (i=0;i<160;i++) { 
-	printf("%d,",i*6);
+	printf("%d,",i*12);
 	if (i % 8 == 7 )
 	    printf("\n");
     } 
