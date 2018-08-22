@@ -26,8 +26,10 @@ extern uint8_t xoff_enabled; /* io.c */
 extern padBool FastText; /* protocol.c */
 extern ConfigInfo config; /* config.c */
 
+#ifndef __ATARI__
 extern unsigned short scalex[];
 extern unsigned short scaley[];
+#endif
 
 extern uint8_t font[];
 extern uint8_t fontm23[];
@@ -37,6 +39,12 @@ extern uint8_t FONT_SIZE_Y;
 
 extern void (*io_recv_serial_flow_on)(void);
 extern void (*io_recv_serial_flow_off)(void);
+
+// Atari uses fast frac multiplies to save memory
+#ifdef __ATARI__
+extern uint16_t mul0625(uint16_t val);
+extern uint16_t mul0375(uint16_t val);
+#endif
 
 /**
  * screen_init() - Set up the screen
@@ -74,9 +82,12 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
     tgi_setcolor(0);
   else
     tgi_setcolor(1);
-  
-  tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
 
+#ifdef __ATARI__
+  tgi_bar(mul0625(Coord1->x),mul0375(Coord1->y^0x1FF),mul0625(Coord2->x),mul0375(Coord2->y^0x1FF));
+#else
+  tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
+#endif
   io_recv_serial_flow_on();
   
 }
@@ -90,8 +101,11 @@ void screen_dot_draw(padPt* Coord)
     tgi_setcolor(0);
   else
     tgi_setcolor(1);
-  
+#ifdef __ATARI__
+  tgi_setpixel(mul0625(Coord->x),mul0375(Coord->y^0x1FF));
+#else
   tgi_setpixel(scalex[Coord->x],scaley[Coord->y]);
+#endif
 }
 
 /**
@@ -99,20 +113,24 @@ void screen_dot_draw(padPt* Coord)
  */
 void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
+#ifdef __ATARI__
+  uint16_t x1=mul0625(Coord1->x);
+  uint16_t x2=mul0625(Coord2->x);
+  uint16_t y1=mul0375(Coord1->y^0x1FF);
+  uint16_t y2=mul0375(Coord2->y^0x1FF);  
+#else
   uint16_t x1=scalex[Coord1->x];
   uint16_t x2=scalex[Coord2->x];
   uint16_t y1=scaley[Coord1->y];
   uint16_t y2=scaley[Coord2->y];
-  
+#endif
+
   if (CurMode==ModeErase || CurMode==ModeInverse)
     tgi_setcolor(0);
   else
     tgi_setcolor(1);
 
-  /* if ((x1==x2) && (y1==y2)) */
-  /*   tgi_setpixel(x1,y1);        // Avoid bug in tgi_line() */
-  /* else */
-    tgi_line(x1,y1,x2,y2);
+  tgi_line(x1,y1,x2,y2);
 }
 
 /**
@@ -174,15 +192,18 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   tgi_setcolor(mainColor);
 
+#ifdef __ATARI__
+  x=mul0625((Coord->x&0x1FF));
+  y=mul0375((Coord->y+14^0x1FF)&0x1FF);
+#else
   x=scalex[(Coord->x&0x1FF)];
   y=scaley[(Coord->y)+14&0x1FF];
+#endif
   
   if (FastText==padF)
     {
       goto chardraw_with_fries;
     }
-
-  y=scaley[(Coord->y)+14&0x1FF];
 
   /* the diet chardraw routine - fast text output. */
   
@@ -325,7 +346,11 @@ void screen_tty_char(padByte theChar)
     {
       TTYLoc.x -= CharWide;
       tgi_setcolor(0);
+#ifdef __ATARI__
+      tgi_bar(mul0625(TTYLoc.x),mul0375(TTYLoc.y^0x1FF),mul0625(TTYLoc.x+CharWide),mul0375(TTYLoc.y^0x1FF+CharHigh));
+#else
       tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
+#endif
       tgi_setcolor(1);
     }
   else if (theChar == 0x0A)			/* line feed */
