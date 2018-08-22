@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <mouse.h>
+#include <peekpoke.h>
 #include "touch.h"
 #include "config.h"
 
@@ -34,40 +35,17 @@ extern uint16_t scalety[];
  */
 void touch_init(void)
 {
-#ifdef __ATARI__
-  if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRJOY)==0)
-    {
-      mou_res = mouse_install(&mouse_def_callbacks,atrjoy_mou);
-    }
-  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRAMI)==0)
-    {
-      mou_res = mouse_install(&mouse_def_callbacks,atrami_mou);
-    }
-  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRST)==0)
-    {
-      mou_res = mouse_install(&mouse_def_callbacks,atrst_mou);
-    }
-  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTRK)==0)
-    {
-      mou_res = mouse_install(&mouse_def_callbacks,atrtrk_mou);
-    }
-  else if (strcmp(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTT)==0)
-    {
-      mou_res = mouse_install(&mouse_def_callbacks,atrtt_mou);
-    }
-
-  if (mou_res==MOUSE_ERR_OK)
-    {
-      mouse_present=true;
-      mouse_show();
-    }
-#else
   if (mouse_load_driver(&mouse_def_callbacks,config.driver_mou) == MOUSE_ERR_OK)
     {
       mouse_present=true;
       mouse_show();
-    }
+#ifdef __ATARI__
+      POKE(0xD000,0);
+      POKE(0xD001,0);
+      /* POKE(0xD002,0); */
+      POKE(0xD003,0);
 #endif
+    }
 }
 
 /**
