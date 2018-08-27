@@ -26,7 +26,7 @@
 
 extern ConfigInfo config;
 
-static uint8_t prefs_running;
+uint8_t prefs_running;
 static padBool TTYSave;
 static padPt TTYLocSave;
 static uint8_t CharWideSave;
@@ -146,8 +146,14 @@ void prefs_serial(void)
 void prefs_save(void)
 {
   prefs_display("saving preferences...");
+#ifdef __ATARI__
+  ser_close();
+#endif
   config_save();
   prefs_select("ok");
+#ifdef __ATARI__
+  io_open();
+#endif
   prefs_clear();
 }
 

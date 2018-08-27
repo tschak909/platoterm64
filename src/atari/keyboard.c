@@ -13,6 +13,7 @@
 #include "../prefs.h"
 #include "../plato_key.h"
 #include "../keyboard.h"
+#include "../screen.h"
 #include "key.h"
 
 static uint8_t lastkey,key;
@@ -20,27 +21,64 @@ static uint8_t keyboard_start_pressed;
 static uint8_t keyboard_select_pressed;
 static uint8_t keyboard_option_pressed;
 extern uint8_t xoff_enabled;
-
+extern uint8_t prefs_running;
+extern void click();
 /**
  * keyboard_main - Handle the keyboard presses
  */
 void keyboard_main(void)
 {
   // Read console keys, no need to read combos of these at present.
+  key=PEEK(764);
   if (PEEK(0xD01F)==6)
     keyboard_start_pressed=true;
   else if (PEEK(0xD01F)==5)
     keyboard_select_pressed=true;
   else if (PEEK(0xD01F)==3)
     keyboard_option_pressed=true;
+  else if (PEEK(0xD01F)==7)
+    keyboard_start_pressed=keyboard_select_pressed=keyboard_option_pressed=false;
 
   // Process non-terminal keys
-  if (keyboard_option_pressed==true)
-    prefs_run();
-
-  key=PEEK(764);
-  if (key!=lastkey)
+  if (keyboard_option_pressed==true && prefs_running==false)
     {
+      prefs_run();
+      POKE(764,255);
+    }
+  else if (keyboard_select_pressed==true)
+    {
+      
+      if (key==14)
+	{
+	  screen_cycle_background();
+	  screen_cycle_border();
+	  POKE(764,255);
+	  screen_update_colors();
+	}
+      else if (key==15)
+	{
+	  screen_cycle_background_back();
+	  screen_cycle_border_back();
+	  POKE(764,255);
+	  screen_update_colors();
+	}
+      else if (key==6)
+	{
+	  screen_cycle_foreground_back();
+	  POKE(764,255);
+	  screen_update_colors();
+	}
+      else if (key==7)
+	{
+	  screen_cycle_foreground();
+	  POKE(764,255);
+	  screen_update_colors();
+	}
+
+    }
+  else if (key!=lastkey)
+    {
+      click();
       keyboard_out(key_to_pkey[key]);
       POKE(764,255);
     }

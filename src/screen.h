@@ -48,6 +48,24 @@ void screen_cycle_background(void);
 void screen_cycle_border(void);
 
 /**
+ * screen_cycle_foreground_back()
+ * Go to the previous foreground color in palette
+ */
+void screen_cycle_foreground_back(void);
+
+/**
+ * screen_cycle_background_back()
+ * Go to the previous background color in palette
+ */
+void screen_cycle_background_back(void);
+
+/**
+ * screen_cycle_border_back()
+ * Go to the previous border color in palette
+ */
+void screen_cycle_border_back(void);
+
+/**
  * screen_update_colors() - Set the terminal colors
  */
 void screen_update_colors(void);

@@ -42,7 +42,6 @@ void screen_load_driver(void)
 void screen_cycle_foreground(void)
 {
   ++config.color_foreground;
-  config.color_foreground&=0x0f;
 }
 
 /**
@@ -52,7 +51,6 @@ void screen_cycle_foreground(void)
 void screen_cycle_background(void)
 {
   ++config.color_background;
-  config.color_background&=0x0f;
 }
 
 /**
@@ -62,7 +60,33 @@ void screen_cycle_background(void)
 void screen_cycle_border(void)
 {
   ++config.color_border;
-  config.color_border&=0x0f;
+}
+
+/**
+ * screen_cycle_foreground_back()
+ * Go to the previous foreground color in palette
+ */
+void screen_cycle_foreground_back(void)
+{
+  --config.color_foreground;
+}
+
+/**
+ * screen_cycle_background_back()
+ * Go to the previous background color in palette
+ */
+void screen_cycle_background_back(void)
+{
+  --config.color_background;
+}
+
+/**
+ * screen_cycle_border_back()
+ * Go to the previous border color in palette
+ */
+void screen_cycle_border_back(void)
+{
+  --config.color_border;
 }
 
 /**
@@ -73,7 +97,7 @@ void screen_update_colors(void)
   pal[0]=config.color_background;
   pal[1]=config.color_foreground;
   tgi_setpalette(pal);
-  POKE(0xD020,config.color_border);
+  POKE(712,config.color_border);
 }
 
 /**

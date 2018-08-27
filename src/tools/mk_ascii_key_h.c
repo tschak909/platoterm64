@@ -19,20 +19,20 @@ void main(void)
 
   printf("unsigned char key_to_pkey[]={\n");
 
-  for (i=0;i<128;++i)
+  for (i=0;i<133;++i)
     {
-      printf("    PKEY_NOKEY, /* 0x%02x */\n",i);
+      printf("    PKEY_NOKEY, /* %03d */\n",i);
     }
 
   printf("};\n\n");
 
-  printf("unsigned char esc_key_to_pkey[]={\n");
+  /* printf("unsigned char esc_key_to_pkey[]={\n"); */
 
-  for (i=0;i<128;++i)
-    {
-      printf("    PKEY_NOKEY, /* 0x%02x */\n",i);      
-    }
+  /* for (i=0;i<128;++i) */
+  /*   { */
+  /*     printf("    PKEY_NOKEY, /\* 0x%02x *\/\n",i);       */
+  /*   } */
   
-  printf("};\n");
+  /* printf("};\n"); */
   
 }
