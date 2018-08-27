@@ -19,7 +19,8 @@ PROGRAM := plato
 # Use only if you don't want to place copies of the libraries in SRCDIR
 # Default: none
 LIBS    := src/irq.o
- 
+#LIBS	:= 
+
 # Custom linker configuration file
 # Use only if you don't want to place it in SRCDIR
 # Default: none
