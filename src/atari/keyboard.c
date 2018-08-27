@@ -8,8 +8,11 @@
  */
 
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <peekpoke.h>
+#include "../io.h"
+#include "../touch.h"
 #include "../prefs.h"
 #include "../plato_key.h"
 #include "../keyboard.h"
@@ -73,6 +76,25 @@ void keyboard_main(void)
 	  screen_cycle_foreground();
 	  POKE(764,255);
 	  screen_update_colors();
+	}
+      else if (key==22)
+	{
+	  prefs_clear(); // because greeting might be there.
+	  prefs_display("exit platoterm (y/n)? ");
+	  key=prefs_get_key_matching("ynYN");
+	  switch(key)
+	    {
+	    case 'y':
+	      POKE(764,255); // clear keyboard buffer
+	      POKE(82,2);    // reset left margin to OS default.
+	      io_done();
+	      touch_done();
+	      screen_done();
+	      exit(0);
+	      break;
+	    default:
+	      prefs_clear();
+	    }
 	}
 
     }
