@@ -18,8 +18,7 @@ PROGRAM := plato
 # Path(s) to additional libraries required for linking the program
 # Use only if you don't want to place copies of the libraries in SRCDIR
 # Default: none
-LIBS    := src/irq.o
-#LIBS	:= 
+LIBS	:= 
 
 # Custom linker configuration file
 # Use only if you don't want to place it in SRCDIR
@@ -28,7 +27,7 @@ CONFIG  :=
  
 # Additional C compiler flags and options.
 # Default: none
-CFLAGS  = -Oris --static-locals -D__SYSTEM_CHECK__=1
+CFLAGS  = -Oris --static-locals
  
 # Additional assembler flags and options.
 # Default: none
@@ -36,7 +35,8 @@ ASFLAGS =
  
 # Additional linker flags and options.
 # Default: none
-LDFLAGS = -D__SYSTEM_CHECK__=1
+LDFLAGS = $(LDFLAGS.$(TARGETS))
+#LDFLAGS.atari = --start-addr 0x2600 -WI -D__RESERVED_MEMORY__=$$1C00
  
 # Path to the directory containing C and ASM sources.
 # Default: src
@@ -368,8 +368,6 @@ dist-apple2: $(PROGRAM).apple2
 	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po license <dist.apple2/license
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.ssc.ser rel 0 <dist.apple2/a2.ssc.ser
 	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po a2.stdmou.mou rel 0 <dist.apple2/a2.stdmou.mou
-	java -jar dist.apple2/ac.jar -as dist.apple2/dist.po stst <dist.apple2/stst
-	java -jar dist.apple2/ac.jar -p dist.apple2/dist.po stst.system sys <dist.apple2/stst.system
 
 dist-atari: $(PROGRAM).atari
 	cp plato.atari dist.atari/files/autorun.ar2
