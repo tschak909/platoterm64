@@ -12,9 +12,13 @@
 #include <stdint.h>
 #include <conio.h>
 #include "../config.h"
+#include "../protocol.h"
 
 extern uint8_t pal[2];
 extern ConfigInfo config; 
+
+extern short FONT_SIZE_X;
+extern short FONT_SIZE_Y;
 
 /**
  * screen_init_hook()
@@ -114,4 +118,11 @@ void screen_wait(void)
 void screen_beep(void)
 {
   // My feeble attempt at a beep.
+}
+
+/**
+ * screen_char_draw(Coord, ch, count) - Output buffer from ch* of length count as PLATO characters
+ */
+void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
+{
 }
