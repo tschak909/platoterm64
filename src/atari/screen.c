@@ -16,9 +16,24 @@
 
 extern uint8_t pal[2];
 extern ConfigInfo config; 
-
 extern short FONT_SIZE_X;
 extern short FONT_SIZE_Y;
+
+static short offset;
+
+// referenced by fast_text routines.
+unsigned short cx;
+unsigned char cy;
+unsigned char CharCode;
+unsigned char Flags;
+unsigned char* GlyphData;
+
+extern unsigned char font[];
+extern unsigned char fontm23[];
+extern uint16_t mul0625(uint16_t val);
+extern uint16_t mul0375(uint16_t val);
+
+extern void RenderGlyph(void);
 
 /**
  * screen_init_hook()
@@ -125,4 +140,44 @@ void screen_beep(void)
  */
 void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 {
+  unsigned char i;
+  Flags=0;
+  
+  switch(CurMem)
+    {
+    case M0:
+      GlyphData=font;
+      offset=-32;
+      break;
+    case M1:
+      GlyphData=font;
+      offset=64;
+      break;
+    case M2:
+      GlyphData=fontm23;
+      offset=-32;
+      break;
+    case M3:
+      GlyphData=fontm23;
+      offset=32;      
+      break;
+    }
+
+  if (CurMode==ModeInverse)
+    Flags|=0x80;
+  
+  if (ModeBold)
+      Flags|=0x40;
+  
+  cx=mul0625((Coord->x&0x1FF));
+  cy=mul0375((Coord->y+14^0x1FF)&0x1FF);
+
+  
+  for (i=0;i<count;++i)
+    {
+      CharCode=ch[i]+offset;
+      RenderGlyph();
+      cx+=5;
+    }
+  
 }
