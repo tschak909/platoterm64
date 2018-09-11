@@ -1,42 +1,35 @@
 ;	PLATOTerm 5x6 glyph renderer for Atari 8-bit
 ;	by FJC, 2018
 ;	MADS listing (to be converted for CA65)
+;;  Move intermediate variables into ZP (Christian Groessler)
 
 .include "zeropage.inc"
 .include "atari.inc"
 .import _cx, _cy, _CharCode, _GlyphData, _Flags
 .export _RenderGlyph
 
-;	you can probably move some of the most used absolute address variables into ptr4 and tmp1-tmp4
-
-;;;PixelOffset:		.res 1  ; pixel offset into leftmost byte
 .define PixelOffset tmp1
-;; cy:			.res 1	; y coord
-;; cx:			.res 2  ; x coord
-;; CharCode:		.res 1  ; character to display
-;; GlyphData:		.res 2  ; base address of character data
-;; Flags:			.res 1  ; bit 7: 1 = reverse video, 0 = normal; bit 6: 1 = double size, 0 = normal
-;;;LineCount:		.res 1  ; line counter
 .define LineCount tmp2
-;;;ByteExtent:		.res 1  ; number of bytes fully or partially occupied by glyph on screen
 .define ByteExtent tmp3
-;;;LeftMask:		.res 1  ; left hand mask
 .define LeftMask tmp4
 
 .segment	"EXTZP":zeropage
 RightMask:		.res 1  ; right hand mask
+MiddleMask:		.res 1	; middle mask
 ByteOffset:		.res 1  ; horizontal byte offset on screen
 EORMask:		.res 1  ; EOR mask (for reverse video rendering)
 BitmapBuffer:		.res 3  ; character data buffer (in shifted position)
+DoubleFlag:		.res 1	; repeat line buffer flag
 
 .code
-
+	
 ;	Render Glyph
 ;	Args:
-;	cx, cy (coordinates)
+;	_cx, cy (coordinates)
 ;	CharCode (character)
 ;	GlyphData (address of glyph data)
 ;	Flags: bit 7: 1 = reverse video, 0 = normal; bit 6: 1 = double size, 0 = normal
+;	bit 5: 1 = transparent background mode, 0 = normal
 ;
 ;	320 x 192 screen size is assumed
 ;	Note: no checks are made for x >= 320 or y >= 192
@@ -44,30 +37,25 @@ BitmapBuffer:		.res 3  ; character data buffer (in shifted position)
 
 .proc _RenderGlyph
 	lda #0
+	sta DoubleFlag	; repeated buffer flag for double-height glyphs
+	sta MiddleMask
 	bit _Flags	; set up EOR mask
 	bpl :+
 	lda #%11111000
-:	
+:
 	sta EORMask
 	
 	jsr GetScreenAddress	; load up ScreenAddress and get pixel offset
 	jsr GetGlyphAddress		; figure out address of glyph data
 
-	lda #6
-	sta LineCount
- 	lda #192	; trim off bottom of character if it extends off the foot of the screen
-	sec
-	sbc _cy
-	cmp #6
-	bcs :+
-	sta LineCount
-:
-
+	ldx #6	; glyph height
 	lda #5	; pixel width
 	bit _Flags
 	bvc :+
 	asl 	; double pixel width if we're in double size mode
+	ldx #12
 :
+	stx LineCount
 	clc
 	adc PixelOffset	; calculate total pixel extent including x offset
 	pha
@@ -86,15 +74,34 @@ BitmapBuffer:		.res 3  ; character data buffer (in shifted position)
 	sta LeftMask
 	
 	ldx ByteExtent
-	bne Loop1
+	bne :+
 	
 	ora RightMask	; if character only occupies one byte, OR in the right background mask
 	sta LeftMask
 	
-Loop1:	
+:
+ 	lda #$20	; check for transparent background mode
+ 	and _Flags
+ 	beq NotTransparent
+ 	
+ 	lda #$FF	; for transparent mode, we simply keep all the background bits intact
+ 	sta LeftMask
+ 	sta RightMask
+ 	sta MiddleMask
+ 	
+NotTransparent:	
+ 	lda #192	; trim off bottom of character if it extends off the foot of the screen
+	sec
+	sbc _cy
+	cmp LineCount	; we now account for double-height glyphs
+	bcs Loop1
+	sta LineCount
 
+Loop1:	
 	bit _Flags
 	bvc NormalSize
+	lda #$80
+	sta DoubleFlag
 	jsr CreateDoubledBitmap
 	jmp DoShift
 	
@@ -117,50 +124,11 @@ DoShift:
 NoShift:	
 	sta BitmapBuffer	; bitmap is now in desired x position
 
-	jsr RenderBits
-	
-	bit _Flags
-	bvc Done
-	
-	lda ptr1
-	clc
-	adc #40
-	sta ptr1
-	bcc :+
-	inc ptr1+1
-:
-	
-	jsr RenderBits
-
-Done:	
-	dec LineCount
-	beq Finished
-	
-	lda ptr1
-	clc
-	adc #40
-	sta ptr1
-	bcc :+
-	inc ptr1+1
-:	
-	inc ptr2
-	bne Loop1
-	inc ptr2+1
-	bne Loop1
-	
-Finished:	
-	rts
-.endproc
-
-
-
-;	Render a scanline of text
-
-.proc RenderBits
+DoRender:	
 	lda ByteExtent
 	sta ptr3
 
-	ldy ByteOffset
+	ldy ByteOffset	; fill bitmap buffer
 	ldx #1
 	lda (ptr1),y
 	and LeftMask
@@ -174,11 +142,11 @@ Finished:
 	bmi Done
 	beq LastByte
 	
-	lda BitmapBuffer+1
+	lda (ptr1),y
+	and MiddleMask
+	ora BitmapBuffer+1
 	sta (ptr1),y
 	iny
-	cpy #40	; omit this check if you don't intend to let text run off the screen
-	bcs Done
 	inx
 
 LastByte:	
@@ -187,9 +155,34 @@ LastByte:
 	ora BitmapBuffer,x
 	sta (ptr1),y
 Done:	
+
+	lsr DoubleFlag	; shift bit 7 into bit 6 (flag will clear on second iteration)
+
+	dec LineCount
+	beq Finished
+	
+	lda ptr1
+	clc
+	adc #40
+	sta ptr1
+	bcc :+
+	inc ptr1+1
+:	
+
+	bit DoubleFlag	; if bit 6 set, we just repeat the previous line using existing buffer content
+	bvs DoRender
+
+	inc ptr2
+	bne :+
+	inc ptr2+1
+:
+	jmp Loop1
+	
+Finished:	
 	rts
 .endproc
-	
+
+
 
 
 ;	Work out the address of the target line
@@ -318,7 +311,7 @@ Done:
 
 .rodata
 
-LeftBGMaskTable:	; 	LUT for left hand mask
+LeftBGMaskTable: ; 	LUT for left hand mask
 	.byte %00000111
 	.byte %10000011
 	.byte %11000001

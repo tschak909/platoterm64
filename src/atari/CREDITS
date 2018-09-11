@@ -1,6 +1,8 @@
 Special thanks for the Atari version:
 
 * Christian Groessler - Work on CC65 to make the IRQ routines relocatable.
+                      - Made Jon's text routines even faster.
 * Jonathan Halliday - For a much faster text output routine! :)
-* Chris Luckey - Extensive testing
-* Ron Klein - Extensive Testing
+* Chris Luckey - Extensive testing, P:R: Connection victim.
+* Ron Klein - Extensive Testing, U1MB on real hardware.
+
