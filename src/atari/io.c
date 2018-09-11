@@ -68,7 +68,9 @@ void io_recv_serial_flow_off_atari(void)
 {
   if (io_load_successful==false)
     return;
-  
+  xoff_enabled=true;
+  POKE(712,148);
+  ser_put(0x13);
 }
 
 /**
@@ -78,4 +80,7 @@ void io_recv_serial_flow_on_atari(void)
 {
   if (io_load_successful==false)
     return;
+  xoff_enabled=false;
+  POKE(712,0);
+  ser_put(0x11);
 }

@@ -88,6 +88,8 @@ void terminal_set_plato(void)
 {
   TTY=false;
   screen_clear();
+  CharWide=8;
+  CharHigh=16;
 }
 
 /**

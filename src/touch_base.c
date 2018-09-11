@@ -35,6 +35,9 @@ extern uint16_t scalety[];
  */
 void touch_init(void)
 {
+  if (strcmp(config.driver_mou,"NONE")==0)
+    return;
+  
   if (mouse_load_driver(&mouse_def_callbacks,config.driver_mou) == MOUSE_ERR_OK)
     {
       mouse_present=true;

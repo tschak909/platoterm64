@@ -560,7 +560,7 @@ void prefs_update(void)
 
   prefs_clear();
   
-  if (touch_prefs_updated==true)
+  if (touch_prefs_updated==true && strcpy(config.driver_mou,"NONE")!=0)
     {
       prefs_clear();
       prefs_display("loading touch driver...");
