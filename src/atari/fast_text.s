@@ -2,12 +2,35 @@
 ;	by FJC, 2018
 ;	MADS listing (to be converted for CA65)
 
+.include "zeropage.inc"
 .include "atari.inc"
 .import _cx, _cy, _CharCode, _GlyphData, _Flags
 .export _RenderGlyph
-.importzp ptr1,ptr2,ptr3,ptr4
-.importzp tmp1,tmp2,tmp3,tmp4
-	
+
+;	you can probably move some of the most used absolute address variables into ptr4 and tmp1-tmp4
+
+;;;PixelOffset:		.res 1  ; pixel offset into leftmost byte
+.define PixelOffset tmp1
+;; cy:			.res 1	; y coord
+;; cx:			.res 2  ; x coord
+;; CharCode:		.res 1  ; character to display
+;; GlyphData:		.res 2  ; base address of character data
+;; Flags:			.res 1  ; bit 7: 1 = reverse video, 0 = normal; bit 6: 1 = double size, 0 = normal
+;;;LineCount:		.res 1  ; line counter
+.define LineCount tmp2
+;;;ByteExtent:		.res 1  ; number of bytes fully or partially occupied by glyph on screen
+.define ByteExtent tmp3
+;;;LeftMask:		.res 1  ; left hand mask
+.define LeftMask tmp4
+
+.segment	"EXTZP":zeropage
+RightMask:		.res 1  ; right hand mask
+ByteOffset:		.res 1  ; horizontal byte offset on screen
+EORMask:		.res 1  ; EOR mask (for reverse video rendering)
+BitmapBuffer:		.res 3  ; character data buffer (in shifted position)
+
+.code
+
 ;	Render Glyph
 ;	Args:
 ;	cx, cy (coordinates)
@@ -293,7 +316,7 @@ Done:
 	rts
 .endproc
 
-
+.rodata
 
 LeftBGMaskTable:	; 	LUT for left hand mask
 	.byte %00000111
@@ -315,20 +338,3 @@ RightBGMaskTable:	; LUT for right hand mask
 	.byte %00000111
 	.byte %00000011
 	.byte %00000001
-	
-
-;	you can probably move some of the most used absolute address variables into ptr4 and tmp1-tmp4
-
-PixelOffset:		.res 1  ; pixel offset into leftmost byte
-;; cy:			.res 1	; y coord
-;; cx:			.res 2  ; x coord
-;; CharCode:		.res 1  ; character to display
-;; GlyphData:		.res 2  ; base address of character data
-;; Flags:			.res 1  ; bit 7: 1 = reverse video, 0 = normal; bit 6: 1 = double size, 0 = normal
-LineCount:		.res 1  ; line counter
-ByteExtent:		.res 1  ; number of bytes fully or partially occupied by glyph on screen
-LeftMask:		.res 1  ; left hand mask
-RightMask:		.res 1  ; right hand mask
-ByteOffset:		.res 1  ; horizontal byte offset on screen
-EORMask:		.res 1  ; EOR mask (for reverse video rendering)
-BitmapBuffer:		.res 3  ; character data buffer (in shifted position)
