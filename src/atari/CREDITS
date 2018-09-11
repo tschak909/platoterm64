@@ -1,0 +1,6 @@
+Special thanks for the Atari version:
+
+* Christian Groessler - Work on CC65 to make the IRQ routines relocatable.
+* Jonathan Halliday - For a much faster text output routine! :)
+* Chris Luckey - Extensive testing
+* Ron Klein - Extensive Testing
