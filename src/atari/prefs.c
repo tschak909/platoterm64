@@ -33,9 +33,9 @@ void prefs_show_greeting(void)
  */
 void prefs_touch(void)
 {
-  prefs_display("a)miga j)oy k)oala s)t t)rkball b)ack: ");
+  prefs_display("a)miga j)oy k)oala s)t t)rkball n)one b)ack: ");
 
-  ch=prefs_get_key_matching("ajkstbAJKSTB");
+  ch=prefs_get_key_matching("ajkstnbAJKSTNB");
 
   switch(ch)
     {
@@ -69,6 +69,11 @@ void prefs_touch(void)
       touch_prefs_updated=true;
       prefs_need_updating=true;
       break;
+    case 'n':
+      prefs_select("none");
+      strcpy(config.driver_mou,"NONE");
+      touch_prefs_updated=true;
+      prefs_need_updating=true;
     case 'b':
       prefs_select("back");
       break;

@@ -32,8 +32,8 @@ static uint8_t recv_buffer[256];
 static uint16_t recv_buffer_size=0;
 extern ConfigInfo config;
 
-#define XON_THRESHOLD 16
-#define XOFF_THRESHOLD 250
+#define XON_THRESHOLD 8
+#define XOFF_THRESHOLD 160
 
 static struct ser_params params = {
   SER_BAUD_38400,
@@ -100,15 +100,6 @@ void io_open(void)
  */
 void io_main(void)
 {
-  io_recv_serial();
-}
-
-/**
- * io_recv_serial() - Receive and interpret serial data.
- */
-void io_recv_serial(void)
-{
-
   if (io_load_successful==false)
     return;
   
@@ -120,14 +111,14 @@ void io_recv_serial(void)
   
   if (xoff_enabled==false)
     {
-      if (io_serial_buffer_size()>XOFF_THRESHOLD)
+      if (recv_buffer_size>XOFF_THRESHOLD)
   	{
   	  io_recv_serial_flow_off();
   	}
     }
   else /* xoff_enabled==true */
     {
-      if (xoff_enabled==true && io_serial_buffer_size()<XON_THRESHOLD)
+      if (xoff_enabled==true && recv_buffer_size<XON_THRESHOLD)
   	{
   	  io_recv_serial_flow_on();
   	}
@@ -135,7 +126,13 @@ void io_recv_serial(void)
 
   ShowPLATO(recv_buffer,recv_buffer_size);
   recv_buffer_size=0;
-  
+}
+
+/**
+ * io_recv_serial() - Receive and interpret serial data.
+ */
+void io_recv_serial(void)
+{
 }
 
 /**

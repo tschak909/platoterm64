@@ -141,6 +141,7 @@ void screen_beep(void)
 void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 {
   unsigned char i;
+  unsigned char dx=5;
   Flags=0;
   
   switch(CurMem)
@@ -167,17 +168,18 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     Flags|=0x80;
   
   if (ModeBold)
+    {
+      dx<<=1;
       Flags|=0x40;
-  
+    }
   cx=mul0625((Coord->x&0x1FF));
   cy=mul0375((Coord->y+14^0x1FF)&0x1FF);
 
-  
   for (i=0;i<count;++i)
     {
       CharCode=ch[i]+offset;
       RenderGlyph();
-      cx+=5;
+      cx+=dx;
     }
   
 }

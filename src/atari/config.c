@@ -32,7 +32,7 @@ void config_set_defaults(void)
   config.gateway=0;
   config.dns=0;
   strcpy(config.driver_ser,CONFIG_DEFAULT_SERIAL_DRIVER);
-  strcpy(config.driver_mou,CONFIG_DEFAULT_MOUSE_DRIVER);
+  strcpy(config.driver_mou,"NONE");
   config.color_foreground=TGI_COLOR_WHITE;
   config.color_background=TGI_COLOR_BLACK;
   config.color_border=TGI_COLOR_BLACK;
