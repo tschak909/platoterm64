@@ -22,12 +22,12 @@
 #define CONFIG_SERIAL_DRIVER_UP2400 "ser-up2400"
 
 /* Atari Driver defines */
-#define CONFIG_SERIAL_DRIVER_ATRRDEV "ATRRDEV.SER"
-#define CONFIG_MOUSE_DRIVER_ATRAMI "ATRAMI.MOU"
-#define CONFIG_MOUSE_DRIVER_ATRJOY "ATRJOY.MOU"
-#define CONFIG_MOUSE_DRIVER_ATRST "ATRST.MOU"
-#define CONFIG_MOUSE_DRIVER_ATRTRK "ATRTRK.MOU"
-#define CONFIG_MOUSE_DRIVER_ATRTT "ATRTT.MOU"
+#define CONFIG_SERIAL_DRIVER_ATRRDEV "D:ATRRDEV.SER"
+#define CONFIG_MOUSE_DRIVER_ATRAMI "D:ATRAMI.MOU"
+#define CONFIG_MOUSE_DRIVER_ATRJOY "D:ATRJOY.MOU"
+#define CONFIG_MOUSE_DRIVER_ATRST "D:ATRST.MOU"
+#define CONFIG_MOUSE_DRIVER_ATRTRK "D:ATRTRK.MOU"
+#define CONFIG_MOUSE_DRIVER_ATRTT "D:ATRTT.MOU"
 
 /* Apple2 Driver Defines */
 #define CONFIG_SERIAL_DRIVER_SSC "a2.ssc.ser"
@@ -54,6 +54,12 @@ typedef struct configInfo
  * Initialize configuration and load either config or defaults.
  */
 void config_init(void);
+
+/**
+ * config_init_hook()
+ * Special system specific initialization functions.
+ */
+void config_init_hook(void);
 
 /**
  * config_load()

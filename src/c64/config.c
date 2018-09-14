@@ -39,3 +39,7 @@ void config_set_defaults(void)
   config.color_border=TGI_COLOR_LIGHTBLUE;
   config_save();
 }
+
+void config_init_hook(void)
+{
+}

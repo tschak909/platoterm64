@@ -11,12 +11,15 @@
 #include <serial.h>
 #include <stdbool.h>
 #include <string.h>
+#include <peekpoke.h>
 #include "../config.h"
 
 #define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_ATRRDEV
 #define CONFIG_DEFAULT_MOUSE_DRIVER CONFIG_MOUSE_DRIVER_ATRJOY
 
 extern ConfigInfo config;
+extern char configFile[13];
+static unsigned char dunit;
 
 /**
  * config_set_defaults()
@@ -37,4 +40,20 @@ void config_set_defaults(void)
   config.color_background=TGI_COLOR_BLACK;
   config.color_border=TGI_COLOR_BLACK;
   config_save();
+}
+
+void config_atari_fix_driver_filenames(void)
+{
+  /* dunit=PEEK(769); // Get drive number from dunit. */
+  /* configFile[1]=dunit; */
+  /* config.driver_ser[1]=dunit; */
+  
+  /* if (strcmp(config.driver_mou,"NONE")!=0) */
+  /*   config.driver_mou[1]=dunit; */
+  
+}
+
+void config_init_hook(void)
+{
+  config_atari_fix_driver_filenames();
 }

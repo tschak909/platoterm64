@@ -35,3 +35,7 @@ void config_set_defaults(void)
   strcpy(config.driver_mou,CONFIG_DEFAULT_MOUSE_DRIVER);
   config_save();
 }
+
+void config_init_hook(void)
+{
+}

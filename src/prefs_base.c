@@ -544,6 +544,7 @@ void prefs_update(void)
   if (io_prefs_updated==true && config.io_mode == IO_MODE_SERIAL)
     {
       prefs_display("loading serial driver...");
+      config_init_hook(); // Do any special re-initalization.
       ser_load_driver(config.driver_ser);
       
       io_init_funcptrs();
@@ -564,6 +565,7 @@ void prefs_update(void)
     {
       prefs_clear();
       prefs_display("loading touch driver...");
+      config_init_hook();
       retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
       if (retv==MOUSE_ERR_OK)
 	{

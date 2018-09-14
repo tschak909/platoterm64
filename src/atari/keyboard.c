@@ -26,6 +26,8 @@ static uint8_t keyboard_option_pressed;
 extern uint8_t xoff_enabled;
 extern uint8_t prefs_running;
 extern void click();
+extern padBool TTY;
+
 /**
  * keyboard_main - Handle the keyboard presses
  */
@@ -101,7 +103,33 @@ void keyboard_main(void)
   else if (key!=lastkey)
     {
       click();
-      keyboard_out(key_to_pkey[key]);
+      // This is a mess.
+      if (TTY)
+	{
+	  switch(key)
+	    {
+	    case 0x0c: // RETURN
+	      keyboard_out_tty(0x0D);
+	      keyboard_out_tty(0x0A);
+	      break;
+	    case 0x5b: // Ampersand
+	      keyboard_out_tty('&');
+	      break;
+	    case 0x58: // Dollar sign
+	      keyboard_out_tty('$');
+	      break;
+	    case 0x5A: // Pound sign
+	      keyboard_out_tty('#');
+	      break;
+	    default:
+	      keyboard_out(key_to_pkey[key]);
+	      break;
+	    }
+	}
+      else
+	{
+	  keyboard_out(key_to_pkey[key]);
+	}
       POKE(764,255);
     }
   lastkey=key;

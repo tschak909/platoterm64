@@ -12,9 +12,14 @@
 #include "config.h"
 #include "screen.h"
 
+#ifdef __ATARI__
+#define CONFIG_FILE "D:CONFIG"
+#else
 #define CONFIG_FILE "config"
+#endif
 
 ConfigInfo config;
+char configFile[13];
 
 /**
  * config_init()
@@ -22,6 +27,8 @@ ConfigInfo config;
  */
 void config_init(void)
 {
+  strcpy(configFile,CONFIG_FILE);
+  config_init_hook();
   memset(&config,0,sizeof(config));
   config_load();
   screen_update_colors(); /* because the screen is already initialized. */
@@ -34,7 +41,7 @@ void config_init(void)
 void config_load(void)
 {
   FILE *fp;
-  fp = fopen(CONFIG_FILE,"r");
+  fp = fopen(configFile,"r");
   
   if (!fp)
     {
@@ -54,7 +61,7 @@ void config_load(void)
 void config_save(void)
 {
   FILE *fp;
-  fp = fopen(CONFIG_FILE,"w");
+  fp = fopen(configFile,"w");
 
   if (!fp)
     return;
