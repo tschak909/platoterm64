@@ -151,7 +151,7 @@ void screen_tty_char(padByte theChar)
       TTYLoc.x -= CharWide;
       tgi_setcolor(0);
 #ifdef __ATARI__
-      tgi_bar(mul0625(TTYLoc.x),mul0375(TTYLoc.y^0x1FF),mul0625(TTYLoc.x+CharWide),mul0375(TTYLoc.y^0x1FF+CharHigh));
+      tgi_bar(mul0625(TTYLoc.x),mul0375(TTYLoc.y^0x1FF),mul0625(TTYLoc.x+CharWide),mul0375((TTYLoc.y+CharHigh)^0x1FF));
 #else
       tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
 #endif
