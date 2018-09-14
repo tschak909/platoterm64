@@ -1,7 +1,17 @@
-;	PLATOTerm 5x6 glyph renderer for Atari 8-bit
-;	by FJC, 2018
-;	MADS listing (to be converted for CA65)
-;;  Move intermediate variables into ZP (Christian Groessler)
+	
+;	Render Glyph
+;	Args:
+;	cx, cy (coordinates)
+;	CharCode (character)
+;	GlyphData (address of glyph data)
+;	Flags: bit 7: 1 = reverse video, 0 = normal
+;	bit 6: 1 = double size, 0 = normal
+;	bit 5: 1 = transparent background mode, 0 = normal
+;	bit 4: 1 = render in background colour with transparent background
+;
+;	320 x 192 screen size is assumed
+;	Note: no checks are made for x >= 320 or y >= 192
+;	Please add these if necessary
 
 .include "zeropage.inc"
 .include "atari.inc"
@@ -20,30 +30,31 @@ ByteOffset:		.res 1  ; horizontal byte offset on screen
 EORMask:		.res 1  ; EOR mask (for reverse video rendering)
 BitmapBuffer:		.res 3  ; character data buffer (in shifted position)
 DoubleFlag:		.res 1	; repeat line buffer flag
-
+LeftBit:		.res 1 	; Left bit to shift in for AND mode
+	
 .code
 	
-;	Render Glyph
-;	Args:
-;	_cx, cy (coordinates)
-;	CharCode (character)
-;	GlyphData (address of glyph data)
-;	Flags: bit 7: 1 = reverse video, 0 = normal; bit 6: 1 = double size, 0 = normal
-;	bit 5: 1 = transparent background mode, 0 = normal
-;
-;	320 x 192 screen size is assumed
-;	Note: no checks are made for x >= 320 or y >= 192
-;	Please add these if necessary
-
 .proc _RenderGlyph
-	lda #0
-	sta DoubleFlag	; repeated buffer flag for double-height glyphs
-	sta MiddleMask
-	bit _Flags	; set up EOR mask
-	bpl :+
-	lda #%11111000
+	lda _Flags 	; check for background colour render
+	asl
+	asl
+	asl
+	and #$80
+	sta LeftBit	; if we're rendering black-on-white, bitmask needs to have 1 shifted into top bit
+	
+	ldx #0
+	stx DoubleFlag	; repeated buffer flag for double-height glyphs
+	stx MiddleMask
+	
+	lda _Flags
+	and #$90
+	beq :+
+	ldx #%11111000
+	and #$10
+	beq :+
+	ldx #%11111111
 :
-	sta EORMask
+	stx EORMask
 	
 	jsr GetScreenAddress	; load up ScreenAddress and get pixel offset
 	jsr GetGlyphAddress		; figure out address of glyph data
@@ -52,7 +63,7 @@ DoubleFlag:		.res 1	; repeat line buffer flag
 	lda #5	; pixel width
 	bit _Flags
 	bvc :+
-	asl 	; double pixel width if we're in double size mode
+	asl	; double pixel width if we're in double size mode
 	ldx #12
 :
 	stx LineCount
@@ -64,9 +75,9 @@ DoubleFlag:		.res 1	; repeat line buffer flag
 	lda RightBGMaskTable,x
 	sta RightMask
 	pla
-	lsr 
-	lsr 
-	lsr 
+	lsr
+	lsr
+	lsr
 	sta ByteExtent
 	
 	ldx PixelOffset	; set up left and right background masks
@@ -98,6 +109,16 @@ NotTransparent:
 	sta LineCount
 
 Loop1:	
+	ldx #0
+	lda #$10
+	bit _Flags
+	beq :+
+	dex
+:
+	stx BitmapBuffer
+	stx BitmapBuffer+1
+	stx BitmapBuffer+2
+
 	bit _Flags
 	bvc NormalSize
 	lda #$80
@@ -107,8 +128,6 @@ Loop1:
 	
 NormalSize:	
 	ldy #0
-	sty BitmapBuffer+1
-	sty BitmapBuffer+2
 	lda (ptr2),y
 	eor EORMask
 
@@ -116,7 +135,8 @@ DoShift:
 	ldx PixelOffset
 	beq NoShift
 :
-	lsr 
+	lsr
+	ora LeftBit
 	ror BitmapBuffer+1
 	ror BitmapBuffer+2
 	dex
@@ -128,8 +148,39 @@ DoRender:
 	lda ByteExtent
 	sta ptr3
 
-	ldy ByteOffset	; fill bitmap buffer
+	ldy ByteOffset
 	ldx #1
+
+	lda #$10
+	bit _Flags 	; check for background colour render
+	beq NormalColour
+	
+	lda BitmapBuffer	; bits are already reversed
+	and (ptr1),y
+	sta (ptr1),y
+	iny
+	cpy #40
+	bcs Done
+	
+	dec ptr3
+	bmi Done
+	beq LastByte2
+	
+	lda BitmapBuffer+1
+	and (ptr1),y
+	sta (ptr1),y
+	iny
+	cpy #40
+	bcs Done
+	inx
+	
+LastByte2:	
+	lda BitmapBuffer,x
+	and (ptr1),y
+	sta (ptr1),y
+	jmp Done
+	
+NormalColour:	
 	lda (ptr1),y
 	and LeftMask
 	ora BitmapBuffer
@@ -147,6 +198,8 @@ DoRender:
 	ora BitmapBuffer+1
 	sta (ptr1),y
 	iny
+	cpy #40	; omit this check if you don't intend to let text run off the screen
+	bcs Done
 	inx
 
 LastByte:	
@@ -170,7 +223,9 @@ Done:
 :	
 
 	bit DoubleFlag	; if bit 6 set, we just repeat the previous line using existing buffer content
-	bvs DoRender
+	bvc :+
+	jmp DoRender
+:
 
 	inc ptr2
 	bne :+
@@ -193,20 +248,20 @@ Finished:
 	sta ptr1+1
 	lda _cy
 
-	asl 	; work out y * 8
+	asl	; work out y * 8
 	rol ptr1+1
-	asl 
+	asl
 	rol ptr1+1
-	asl 
+	asl
 	rol ptr1+1
 	
 	sta ptr3
 	ldy ptr1+1
 	sty ptr3+1
 	
-	asl 	; work out y * 32
+	asl	; work out y * 32
 	rol ptr1+1
-	asl 
+	asl
 	rol ptr1+1
 	
 	clc
@@ -225,11 +280,11 @@ Finished:
 	tya
 	
 	lsr ptr3+1
-	ror 
+	ror
 	lsr ptr3+1
-	ror 
+	ror
 	lsr ptr3+1
-	ror 
+	ror
 	sta ByteOffset
 
 	lda ptr1	; finally, add screen base address
@@ -253,13 +308,13 @@ Finished:
 	sta ptr2+1
 	lda _CharCode
 	
-	asl 	; work out char * 6
+	asl	; work out char * 6
 	rol ptr2+1
 	sta ptr3
 	ldy ptr2+1
 	sty ptr3+1
 	
-	asl 
+	asl
 	rol ptr2+1
 	
 	clc
@@ -287,16 +342,14 @@ Finished:
 
 .proc CreateDoubledBitmap
 	ldy #0
-	sty BitmapBuffer
-	sty BitmapBuffer+1
 	lda (ptr2),y
 	eor EORMask
-	lsr 
-	lsr 
-	lsr 
+	lsr
+	lsr
+	lsr
 	ldx #4	; loop for each pixel
 :
-	lsr 	; shift rightmost bit into c
+	lsr	; shift rightmost bit into c
 	php	; save state of carry
 	ror BitmapBuffer
 	ror BitmapBuffer+1	; this leaves c = 0
@@ -310,8 +363,8 @@ Finished:
 .endproc
 
 .rodata
-
-LeftBGMaskTable: ; 	LUT for left hand mask
+	
+LeftBGMaskTable:	; 	LUT for left hand mask
 	.byte %00000111
 	.byte %10000011
 	.byte %11000001
@@ -331,3 +384,25 @@ RightBGMaskTable:	; LUT for right hand mask
 	.byte %00000111
 	.byte %00000011
 	.byte %00000001
+	
+
+;; ;	you can probably move some of the most used absolute address variables into ptr4 and tmp1-tmp4
+
+;; PixelOffset		.ds 1	; pixel offset into leftmost byte
+;; cy				.ds 1	; y coord
+;; cx 				.ds 2	; x coord
+;; LineCount		.ds 1	; line counter
+;; CharCode		.ds 1	; character to display
+;; GlyphData		.ds 2	; base address of character data
+;; Flags			.ds 1	; bit 7: 1 = reverse video, 0 = normal; bit 6: 1 = double size, 0 = normal
+;; ByteExtent		.ds 1	; number of bytes fully or partially occupied by glyph on screen
+;; LeftMask		.ds 1	; left hand mask
+;; RightMask		.ds 1	; right hand mask
+;; MiddleMask		.ds 1	; middle mask
+;; ByteOffset		.ds 1	; horizontal byte offset on screen
+;; EORMask			.ds 1	; EOR mask (for reverse video rendering)
+;; BitmapBuffer	.ds 3	; character data buffer (in shifted position)
+;; DoubleFlag		.ds 1	; repeat line buffer flag
+;; LeftBit			.ds 1	; bit to shift into rotated bitmask
+	
+;; 	run Start

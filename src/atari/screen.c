@@ -168,6 +168,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     Flags|=0x80;
   else if (CurMode==ModeWrite)
     Flags|=0x20;
+  else if (CurMode==ModeErase)
+    Flags|=0x10;
   
   if (ModeBold)
     {
