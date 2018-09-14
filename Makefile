@@ -36,7 +36,7 @@ ASFLAGS =
 # Additional linker flags and options.
 # Default: none
 LDFLAGS = $(LDFLAGS.$(TARGETS))
-#LDFLAGS.atari = --start-addr 0x2600 -WI -D__RESERVED_MEMORY__=$$1C00
+LDFLAGS.atari = --start-addr 0x2420 -Wl -D__RESERVED_MEMORY__=0x2000
  
 # Path to the directory containing C and ASM sources.
 # Default: src
