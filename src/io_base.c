@@ -28,12 +28,12 @@ void (*io_recv_serial_flow_on)(void);
 
 static uint8_t ch=0;
 static uint8_t io_res;
-static uint8_t recv_buffer[256];
+static uint8_t recv_buffer[512];
 static uint16_t recv_buffer_size=0;
 extern ConfigInfo config;
 
-#define XON_THRESHOLD 8
-#define XOFF_THRESHOLD 160
+#define XON_THRESHOLD 32
+#define XOFF_THRESHOLD 128
 
 static struct ser_params params = {
   SER_BAUD_38400,
