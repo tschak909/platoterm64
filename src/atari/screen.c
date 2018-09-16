@@ -19,6 +19,9 @@ extern ConfigInfo config;
 extern short FONT_SIZE_X;
 extern short FONT_SIZE_Y;
 
+/* screen_beep.s */
+extern screen_beep(void);
+
 static short offset;
 
 // referenced by fast_text routines.
@@ -125,14 +128,6 @@ void screen_update_colors(void)
 void screen_wait(void)
 {
   // TODO: function to do one vblank wait
-}
-
-/**
- * screen_beep(void) - Beep the terminal
- */
-void screen_beep(void)
-{
-  // My feeble attempt at a beep.
 }
 
 /**
