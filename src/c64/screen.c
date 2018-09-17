@@ -215,6 +215,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		{
 		  tgi_setcolor(mainColor);
 		  tgi_setpixel(x,y);
+#ifdef __C64_COLOR__
 		  x_coord=x-4;
 		  y_coord=y;
 		  color_transform(); // take x_coord/y_coord, return offset into color ram in colorpt.
@@ -227,6 +228,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		  asm("pla");          // Pop old kernal banking value off stack back into A
 		  asm("sta $01");      // store
 		  asm("cli");          // and turn back on interrupts, like nothing ever happened.
+#endif
 		}
 
 	      ++x;
@@ -297,6 +299,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		      tgi_setpixel(*px+1,*py);
 		      tgi_setpixel(*px,*py+1);
 		      tgi_setpixel(*px+1,*py+1);
+#ifdef __C64_COLOR__
 		      x_coord=x-4;
 		      y_coord=y;
 		      color_transform(); // take x_coord/y_coord, return offset into color ram in colorpt.
@@ -309,6 +312,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		      asm("pla");          // Pop old kernal banking value off stack back into A
 		      asm("sta $01");      // store
 		      asm("cli");          // and turn back on interrupts, like nothing ever happened.
+#endif
 		    }
 		  tgi_setpixel(*px,*py);
 		}
