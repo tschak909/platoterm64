@@ -19,6 +19,7 @@
 extern uint8_t pal[2];
 extern ConfigInfo config; 
 
+extern unsigned char current_foreground;
 extern unsigned short scalex[];
 extern unsigned short scaley[];
 extern uint8_t font[];
@@ -32,6 +33,11 @@ extern padBool FastText; /* protocol.c */
 #define outw(addr,val)        (*(addr)) = (val)
 
 extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
+extern void color_transform(void); /* color_transform.s */
+unsigned short colorpt;
+unsigned short x_coord;
+unsigned char y_coord;
+
 
 /**
  * screen_load_driver()
@@ -209,6 +215,18 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		{
 		  tgi_setcolor(mainColor);
 		  tgi_setpixel(x,y);
+		  x_coord=x-4;
+		  y_coord=y;
+		  color_transform(); // take x_coord/y_coord, return offset into color ram in colorpt.
+		  asm("sei");          // stop interrupts.
+		  asm("lda $01");      // value of kernal banking address
+		  asm("pha");          // push onto stack
+		  asm("and #$FC");     // AND off last two bits (to page out kernal and basic roms)
+		  asm("sta $01");      // and pop back into kernal banking address
+		  POKE(0xD000+colorpt,(current_foreground << 4) | PEEK(0xD000+colorpt));   // Plop on new color ram value
+		  asm("pla");          // Pop old kernal banking value off stack back into A
+		  asm("sta $01");      // store
+		  asm("cli");          // and turn back on interrupts, like nothing ever happened.
 		}
 
 	      ++x;
@@ -253,6 +271,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       ++ch;
       a+=offset;
       p=&curfont[fontptr[a]];
+
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
   	  b=*p;
@@ -278,6 +297,18 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		      tgi_setpixel(*px+1,*py);
 		      tgi_setpixel(*px,*py+1);
 		      tgi_setpixel(*px+1,*py+1);
+		      x_coord=x-4;
+		      y_coord=y;
+		      color_transform(); // take x_coord/y_coord, return offset into color ram in colorpt.
+		      asm("sei");          // stop interrupts.
+		      asm("lda $01");      // value of kernal banking address
+		      asm("pha");          // push onto stack
+		      asm("and #$FC");     // AND off last two bits (to page out kernal and basic roms)
+		      asm("sta $01");      // and pop back into kernal banking address
+		      POKE(0xD000+colorpt,(current_foreground << 4) | PEEK(0xD000+colorpt));   // Plop on new color ram value
+		      asm("pla");          // Pop old kernal banking value off stack back into A
+		      asm("sta $01");      // store
+		      asm("cli");          // and turn back on interrupts, like nothing ever happened.
 		    }
 		  tgi_setpixel(*px,*py);
 		}

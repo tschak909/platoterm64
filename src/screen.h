@@ -111,6 +111,16 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count);
 void screen_tty_char(padByte theChar);
 
 /**
+ * screen_foreground - set foreground color
+ */
+void screen_foreground(padRGB* theColor);
+
+/**
+ * screen_background - set background_color
+ */
+void screen_background(padRGB* theColor);
+  
+/**
  * screen_done()
  * Close down TGI
  */

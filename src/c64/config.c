@@ -36,9 +36,9 @@ void config_set_defaults(void)
   config.xoff_threshold=XOFF_THRESHOLD;
   strcpy(config.driver_ser,CONFIG_DEFAULT_SERIAL_DRIVER);
   strcpy(config.driver_mou,CONFIG_DEFAULT_MOUSE_DRIVER);
-  config.color_foreground=TGI_COLOR_LIGHTBLUE;
-  config.color_background=TGI_COLOR_BLUE;
-  config.color_border=TGI_COLOR_LIGHTBLUE;
+  config.color_foreground=TGI_COLOR_WHITE;
+  config.color_background=TGI_COLOR_BLACK;
+  config.color_border=TGI_COLOR_BLACK;
   config_save();
 }
 

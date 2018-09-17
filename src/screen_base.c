@@ -21,6 +21,8 @@ uint8_t CharWide=8;
 uint8_t CharHigh=16;
 padPt TTYLoc;
 uint8_t pal[2];
+unsigned char current_foreground=COLOR_WHITE;
+unsigned char current_background=COLOR_BLACK;
 
 extern uint8_t xoff_enabled; /* io.c */
 extern padBool FastText; /* protocol.c */
@@ -68,6 +70,7 @@ void screen_init(void)
 void screen_clear(void)
 {
   tgi_clear();
+  screen_update_colors();
 }
 
 /**
@@ -172,6 +175,62 @@ void screen_tty_char(padByte theChar)
     TTYLoc.y=495;
   }
 
+}
+
+/**
+ * match_color - quantize to nearest system palette color.
+ * will eventually do a full hsv match to nearest possible color,
+ * but for now, it's a straight match of system colors only.
+ */
+unsigned char screen_match_color(padRGB* theColor)
+{
+  if (theColor->red==0 && theColor->green==0 && theColor->blue==0)
+    {
+      return COLOR_BLACK;
+    }
+  else if (theColor->red==0 && theColor->green==0 && theColor->blue==255)
+    {
+      return COLOR_BLUE;
+    }
+  else if (theColor->red==0 && theColor->green==255 && theColor->blue==0)
+    {
+      return COLOR_GREEN;
+    }
+  else if (theColor->red==255 && theColor->green==0 && theColor->blue==0)
+    {
+      return COLOR_RED;
+    }
+  else if (theColor->red==0 && theColor->green==255 && theColor->blue==255)
+    {
+      return COLOR_CYAN;
+    }
+  else if (theColor->red==255 && theColor->green==0 && theColor->blue==255)
+    {
+      return COLOR_LIGHTRED;
+    }
+  else if (theColor->red==255 && theColor->green==255 && theColor->blue==0)
+    {
+      return COLOR_YELLOW;
+    }
+
+  // For any other color, return white.
+  return COLOR_WHITE;
+}
+
+/**
+ * screen_foreground - set foreground color
+ */
+void screen_foreground(padRGB* theColor)
+{
+  current_foreground=screen_match_color(theColor);
+}
+
+/**
+ * screen_background - set background_color
+ */
+void screen_background(padRGB* theColor)
+{
+  current_background=screen_match_color(theColor);
 }
 
 /**

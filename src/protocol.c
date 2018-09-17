@@ -57,6 +57,8 @@ extern void screen_dot_draw(padPt* Coord);
 extern void screen_line_draw(padPt* Coord1, padPt* Coord2);
 extern void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count);
 extern void screen_tty_char(padByte theChar);
+extern void screen_foreground(padRGB* theColor);
+extern void screen_background(padRGB* theColor);
 extern void terminal_mem_load(padWord addr, padWord value);
 extern void terminal_char_load(padWord charnum, charData theChar);
 extern void terminal_mode_5(padWord value);
@@ -646,10 +648,10 @@ GoMode (void)
       terminal_mode_7 (theWord);
       break;
     case mFore:
-      /* ForeGround (&theColor); */
+      screen_foreground(&theColor);
       break;
     case mBack:
-      /* BackGround (&theColor); */
+      screen_background(&theColor);
       break;
     }
   CMode = PMode;
