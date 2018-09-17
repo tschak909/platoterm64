@@ -32,9 +32,6 @@ static uint8_t recv_buffer[384];
 static uint16_t recv_buffer_size=0;
 extern ConfigInfo config;
 
-#define XON_THRESHOLD 46
-#define XOFF_THRESHOLD 127
-
 static struct ser_params params = {
   SER_BAUD_38400,
   SER_BITS_8,
@@ -60,7 +57,7 @@ void io_init(void)
     {
       io_init_funcptrs();
       io_open();
-      prefs_display("serial driver loaded.");
+      prefs_display("serial driver opened.");
     }
   else
     {
@@ -111,14 +108,14 @@ void io_main(void)
   
   if (xoff_enabled==false)
     {
-      if (recv_buffer_size>XOFF_THRESHOLD)
+      if (recv_buffer_size>config.xoff_threshold)
   	{
   	  io_recv_serial_flow_off();
   	}
     }
   else /* xoff_enabled==true */
     {
-      if (xoff_enabled==true && recv_buffer_size<XON_THRESHOLD)
+      if (xoff_enabled==true && recv_buffer_size<config.xon_threshold)
   	{
   	  io_recv_serial_flow_on();
   	}

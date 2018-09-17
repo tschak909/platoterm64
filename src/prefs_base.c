@@ -7,6 +7,7 @@
  * prefs.c - Preferences menu functions
  */
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -45,8 +46,7 @@ extern padBool ModeBold;
 extern padBool Rotate;
 extern padBool Reverse;
 
-/* static char temp_ip_address[17]; */
-
+uint8_t temp_val[8];
 uint8_t ch;
 uint8_t prefs_need_updating;
 uint8_t touch_prefs_updated;
@@ -106,9 +106,9 @@ void prefs_run(void)
  */
 void prefs_serial(void)
 {
-  prefs_display("i)nterface d)river b)aud t)ouch s)ave e)xit: ");
+  prefs_display("i)nterface d)river b)aud t)ouch x)onoff s)ave e)xit: ");
 
-  ch=prefs_get_key_matching("idbtseIDBTSE");
+  ch=prefs_get_key_matching("idbtxseIDBTXSE");
 
   switch(ch)
     {
@@ -128,6 +128,10 @@ void prefs_serial(void)
       prefs_select("touch");
       prefs_touch();
       break;
+    case 'x':
+      prefs_select("xonoff");
+      prefs_xonoff();
+      break;
     case 's':
       prefs_select("save");
       prefs_save();
@@ -138,6 +142,62 @@ void prefs_serial(void)
     }
   
 }
+
+/**
+ * prefs_get_val()
+ * get string with ip address numbers, terminated by return.
+ */
+void prefs_get_val(void)
+{
+  unsigned char strp=0;
+  
+  ch=0;
+
+  while (ch != 0x0d)
+    {
+      ch=prefs_get_key_matching1("0123456789");
+      if (ch==0x08) /* was translated from 0x14 to 0x08 */
+  	{
+	  if (strp>0)
+	    {
+	      --strp;
+	      temp_val[strp]=0;
+	      ShowPLATO(&ch,1);
+	    }
+  	}
+      else if (ch==0x0d)
+	{
+	  // Don't append or show the CR
+	}
+      else
+  	{
+  	  temp_val[strp]=ch;
+  	  ShowPLATO(&ch,1);
+	  ++strp;
+  	}
+    }
+}
+
+/**
+ * prefs_xonoff()
+ * Set xon/off buffers
+ */
+void prefs_xonoff(void)
+{
+  prefs_display("enter new xon threshold: ");
+  prefs_get_val();
+  if (strcmp(temp_val,"")!=0)
+    config.xon_threshold=atoi(temp_val);
+  prefs_select(" ok");
+  prefs_clear();
+  prefs_display("enter new xoff threshold: ");
+  prefs_get_val();
+  if (strcmp(temp_val,"")!=0)
+    config.xoff_threshold=atoi(temp_val);
+  prefs_select(" ok");
+  prefs_clear();
+}
+
 
 /**
  * prefs_save(void)
@@ -453,30 +513,30 @@ unsigned char prefs_get_key_matching(const char* matches)
     }
 }
 
-/* /\** */
-/*  * TEMPORARY: Wait for a key matching input, return it. */
-/*  *\/ */
-/* unsigned char prefs_get_key_matching1(const char* matches) */
-/* { */
-/*   unsigned char ch=0; */
-/*   unsigned char i; */
+/**
+ * TEMPORARY: Wait for a key matching input, return it.
+ */
+unsigned char prefs_get_key_matching1(const char* matches)
+{
+  unsigned char ch=0;
+  unsigned char i;
   
-/*   for (;;) */
-/*     { */
-/*       ch=cgetc(); */
+  for (;;)
+    {
+      ch=cgetc();
 
-/*       if (ch==0x0d) */
-/* 	return 0x0d; */
-/*       else if (ch==0x14) */
-/* 	return 0x08; /\* convert PETSCII DEL to ASCII BS *\/ */
+      if (ch==0x0d || ch==0x9B)
+	return 0x0d;
+      else if (ch==0x14)
+	return 0x08; /* convert PETSCII DEL to ASCII BS */
       
-/*       for (i=0;i<strlen(matches);++i) */
-/* 	{ */
-/* 	  if (ch==matches[i]) */
-/* 	    return ch; */
-/* 	} */
-/*     } */
-/* } */
+      for (i=0;i<strlen(matches);++i)
+	{
+	  if (ch==matches[i])
+	    return ch;
+	}
+    }
+}
 
 /**
  * erase prefs bar

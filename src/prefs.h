@@ -33,6 +33,18 @@ void prefs_interface(void);
 void prefs_serial(void);
 
 /**
+ * prefs_get_val()
+ * get string with ip address numbers, terminated by return.
+ */
+void prefs_get_val(void);
+
+/**
+ * prefs_xonoff()
+ * Set xon/off buffers
+ */
+void prefs_xonoff(void);
+
+/**
  * prefs_driver(void)
  * Preferences menu to select serial driver
  */

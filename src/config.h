@@ -13,6 +13,9 @@
 #define IO_MODE_SERIAL        0
 #define IO_MODE_ETHERNET      1
 
+#define XON_THRESHOLD 46
+#define XOFF_THRESHOLD 127
+
 /* C64/128 Driver defines */
 #define CONFIG_MOUSE_DRIVER_1351 "mou-1351"
 #define CONFIG_MOUSE_DRIVER_JOY "mou-joy"
@@ -47,6 +50,8 @@ typedef struct configInfo
   unsigned char color_foreground;
   unsigned char color_background;
   unsigned char color_border;
+  unsigned short xon_threshold;
+  unsigned short xoff_threshold;
 } ConfigInfo;
 
 /**
