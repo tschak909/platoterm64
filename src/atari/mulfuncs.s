@@ -9,60 +9,66 @@
 ; 0.625x = (1/2 + 1/8)x
 
 _mul0625:
-	stx tmp1	; high-byte of val
-	clc
-	ror tmp1
-	ror a
-	sta tmp2	; tmp1:tmp2 = val/2
-	lda tmp1
-	clc
-	ror a
-	sta tmp3
-	lda tmp2
-	ror a
-;	sta tmp4	; tmp3:tmp4 = val/4
-	clc
-	ror tmp3
-	ror a
-;	sta tmp4	; tmp3:tmp4 = val/8
-	clc
-	adc tmp2
-	sta tmp2
-	lda tmp3
-	adc tmp1
-	tax
-	lda tmp2
-	rts
+	stx ptr1+1
 
+	asl	; double it
+	rol ptr1+1
+	
+	sta ptr2	; save * 2
+	ldy ptr1+1
+	
+	asl	; calculate * 8
+	rol ptr1+1
+	asl
+	rol ptr1+1
+	
+	clc	; add to * 2
+	adc ptr2
+	sta ptr2
+	tya
+	adc ptr1+1
+
+	lsr 	; now divide by 16
+	ror ptr2
+	lsr
+	ror ptr2
+	lsr
+	ror ptr2
+	lsr
+	ror ptr2
+	
+	tax
+	lda ptr2
+	rts
 
 ; unsigned int __fastcall__ mul0375(unsigned int val);
 ; 0.375x = (1/4 + 1/8)x
 
 _mul0375:
-	stx tmp1	; high-byte of val
-	clc
-	ror tmp1
-	ror a
-	sta tmp2	; tmp1:tmp2 = val/2
-	clc
-	ror tmp1
-	ror tmp2	; tmp1:tmp2 = val/4
-	lda tmp1
-	clc
-	ror a
-	sta tmp3
-	lda tmp2
-	ror a
-;	sta tmp4	; tmp3:tmp4 = val/8
-	clc
-	adc tmp2
-	sta tmp2
-	lda tmp3
-	adc tmp1
-	tax
-	lda tmp2
-	rts
+	sta ptr2	; save original value
+	stx ptr2+1
+	stx ptr1+1	; msb of shifted value
+
+	asl	; double it
+	rol ptr1+1
 	
+	clc	; get * 3
+	adc ptr2
+	sta ptr2
+	
+	lda ptr1+1
+	adc ptr2+1
+
+	lsr 	; now divide by 8
+	ror ptr2
+	lsr
+	ror ptr2
+	lsr
+	ror ptr2
+	
+	tax
+	lda ptr2
+	rts
 .end
 	
 .endif
