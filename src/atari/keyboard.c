@@ -100,7 +100,18 @@ void keyboard_main(void)
 	      prefs_clear();
 	    }
 	}
-
+      else if (key==45 && TTY==false) // T
+	{
+	  prefs_clear();
+	  prefs_display("TTY Mode");
+	  TTY=true;
+	}
+      else if (key==10 && TTY==true) // P
+	{
+	  prefs_clear();
+	  prefs_display("PLATO Mode");
+	  TTY=false;
+	}
     }
   else if (TTY)
     {
