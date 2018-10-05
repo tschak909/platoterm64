@@ -20,7 +20,7 @@ extern short FONT_SIZE_X;
 extern short FONT_SIZE_Y;
 
 /* screen_beep.s */
-extern screen_beep(void);
+extern void screen_beep(void);
 
 static short offset;
 
