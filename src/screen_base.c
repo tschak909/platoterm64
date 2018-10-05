@@ -184,6 +184,7 @@ void screen_tty_char(padByte theChar)
  */
 unsigned char screen_match_color(padRGB* theColor)
 {
+#ifdef __C64__
   if (theColor->red==0 && theColor->green==0 && theColor->blue==0)
     {
       return COLOR_BLACK;
@@ -212,7 +213,7 @@ unsigned char screen_match_color(padRGB* theColor)
     {
       return COLOR_YELLOW;
     }
-
+#endif
   // For any other color, return white.
   return COLOR_WHITE;
 }

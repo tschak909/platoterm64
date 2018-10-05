@@ -13,7 +13,7 @@
 #include "screen.h"
 
 #ifdef __ATARI__
-#define CONFIG_FILE "D:CONFIG"
+#define CONFIG_FILE "CONFIG"
 #else
 #define CONFIG_FILE "config"
 #endif
