@@ -172,7 +172,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       Flags|=0x40;
     }
   cx=mul0625((Coord->x&0x1FF));
-  cy=mul0375((Coord->y+14^0x1FF)&0x1FF);
+  cy=mul0375((Coord->y+15^0x1FF)&0x1FF);
 
   for (i=0;i<count;++i)
     {
