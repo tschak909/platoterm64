@@ -439,6 +439,7 @@ Blockx (void)
       LoadCoordx (&NewCoord);
       screen_block_draw (&CurCoord, &NewCoord);
       SubMode = 0;
+      CurCoord.x-=15; // s0ascers 
     }
 }
 
