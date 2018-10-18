@@ -98,8 +98,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t height=FONT_SIZE_Y;
   uint16_t deltaX=1;
   uint16_t deltaY=1;
-  uint8_t mainColor=1;
-  uint8_t altColor=0;
+  uint8_t mainColor=TGI_COLOR_WHITE;
+  uint8_t altColor=TGI_COLOR_BLACK;
   uint8_t *p;
   uint8_t* curfont;
   
@@ -125,17 +125,17 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   if (CurMode==ModeRewrite)
     {
-      altColor=0;
+      altColor=TGI_COLOR_BLACK;
     }
   else if (CurMode==ModeInverse)
     {
-      altColor=1;
+      altColor=TGI_COLOR_WHITE;
     }
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    mainColor=0;
+    mainColor=TGI_COLOR_BLACK;
   else
-    mainColor=1;
+    mainColor=TGI_COLOR_WHITE;
 
   tgi_setcolor(mainColor);
 
