@@ -267,6 +267,84 @@ void screen_background(padRGB* theColor)
 }
 
 /**
+ * screen_paint - Paint screen scanline_fill
+ */
+void _screen_paint(unsigned short x, unsigned short y)
+{
+  // Currently we run out of memory on apple2, so this is temporarily disabled.
+#ifndef __APPLE2__
+  static unsigned short xStack[64];
+  static unsigned char yStack[64];
+  unsigned char stackentry = 1;
+  unsigned char spanAbove, spanBelow;
+  
+  unsigned char oldColor = tgi_getpixel(x,y);
+  
+  if (oldColor == 1)
+    return;
+  
+  do
+    {
+      while (x > 0 && tgi_getpixel(x-1,y) == oldColor)
+	--x;
+      
+      spanAbove = spanBelow = false;
+      while(tgi_getpixel(x,y) == oldColor)
+	{
+	  tgi_setpixel(x,y);
+	  
+	  if (y < (191))
+	    {
+	      unsigned char belowColor = tgi_getpixel(x, y+1);
+	      if (!spanBelow  && belowColor == oldColor)
+		{
+		  xStack[stackentry]  = x;
+		  yStack[stackentry]  = y+1;					
+		  ++stackentry;
+		  spanBelow = true;
+		}
+	      else if (spanBelow && belowColor != oldColor)
+		spanBelow = false;
+	    }
+	  
+	  if (y > 0)
+	    {
+	      unsigned char aboveColor = tgi_getpixel(x, y-1);
+	      if (!spanAbove  && aboveColor == oldColor)
+		{
+		  xStack[stackentry]  = x;
+		  yStack[stackentry]  = y-1;
+		  ++stackentry;
+		  spanAbove = true;
+		}
+	      else if (spanAbove && aboveColor != oldColor)
+		spanAbove = false;
+	    }
+	  
+	  ++x;
+	}
+      --stackentry;
+      x = xStack[stackentry];
+      y = yStack[stackentry];
+    }
+  while (stackentry);		
+#endif
+}
+
+/**
+ * screen_paint - Paint the screen
+ * Calling convention is different due to this needing to be recursive.
+ */
+void screen_paint(padPt* Coord)
+{
+#ifdef __ATARI__
+  _screen_paint(mul0625(Coord->x),mul0375(Coord->y^0x1FF));
+#else
+  _screen_paint(scalex[Coord->x],scaley[Coord->y]);
+#endif
+}
+
+/**
  * screen_done()
  * Close down TGI
  */

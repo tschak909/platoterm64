@@ -119,7 +119,13 @@ void screen_foreground(padRGB* theColor);
  * screen_background - set background_color
  */
 void screen_background(padRGB* theColor);
-  
+
+/**
+ * screen_paint - Paint the screen
+ * Calling convention is different due to this needing to be recursive.
+ */
+void screen_paint(padPt* Coord);
+
 /**
  * screen_done()
  * Close down TGI
