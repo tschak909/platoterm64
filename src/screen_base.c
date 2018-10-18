@@ -77,10 +77,18 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   io_recv_serial_flow_off(); 
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
+#ifdef __ATARI__
+    tgi_setcolor(0);
+#else
     tgi_setcolor(TGI_COLOR_BLACK);
-  else
+#endif
+    else
+#ifdef __ATARI__
+      tgi_setcolor(1);
+#else
     tgi_setcolor(TGI_COLOR_WHITE);
-
+#endif
+    
 #ifdef __ATARI__
   tgi_bar(mul0625(Coord1->x),mul0375(Coord1->y^0x1FF),mul0625(Coord2->x),mul0375(Coord2->y^0x1FF));
 #else
@@ -96,9 +104,18 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
 void screen_dot_draw(padPt* Coord)
 {
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(TGI_COLOR_BLACK);
-  else
-    tgi_setcolor(TGI_COLOR_WHITE);
+#ifdef __ATARI__
+    tgi_setcolor(0);
+#else
+  tgi_setcolor(TGI_COLOR_BLACK);
+#endif
+    else
+#ifdef __ATARI__
+      tgi_setcolor(1);
+#else
+  tgi_setcolor(TGI_COLOR_WHITE);
+#endif
+  
 #ifdef __ATARI__
   tgi_setpixel(mul0625(Coord->x),mul0375(Coord->y^0x1FF));
 #else
@@ -124,9 +141,17 @@ void screen_line_draw(padPt* Coord1, padPt* Coord2)
 #endif
 
   if (CurMode==ModeErase || CurMode==ModeInverse)
+#ifdef __ATARI__
+    tgi_setcolor(0);
+#else
     tgi_setcolor(TGI_COLOR_BLACK);
-  else
-    tgi_setcolor(TGI_COLOR_WHITE);
+#endif
+    else
+#ifdef __ATARI__
+      tgi_setcolor(1);
+#else
+  tgi_setcolor(TGI_COLOR_WHITE);
+#endif
 
   tgi_line(x1,y1,x2,y2);
 }
@@ -147,13 +172,25 @@ void screen_tty_char(padByte theChar)
   else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
     {
       TTYLoc.x -= CharWide;
+
+#ifdef __ATARI__
+      tgi_setcolor(0);
+#else
       tgi_setcolor(TGI_COLOR_BLACK);
+#endif
+      
 #ifdef __ATARI__
       tgi_bar(mul0625(TTYLoc.x),mul0375(TTYLoc.y^0x1FF),mul0625(TTYLoc.x+CharWide),mul0375((TTYLoc.y+CharHigh)^0x1FF));
 #else
       tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
 #endif
+
+#ifdef __ATARI__
+      tgi_setcolor(1);
+#else
       tgi_setcolor(TGI_COLOR_WHITE);
+#endif
+      
     }
   else if (theChar == 0x0A)			/* line feed */
     TTYLoc.y -= CharHigh;
