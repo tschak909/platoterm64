@@ -440,7 +440,8 @@ Blockx (void)
       LoadCoordx (&NewCoord);
       screen_block_draw (&CurCoord, &NewCoord);
       SubMode = 0;
-      CurCoord.y-=15; // s0ascers 
+      CurCoord.y-=15; // s0ascers
+      CurCoord.x+=16; // need to see why I am needing to do this...
     }
 }
 
