@@ -20,6 +20,7 @@
 #include "../screen.h"
 #include "key.h"
 
+static uint16_t delay;
 static uint8_t lastkey,key;
 static uint8_t keyboard_start_pressed;
 static uint8_t keyboard_select_pressed;
@@ -30,6 +31,15 @@ extern void click();
 extern padBool TTY;
 
 static uint8_t tty_ch;
+
+/**
+ * keyboard_sleep - Wait a few moments, for guard time.
+ */
+void keyboard_sleep(void)
+{
+  for (delay=0;delay<60000;delay++)
+    {}
+}
 
 /**
  * keyboard_main - Handle the keyboard presses
@@ -61,6 +71,27 @@ void keyboard_main(void)
 	  screen_cycle_border();
 	  POKE(764,255);
 	  screen_update_colors();
+	}
+      if (key==12)
+	{
+	  POKE(764,255);
+	  keyboard_out_tty(0x0D);
+	  keyboard_out_tty(0x0A);
+	}
+      else if (key==57)
+	{
+	  POKE(764,255);
+	  TTY=true;
+	  prefs_display("Hanging up...");
+	  keyboard_out_tty('+');
+	  keyboard_out_tty('+');
+	  keyboard_out_tty('+');
+	  keyboard_sleep();
+	  keyboard_out_tty('A');
+	  keyboard_out_tty('T');
+	  keyboard_out_tty('H');
+	  keyboard_out_tty(0x0D);
+	  keyboard_out_tty(0x0A);
 	}
       else if (key==15)
 	{
@@ -97,17 +128,20 @@ void keyboard_main(void)
 	      exit(0);
 	      break;
 	    default:
+	      POKE(764,255);	  
 	      prefs_clear();
 	    }
 	}
       else if (key==45 && TTY==false) // T
 	{
+	  POKE(764,255);
 	  prefs_clear();
 	  prefs_display("TTY Mode");
 	  TTY=true;
 	}
       else if (key==10 && TTY==true) // P
 	{
+	  POKE(764,255);
 	  prefs_clear();
 	  prefs_display("PLATO Mode");
 	  TTY=false;
