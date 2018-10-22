@@ -35,6 +35,7 @@ extern uint16_t scalety[];
  */
 void touch_init(void)
 {
+#ifndef __APPLE2__
   if (strcmp(config.driver_mou,"NONE")==0)
     return;
   
@@ -47,8 +48,10 @@ void touch_init(void)
       POKE(0xD001,0);
       /* POKE(0xD002,0); */
       POKE(0xD003,0);
-#endif
+#endif /* __ATARI__ */
     }
+#endif /* __APPLE2__ */
+  
 }
 
 /**
@@ -56,6 +59,7 @@ void touch_init(void)
  */
 void touch_allow(padBool allow)
 {
+#ifndef __APPLE2__
   /* // If mouse is off screen (due to previously being moved off screen, move onscreen to make visible. */
   /* if (allow) */
   /*   { */
@@ -71,6 +75,7 @@ void touch_allow(padBool allow)
   /* 	} */
   /*   } */
   TouchActive=allow;
+#endif
 }
 
 /**
@@ -78,6 +83,7 @@ void touch_allow(padBool allow)
  */
 void touch_main(void)
 {
+#ifndef __APPLE2__
   uint8_t lastbuttons;
   padPt coord;
 
@@ -95,6 +101,7 @@ void touch_main(void)
       Touch(&coord);
     }
   lastbuttons = mouse_data.buttons;
+#endif 
 }
 
 /**
@@ -102,7 +109,9 @@ void touch_main(void)
  */
 void touch_hide(void)
 {
+#ifndef __APPLE2__
   mouse_move(screen_w,screen_h);
+#endif
 }
 
 /**
@@ -110,6 +119,8 @@ void touch_hide(void)
  */
 void touch_done(void)
 {
+#ifndef __APPLE2__
   if (mouse_present==true)
     mouse_uninstall();
+#endif
 }

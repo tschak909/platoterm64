@@ -271,10 +271,10 @@ void screen_background(padRGB* theColor)
  */
 void _screen_paint(unsigned short x, unsigned short y)
 {
-  // Currently we run out of memory on apple2, so this is temporarily disabled.
 #ifndef __APPLE2__
-  static unsigned short xStack[64];
-  static unsigned char yStack[64];
+  // Currently we run out of memory on apple2, so this is temporarily disabled.
+  static unsigned short xStack[256];
+  static unsigned char yStack[192];
   unsigned char stackentry = 1;
   unsigned char spanAbove, spanBelow;
   
@@ -327,7 +327,7 @@ void _screen_paint(unsigned short x, unsigned short y)
       x = xStack[stackentry];
       y = yStack[stackentry];
     }
-  while (stackentry);		
+  while (stackentry);
 #endif
 }
 
