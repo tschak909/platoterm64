@@ -122,6 +122,7 @@ void keyboard_main(void)
 	    case 'y':
 	      POKE(764,255); // clear keyboard buffer
 	      POKE(82,2);    // reset left margin to OS default.
+	      POKE(559,34);  // reset ANTIC to Normal PF, P/M DMA OFF
 	      io_done();
 	      touch_done();
 	      screen_done();
