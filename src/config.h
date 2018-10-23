@@ -52,6 +52,7 @@ typedef struct configInfo
   unsigned char color_border;
   unsigned short xon_threshold;
   unsigned short xoff_threshold;
+  unsigned char fill;
 } ConfigInfo;
 
 /**

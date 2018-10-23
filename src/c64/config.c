@@ -34,6 +34,7 @@ void config_set_defaults(void)
   config.dns=0;
   config.xon_threshold=XON_THRESHOLD;
   config.xoff_threshold=XOFF_THRESHOLD;
+  config.fill=true;
   strcpy(config.driver_ser,CONFIG_DEFAULT_SERIAL_DRIVER);
   strcpy(config.driver_mou,CONFIG_DEFAULT_MOUSE_DRIVER);
   config.color_foreground=TGI_COLOR_WHITE;

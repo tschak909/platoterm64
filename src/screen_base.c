@@ -273,8 +273,8 @@ void _screen_paint(unsigned short x, unsigned short y)
 {
 #ifndef __APPLE2__
   // Currently we run out of memory on apple2, so this is temporarily disabled.
-  static unsigned short xStack[256];
-  static unsigned char yStack[192];
+  static unsigned short xStack[64];
+  static unsigned char yStack[64];
   unsigned char stackentry = 1;
   unsigned char spanAbove, spanBelow;
   
@@ -337,11 +337,14 @@ void _screen_paint(unsigned short x, unsigned short y)
  */
 void screen_paint(padPt* Coord)
 {
+  if (config.fill==true)
+    {
 #ifdef __ATARI__
-  _screen_paint(mul0625(Coord->x),mul0375(Coord->y^0x1FF));
+      _screen_paint(mul0625(Coord->x),mul0375(Coord->y^0x1FF));
 #else
-  _screen_paint(scalex[Coord->x],scaley[Coord->y]);
+      _screen_paint(scalex[Coord->x],scaley[Coord->y]);
 #endif
+    }
 }
 
 /**

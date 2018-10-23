@@ -39,6 +39,18 @@ void prefs_serial(void);
 void prefs_get_val(void);
 
 /**
+ * prefs_other()
+ * Other prefs options
+ */
+void prefs_other(void);
+
+/**
+ * prefs_fill()
+ * Toggle fill on/off
+ */
+void prefs_fill(void);
+
+/**
  * prefs_xonoff()
  * Set xon/off buffers
  */

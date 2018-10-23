@@ -106,9 +106,9 @@ void prefs_run(void)
  */
 void prefs_serial(void)
 {
-  prefs_display("i)nterface d)river b)aud t)ouch x)onoff s)ave e)xit: ");
+  prefs_display("i)nterface d)river b)aud t)ouch o)ther s)ave e)xit: ");
 
-  ch=prefs_get_key_matching("idbtxseIDBTXSE");
+  ch=prefs_get_key_matching("idbtoseIDBTOSE");
 
   switch(ch)
     {
@@ -128,9 +128,9 @@ void prefs_serial(void)
       prefs_select("touch");
       prefs_touch();
       break;
-    case 'x':
-      prefs_select("xonoff");
-      prefs_xonoff();
+    case 'o':
+      prefs_select("other");
+      prefs_other();
       break;
     case 's':
       prefs_select("save");
@@ -179,11 +179,60 @@ void prefs_get_val(void)
 }
 
 /**
+ * prefs_other()
+ * Other prefs options
+ */
+void prefs_other(void)
+{
+  prefs_clear();
+  prefs_display("OTHER: f)ill x)onoff e)xit: ");
+  ch=prefs_get_key_matching("fxeFXE");
+
+  switch(ch)
+    {
+    case 'f':
+      prefs_fill();
+      break;
+    case 'x':
+      prefs_xonoff();
+      break;
+    case 'e':
+      prefs_serial();
+      break;
+    }
+}
+
+/**
+ * prefs_fill()
+ * Toggle fill on/off
+ */
+void prefs_fill(void)
+{
+  prefs_clear();
+  prefs_display("FILL: Y)ES N)O: ");
+  ch=prefs_get_key_matching("ynYN");
+  switch(ch)
+    {
+    case 'y':
+      prefs_select(" YES");
+      config.fill=true;
+      break;
+    case 'n':
+      prefs_select(" NO");
+      config.fill=false;
+      break;
+    }
+  prefs_clear();
+  prefs_other();
+}
+
+/**
  * prefs_xonoff()
  * Set xon/off buffers
  */
 void prefs_xonoff(void)
 {
+  prefs_clear();
   prefs_display("enter new xon threshold: ");
   prefs_get_val();
   if (strcmp(temp_val,"")!=0)
