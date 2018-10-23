@@ -27,6 +27,7 @@ char configFile[13];
  */
 void config_init(void)
 {
+  memset(&configFile,0,sizeof(configFile));
   strcpy(configFile,CONFIG_FILE);
   config_init_hook();
   memset(&config,0,sizeof(config));
