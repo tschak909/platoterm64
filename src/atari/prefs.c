@@ -18,13 +18,17 @@ extern uint8_t ch;
 extern uint8_t prefs_need_updating;
 extern uint8_t touch_prefs_updated;
 extern uint8_t io_prefs_updated;
+extern uint8_t io_load_successful;
 
 /**
  * Show PLATOTERM READY - Press '<key>' for setup.
  */
 void prefs_show_greeting(void)
 {
-  prefs_display("platoterm ready - option for setup");
+  if (io_load_successful==false)
+    prefs_display("serial driver didn't load. Check handler.");
+  else
+    prefs_display("platoterm ready - option for setup");
 }
 
 /**
