@@ -156,7 +156,6 @@ void keyboard_main(void)
 	  if (tty_ch==0x9B) // ATASCII EOL, send CR/LF
 	    {
 	      keyboard_out_tty(0x0D);
-	      keyboard_out_tty(0x0A);
 	    }
 	  else if (tty_ch==0x7E) // ATASCII BS, send ASCII BS
 	    {

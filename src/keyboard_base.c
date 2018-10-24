@@ -46,6 +46,4 @@ void keyboard_out(uint8_t platoKey)
 void keyboard_out_tty(char ch)
 {
   io_send_byte(ch);
-  if (ch==0x0D)
-    io_send_byte(0x0A); // Send a linefeed along with CR in TTY mode.
 }
