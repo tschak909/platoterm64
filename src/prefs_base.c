@@ -185,14 +185,11 @@ void prefs_get_val(void)
 void prefs_other(void)
 {
   prefs_clear();
-  prefs_display("OTHER: f)ill x)onoff e)xit: ");
+  prefs_display("OTHER: x)onoff e)xit: ");
   ch=prefs_get_key_matching("fxeFXE");
 
   switch(ch)
     {
-    case 'f':
-      prefs_fill();
-      break;
     case 'x':
       prefs_xonoff();
       break;
@@ -202,29 +199,29 @@ void prefs_other(void)
     }
 }
 
-/**
- * prefs_fill()
- * Toggle fill on/off
- */
-void prefs_fill(void)
-{
-  prefs_clear();
-  prefs_display("FILL: Y)ES N)O: ");
-  ch=prefs_get_key_matching("ynYN");
-  switch(ch)
-    {
-    case 'y':
-      prefs_select(" YES");
-      config.fill=true;
-      break;
-    case 'n':
-      prefs_select(" NO");
-      config.fill=false;
-      break;
-    }
-  prefs_clear();
-  prefs_other();
-}
+/* /\** */
+/*  * prefs_fill() */
+/*  * Toggle fill on/off */
+/*  *\/ */
+/* void prefs_fill(void) */
+/* { */
+/*   prefs_clear(); */
+/*   prefs_display("FILL: Y)ES N)O: "); */
+/*   ch=prefs_get_key_matching("ynYN"); */
+/*   switch(ch) */
+/*     { */
+/*     case 'y': */
+/*       prefs_select(" YES"); */
+/*       config.fill=true; */
+/*       break; */
+/*     case 'n': */
+/*       prefs_select(" NO"); */
+/*       config.fill=false; */
+/*       break; */
+/*     } */
+/*   prefs_clear(); */
+/*   prefs_other(); */
+/* } */
 
 /**
  * prefs_xonoff()

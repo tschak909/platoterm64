@@ -47,13 +47,8 @@ void config_set_defaults(void)
 
 void config_atari_fix_driver_filenames(void)
 {
-  /* dunit=PEEK(769); // Get drive number from dunit. */
-  /* configFile[1]=dunit; */
-  /* config.driver_ser[1]=dunit; */
-  
-  /* if (strcmp(config.driver_mou,"NONE")!=0) */
-  /*   config.driver_mou[1]=dunit; */
-  
+  // Put EOL at end of driver filename.
+  configFile[6]=0x9B;
 }
 
 void config_init_hook(void)
