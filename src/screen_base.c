@@ -35,7 +35,6 @@ extern unsigned short scaley[];
 
 extern uint8_t font[];
 extern uint8_t fontm23[];
-extern uint16_t fontptr[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
 

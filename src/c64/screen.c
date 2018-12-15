@@ -37,6 +37,7 @@ unsigned short colorpt;
 unsigned short x_coord;
 unsigned char y_coord;
 
+#define FONTPTR(a) (((a << 1) + a) << 1)
 
 /**
  * screen_load_driver()

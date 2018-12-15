@@ -172,13 +172,7 @@ int main(int argc, char *argv[])
     "};\n\n");
 
 
-    printf("unsigned int fontptr[]={\n");
-    for (i=0;i<160;i++) { 
-	printf("%d,",i*12);
-	if (i % 8 == 7 )
-	    printf("\n");
-    } 
-    printf("};\n\n"
+    printf("\n\n"
 	   "#endif /* FONT_H */\n");
 
     return 0;

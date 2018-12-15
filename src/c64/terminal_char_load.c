@@ -15,6 +15,8 @@
 #include "../terminal.h"
 #include "../protocol.h"
 
+#define FONTPTR(a) (((a << 1) + a) << 1)
+
 // Temporary PLATO character data, 8x16 matrix
 static unsigned char char_data[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 				  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
@@ -48,7 +50,6 @@ static unsigned char curr_word;   // current word
 static unsigned char u,v;       // loop counters
 
 extern unsigned char fontm23[768];
-extern unsigned short fontptr[160];
 
 /**
  * terminal_char_load - Store a character into the user definable
@@ -59,7 +60,7 @@ void terminal_char_load(padWord charnum, charData theChar)
   // Clear char data. 
   memset(char_data,0,sizeof(char_data));
   memset(PIX_WEIGHTS,0,sizeof(PIX_WEIGHTS));
-  memset(&fontm23[fontptr[charnum]],0,6);
+  memset(&fontm23[FONTPTR(charnum)],0,6);
   
   // Transpose character data.  
   for (curr_word=0;curr_word<8;curr_word++)
@@ -86,7 +87,7 @@ void terminal_char_load(padWord charnum, charData theChar)
   	  for (v=5; v-->0; )
   	    {
   	      if (PIX_WEIGHTS[TAB_0_25[u]+v] >= PIX_THRESH[TAB_0_25[u]+v])
-  		fontm23[fontptr[charnum]+u]|=BTAB[v];
+  		fontm23[FONTPTR(charnum)+u]|=BTAB[v];
   	    }
   	}
     }
@@ -99,7 +100,7 @@ void terminal_char_load(padWord charnum, charData theChar)
 	    {
 	      if (char_data[u] & (1<<v))
 		{
-		  fontm23[fontptr[charnum]+TAB_0_5i[u]]|=BTAB_5[v];
+		  fontm23[FONTPTR(charnum)+TAB_0_5i[u]]|=BTAB_5[v];
 		}
 	    }
 	}

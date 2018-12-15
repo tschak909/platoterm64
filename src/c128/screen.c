@@ -30,6 +30,8 @@ extern padBool FastText; /* protocol.c */
 #define outb(addr,val)        (*(addr)) = (val)
 #define outw(addr,val)        (*(addr)) = (val)
 
+#define FONTPTR(a) (a<<4)
+
 extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 
 /**
