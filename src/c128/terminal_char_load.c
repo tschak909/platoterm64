@@ -17,7 +17,7 @@ static unsigned char curr_word;
 
 extern unsigned char fontm23[768];
 
-#define FONTPTR(a) (1<<4)
+#define FONTPTR(a) (a<<4)
 
 /**
  * terminal_char_load - Store a character into the user definable

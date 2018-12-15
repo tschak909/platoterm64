@@ -14,16 +14,18 @@
 #include <stdlib.h>
 #include "../config.h"
 #include "../protocol.h"
+#include "../screen.h"
 
 extern ConfigInfo config; 
 
-extern unsigned short scalex[];
-extern unsigned short scaley[];
 extern uint8_t font[];
 extern uint8_t fontm23[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
 extern padBool FastText; /* protocol.c */
+extern padPt TTYLoc;
+extern uint8_t CharWide;
+extern uint8_t CharHigh;
 
 #define outb(addr,val)        (*(addr)) = (val)
 #define outw(addr,val)        (*(addr)) = (val)
@@ -31,7 +33,13 @@ extern padBool FastText; /* protocol.c */
 static uint8_t bp=0;
 static uint8_t bd=0;
 
+extern uint16_t mul0375(uint16_t val);
+
+extern void (*io_recv_serial_flow_on)(void);
+extern void (*io_recv_serial_flow_off)(void);
+
 #define FONTPTR(a) (((a << 1) + a) << 1)
+#define mul05(a) ((a>>1)+12)
 
 /**
  * screen_load_driver()
@@ -48,6 +56,94 @@ void screen_load_driver(void)
  */
 void screen_init_hook(void)
 {
+}
+
+/**
+ * screen_block_draw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
+ */
+void screen_block_draw(padPt* Coord1, padPt* Coord2)
+{
+  // Block erase takes forever, manually assert flow control.
+  io_recv_serial_flow_off(); 
+  
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+  
+  tgi_bar(mul05(Coord1->x),mul0375(Coord1->y^0x1FF),mul05(Coord2->x),mul0375(Coord2->y^0x1FF));
+
+  io_recv_serial_flow_on();
+  
+}
+
+/**
+ * screen_dot_draw(Coord) - Plot a mode 0 pixel
+ */
+void screen_dot_draw(padPt* Coord)
+{
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+  
+  tgi_setpixel(mul05(Coord->x),mul0375(Coord->y^0x1FF));
+}
+
+/**
+ * screen_line_draw(Coord1, Coord2) - Draw a mode 1 line
+ */
+void screen_line_draw(padPt* Coord1, padPt* Coord2)
+{
+  uint16_t x1=mul05(Coord1->x);
+  uint16_t x2=mul05(Coord2->x);
+  uint16_t y1=mul0375(Coord1->y^0x1FF);
+  uint16_t y2=mul0375(Coord2->y^0x1FF);  
+
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+
+  tgi_line(x1,y1,x2,y2);
+}
+
+/**
+ * screen_tty_char - Called to plot chars when in tty mode
+ */
+void screen_tty_char(padByte theChar)
+{
+  if ((theChar >= 0x20) && (theChar < 0x7F)) {
+    screen_char_draw(&TTYLoc, &theChar, 1);
+    TTYLoc.x += CharWide;
+  }
+  else if ((theChar == 0x0b)) /* Vertical Tab */
+    {
+      TTYLoc.y += CharHigh;
+    }
+  else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
+    {
+      TTYLoc.x -= CharWide;
+
+      tgi_setcolor(TGI_COLOR_BLACK);
+      tgi_bar(mul05(TTYLoc.x),mul0375(TTYLoc.y^0x1FF),mul05(TTYLoc.x+CharWide),mul0375((TTYLoc.y+CharHigh)^0x1FF));
+      tgi_setcolor(TGI_COLOR_WHITE);
+    }
+  else if (theChar == 0x0A)			/* line feed */
+    TTYLoc.y -= CharHigh;
+  else if (theChar == 0x0D)			/* carriage return */
+    TTYLoc.x = 0;
+  
+  if (TTYLoc.x + CharWide > 511) {	/* wrap at right side */
+    TTYLoc.x = 0;
+    TTYLoc.y -= CharHigh;
+  }
+  
+  if (TTYLoc.y < 0) {
+    tgi_clear();
+    TTYLoc.y=495;
+  }
+
 }
 
 /**
@@ -138,13 +234,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   tgi_setcolor(mainColor);
 
-#ifdef __ATARI__
-  x=mul0625((Coord->x&0x1FF));
+  x=mul05((Coord->x&0x1FF));
   y=mul0375((Coord->y+15^0x1FF)&0x1FF);
-#else
-  x=scalex[(Coord->x&0x1FF)];
-  y=scaley[(Coord->y)+15&0x1FF];
-#endif
   
   if (FastText==padF)
     {

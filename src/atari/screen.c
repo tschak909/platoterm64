@@ -13,11 +13,14 @@
 #include <conio.h>
 #include "../config.h"
 #include "../protocol.h"
+#include "../screen.h"
 
 extern uint8_t pal[2];
 extern ConfigInfo config; 
 extern short FONT_SIZE_X;
 extern short FONT_SIZE_Y;
+extern uint8_t CharWide;
+extern uint8_t CharHigh;
 
 /* screen_beep.s */
 extern void screen_beep(void);
@@ -35,6 +38,9 @@ extern unsigned char font[];
 extern unsigned char fontm23[];
 extern uint16_t mul0625(uint16_t val);
 extern uint16_t mul0375(uint16_t val);
+extern void (*io_recv_serial_flow_on)(void);
+extern void (*io_recv_serial_flow_off)(void);
+extern padPt TTYLoc;
 
 extern void RenderGlyph(void);
 
@@ -55,6 +61,93 @@ void screen_init_hook(void)
 void screen_load_driver(void)
 {
   tgi_install(tgi_static_stddrv);
+}
+
+/**
+ * screen_block_draw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
+ */
+void screen_block_draw(padPt* Coord1, padPt* Coord2)
+{
+  // Block erase takes forever, manually assert flow control.
+  io_recv_serial_flow_off(); 
+  
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(0);
+  else
+    tgi_setcolor(1);
+  
+  tgi_bar(mul0625(Coord1->x),mul0375(Coord1->y^0x1FF),mul0625(Coord2->x),mul0375(Coord2->y^0x1FF));
+
+  io_recv_serial_flow_on();  
+}
+
+/**
+ * screen_dot_draw(Coord) - Plot a mode 0 pixel
+ */
+void screen_dot_draw(padPt* Coord)
+{
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(0);
+  else
+    tgi_setcolor(1);
+  
+  tgi_setpixel(mul0625(Coord->x),mul0375(Coord->y^0x1FF));
+}
+
+/**
+ * screen_line_draw(Coord1, Coord2) - Draw a mode 1 line
+ */
+void screen_line_draw(padPt* Coord1, padPt* Coord2)
+{
+  uint16_t x1=mul0625(Coord1->x);
+  uint16_t x2=mul0625(Coord2->x);
+  uint16_t y1=mul0375(Coord1->y^0x1FF);
+  uint16_t y2=mul0375(Coord2->y^0x1FF);  
+
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(0);
+  else
+    tgi_setcolor(1);
+
+  tgi_line(x1,y1,x2,y2);
+}
+
+/**
+ * screen_tty_char - Called to plot chars when in tty mode
+ */
+void screen_tty_char(padByte theChar)
+{
+  if ((theChar >= 0x20) && (theChar < 0x7F)) {
+    screen_char_draw(&TTYLoc, &theChar, 1);
+    TTYLoc.x += CharWide;
+  }
+  else if ((theChar == 0x0b)) /* Vertical Tab */
+    {
+      TTYLoc.y += CharHigh;
+    }
+  else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
+    {
+      TTYLoc.x -= CharWide;
+
+      tgi_setcolor(0);
+      tgi_bar(mul0625(TTYLoc.x),mul0375(TTYLoc.y^0x1FF),mul0625(TTYLoc.x+CharWide),mul0375((TTYLoc.y+CharHigh)^0x1FF));
+      tgi_setcolor(1);
+    }
+  else if (theChar == 0x0A)			/* line feed */
+    TTYLoc.y -= CharHigh;
+  else if (theChar == 0x0D)			/* carriage return */
+    TTYLoc.x = 0;
+  
+  if (TTYLoc.x + CharWide > 511) {	/* wrap at right side */
+    TTYLoc.x = 0;
+    TTYLoc.y -= CharHigh;
+  }
+  
+  if (TTYLoc.y < 0) {
+    tgi_clear();
+    TTYLoc.y=495;
+  }
+
 }
 
 /**

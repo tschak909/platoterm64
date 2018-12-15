@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include "../config.h"
 #include "../protocol.h"
+#include "../screen.h"
 
 extern uint8_t pal[2];
 extern ConfigInfo config; 
@@ -26,6 +27,12 @@ extern uint8_t fontm23[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
 extern padBool FastText; /* protocol.c */
+extern padPt TTYLoc;
+extern uint8_t CharWide;
+extern uint8_t CharHigh;
+
+extern void (*io_recv_serial_flow_on)(void);
+extern void (*io_recv_serial_flow_off)(void);
 
 #define outb(addr,val)        (*(addr)) = (val)
 #define outw(addr,val)        (*(addr)) = (val)
@@ -78,6 +85,92 @@ void screen_cycle_background(void)
 void screen_cycle_border(void)
 {
   ++config.color_border;
+}
+
+/**
+ * screen_block_draw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
+ */
+void screen_block_draw(padPt* Coord1, padPt* Coord2)
+{
+  // Block erase takes forever, manually assert flow control.
+  io_recv_serial_flow_off(); 
+  
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+    
+  tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
+
+  io_recv_serial_flow_on();
+}
+
+/**
+ * screen_dot_draw(Coord) - Plot a mode 0 pixel
+ */
+void screen_dot_draw(padPt* Coord)
+{
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+  
+  tgi_setpixel(scalex[Coord->x],scaley[Coord->y]);
+}
+
+/**
+ * screen_line_draw(Coord1, Coord2) - Draw a mode 1 line
+ */
+void screen_line_draw(padPt* Coord1, padPt* Coord2)
+{
+  uint16_t x1=scalex[Coord1->x];
+  uint16_t x2=scalex[Coord2->x];
+  uint16_t y1=scaley[Coord1->y^0x1FF];
+  uint16_t y2=scaley[Coord2->y^0x1FF];  
+
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(TGI_COLOR_BLACK);
+  else
+    tgi_setcolor(TGI_COLOR_WHITE);
+
+  tgi_line(x1,y1,x2,y2);
+}
+
+/**
+ * screen_tty_char - Called to plot chars when in tty mode
+ */
+void screen_tty_char(padByte theChar)
+{
+  if ((theChar >= 0x20) && (theChar < 0x7F)) {
+    screen_char_draw(&TTYLoc, &theChar, 1);
+    TTYLoc.x += CharWide;
+  }
+  else if ((theChar == 0x0b)) /* Vertical Tab */
+    {
+      TTYLoc.y += CharHigh;
+    }
+  else if ((theChar == 0x08) && (TTYLoc.x > 7))	/* backspace */
+    {
+      TTYLoc.x -= CharWide;
+      tgi_setcolor(TGI_COLOR_BLACK);      
+      tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
+      tgi_setcolor(TGI_COLOR_WHITE);      
+    }
+  else if (theChar == 0x0A)			/* line feed */
+    TTYLoc.y -= CharHigh;
+  else if (theChar == 0x0D)			/* carriage return */
+    TTYLoc.x = 0;
+  
+  if (TTYLoc.x + CharWide > 511) {	/* wrap at right side */
+    TTYLoc.x = 0;
+    TTYLoc.y -= CharHigh;
+  }
+  
+  if (TTYLoc.y < 0) {
+    tgi_clear();
+    TTYLoc.y=495;
+  }
+
 }
 
 /**
