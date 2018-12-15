@@ -21,7 +21,6 @@ extern unsigned short scalex[];
 extern unsigned short scaley[];
 extern uint8_t font[];
 extern uint8_t fontm23[];
-extern uint16_t fontptr[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
 extern padBool FastText; /* protocol.c */
@@ -159,7 +158,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       a=*ch;
       ++ch;
       a+=offset;
-      p=&curfont[fontptr[a]];
+      p=&curfont[FONTPTR(a)];
       
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
@@ -214,7 +213,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       a=*ch;
       ++ch;
       a+=offset;
-      p=&curfont[fontptr[a]];
+      p=&curfont[FONTPTR(a)];
       for (j=0;j<FONT_SIZE_Y;++j)
   	{
   	  b=*p;

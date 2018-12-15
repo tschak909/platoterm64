@@ -4,6 +4,9 @@
 
 #include <stdint.h>
 
+// Thanks to Nick Shcherbyna for this table saver!
+#define FONTPTR(a) (((i << 1) + i) << 1)
+
 uint8_t FONT_SIZE_X=4;
 uint8_t FONT_SIZE_Y=6;
 
