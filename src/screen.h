@@ -86,6 +86,12 @@ void screen_beep(void);
 void screen_clear(void);
 
 /**
+ * screen_set_pen_mode()
+ * Set the pen mode based on CurMode.
+ */
+void screen_set_pen_mode(void);
+
+/**
  * screen_block_draw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
  */
 void screen_block_draw(padPt* Coord1, padPt* Coord2);

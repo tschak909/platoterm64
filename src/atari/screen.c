@@ -64,6 +64,18 @@ void screen_load_driver(void)
 }
 
 /**
+ * screen_set_pen_mode()
+ * Set the pen mode based on CurMode.
+ */
+void screen_set_pen_mode(void)
+{
+  if (CurMode==ModeErase || CurMode==ModeInverse)
+    tgi_setcolor(0);
+  else
+    tgi_setcolor(1);
+}
+
+/**
  * screen_block_draw(Coord1, Coord2) - Perform a block fill from Coord1 to Coord2
  */
 void screen_block_draw(padPt* Coord1, padPt* Coord2)
@@ -71,11 +83,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   // Block erase takes forever, manually assert flow control.
   io_recv_serial_flow_off(); 
   
-  if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(0);
-  else
-    tgi_setcolor(1);
-  
+  screen_set_pen_mode();
   tgi_bar(mul0625(Coord1->x),mul0375(Coord1->y^0x1FF),mul0625(Coord2->x),mul0375(Coord2->y^0x1FF));
 
   io_recv_serial_flow_on();  
@@ -86,11 +94,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
  */
 void screen_dot_draw(padPt* Coord)
 {
-  if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(0);
-  else
-    tgi_setcolor(1);
-  
+  screen_set_pen_mode();
   tgi_setpixel(mul0625(Coord->x),mul0375(Coord->y^0x1FF));
 }
 
@@ -99,17 +103,8 @@ void screen_dot_draw(padPt* Coord)
  */
 void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
-  uint16_t x1=mul0625(Coord1->x);
-  uint16_t x2=mul0625(Coord2->x);
-  uint16_t y1=mul0375(Coord1->y^0x1FF);
-  uint16_t y2=mul0375(Coord2->y^0x1FF);  
-
-  if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(0);
-  else
-    tgi_setcolor(1);
-
-  tgi_line(x1,y1,x2,y2);
+  screen_set_pen_mode();
+  tgi_line(mul0625(Coord1->x),mul0375(Coord1->y^0x1FF),mul0625(Coord2->x),mul0375(Coord2->y^0x1FF));
 }
 
 /**
