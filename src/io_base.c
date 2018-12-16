@@ -28,7 +28,7 @@ void (*io_recv_serial_flow_on)(void);
 
 static uint8_t ch=0;
 static uint8_t io_res;
-static uint8_t recv_buffer[384];
+uint8_t recv_buffer[384];
 static uint16_t recv_buffer_size=0;
 extern ConfigInfo config;
 

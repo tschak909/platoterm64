@@ -12,6 +12,7 @@
 #include <tgi.h>
 #include <stdlib.h>
 #include <peekpoke.h>
+#include <stdio.h>
 #include "screen.h"
 #include "protocol.h"
 #include "config.h"
@@ -27,7 +28,7 @@ unsigned char current_background=COLOR_BLACK;
 extern uint8_t xoff_enabled; /* io.c */
 extern padBool FastText; /* protocol.c */
 extern ConfigInfo config; /* config.c */
-
+extern uint8_t recv_buffer[384];
 extern uint8_t font[];
 extern uint8_t fontm23[];
 extern uint8_t FONT_SIZE_X;
@@ -42,6 +43,24 @@ void screen_init(void)
   tgi_init();
   screen_init_hook();
   tgi_clear();
+}
+
+/**
+ * screen_splash - Show splash screen
+ */
+void screen_splash(void)
+{
+  FILE *fp;
+  short len=0;
+
+  fp=fopen("splash.bin","r");
+
+  while (len=fread(recv_buffer,sizeof(unsigned char),384,fp))
+    ShowPLATO((padByte *)recv_buffer,len);
+
+  memset(recv_buffer,0,sizeof(recv_buffer));
+  
+  fclose(fp);
 }
 
 /**

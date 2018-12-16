@@ -17,15 +17,13 @@
 #include "prefs.h"
 
 uint8_t already_started=false;
-extern padByte splash[];
-extern short splash_size;
 
 /**
  * greeting(void) - Show terminal greeting
  */
 void greeting(void)
 {
-  ShowPLATO(splash,splash_size);
+  screen_splash();
   prefs_show_greeting();
   terminal_initial_position();
 }
@@ -34,10 +32,10 @@ void main(void)
 {
   screen_init();
   config_init();
-  io_init();
   touch_init();
   terminal_init();
   greeting();
+  io_init();
   screen_beep();
   
   already_started=true;

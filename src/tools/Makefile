@@ -1,5 +1,5 @@
 
-all: mk_scale mk_font mk_ascii_key_h
+all: mk_scale mk_font mk_ascii_key_h mk_splash
 
 mk_font: mk_font.c
 	$(CC) -o mk_font mk_font.c
@@ -7,8 +7,11 @@ mk_font: mk_font.c
 mk_scale: mk_scale.c
 	$(CC) -lm -o mk_scale mk_scale.c
 
+mk_splash: mk_splash.c
+	$(CC) -o mk_splash mk_splash.c
+
 mk_ascii_key_h: mk_ascii_key_h.c
 	$(CC) -o mk_ascii_key_h mk_ascii_key_h.c
 
 clean:
-	rm -f *~ mk_scale mk_font mk_ascii_key_h
+	rm -f *~ mk_scale mk_font mk_ascii_key_h mk_splash
