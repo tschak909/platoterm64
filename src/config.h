@@ -10,9 +10,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define IO_MODE_SERIAL        0
-#define IO_MODE_ETHERNET      1
-
 #define XON_THRESHOLD 46
 #define XOFF_THRESHOLD 127
 
@@ -38,15 +35,9 @@
 
 typedef struct configInfo
 {
-  unsigned char io_mode;
   unsigned char baud;
-  unsigned char use_dhcp;
-  unsigned long ip_address;
-  unsigned long netmask;
-  unsigned long gateway;
-  unsigned long dns;
-  unsigned char driver_ser[16];
-  unsigned char driver_mou[16];
+  unsigned char driver_ser;
+  unsigned char driver_mou;
   unsigned char color_foreground;
   unsigned char color_background;
   unsigned char color_border;

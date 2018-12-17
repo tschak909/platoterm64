@@ -12,14 +12,9 @@
 #include "config.h"
 #include "screen.h"
 
-#ifdef __ATARI__
-#define CONFIG_FILE "CONFIG"
-#else
 #define CONFIG_FILE "config"
-#endif
 
 ConfigInfo config;
-char configFile[13];
 
 /**
  * config_init()
@@ -27,8 +22,6 @@ char configFile[13];
  */
 void config_init(void)
 {
-  memset(&configFile,0,sizeof(configFile));
-  strcpy(configFile,CONFIG_FILE);
   config_init_hook();
   memset(&config,0,sizeof(config));
   config_load();
@@ -42,16 +35,13 @@ void config_init(void)
 void config_load(void)
 {
   FILE *fp;
-  fp = fopen(configFile,"r");
+  fp = fopen(CONFIG_FILE,"r");
   
   if (!fp)
-    {
       config_set_defaults();
-    }
   else
-    {
       fread(&config,1,sizeof(config),fp);
-    }
+
   fclose(fp);
 }
 
@@ -62,7 +52,7 @@ void config_load(void)
 void config_save(void)
 {
   FILE *fp;
-  fp = fopen(configFile,"w");
+  fp = fopen(CONFIG_FILE,"w");
 
   if (!fp)
     return;
