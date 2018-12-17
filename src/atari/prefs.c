@@ -25,10 +25,10 @@ extern uint8_t io_load_successful;
  */
 void prefs_show_greeting(void)
 {
-  if (io_load_successful==false)
-    prefs_display("serial driver didn't load. Check handler.");
-  else
-    prefs_display("platoterm ready - option for setup");
+  /* if (io_load_successful==false) */
+  /*   prefs_display("serial driver didn't load. Check handler."); */
+  /* else */
+  /*   prefs_display("platoterm ready - option for setup"); */
 }
 
 /**

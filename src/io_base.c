@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <peekpoke.h>
+#include <stdio.h>
 #include "io.h"
 #include "protocol.h"
 #include "config.h"
@@ -61,7 +62,8 @@ void io_init(void)
     }
   else
     {
-      prefs_display("error: could not load serial driver.");
+      sprintf(recv_buffer,"open err: %d",io_res);
+      prefs_display(recv_buffer);
     }
   
 }
