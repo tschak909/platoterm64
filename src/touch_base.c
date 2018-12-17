@@ -96,8 +96,7 @@ void touch_main(void)
     return; /* debounce */
   else if ((mouse_data.buttons & MOUSE_BTN_LEFT))
     {
-      coord.x = scaletx[mouse_data.pos.x];
-      coord.y = scalety[mouse_data.pos.y];
+      touch_translate(&coord);
       Touch(&coord);
     }
   lastbuttons = mouse_data.buttons;

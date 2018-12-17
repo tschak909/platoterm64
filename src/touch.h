@@ -28,6 +28,11 @@ void touch_main(void);
 void touch_allow(padBool allow);
 
 /**
+ * touch_translate - Translate coordinates from native system to PLATO
+ */
+void touch_translate(padPt* Coord);
+
+/**
  * handle_mouse - Process mouse events and turn into scaled touch events
  */
 void handle_mouse(void);
