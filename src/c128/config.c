@@ -25,24 +25,14 @@ extern ConfigInfo config;
  */
 void config_set_defaults(void)
 {
-  config.io_mode = IO_MODE_SERIAL;
   config.baud = SER_BAUD_9600;
-  config.use_dhcp = false;
-  config.ip_address=0;
-  config.netmask=0;
-  config.gateway=0;
-  config.dns=0;
   config.xon_threshold=XON_THRESHOLD;
   config.xoff_threshold=XOFF_THRESHOLD;
   config.fill=true;
-  strcpy(config.driver_ser,CONFIG_DEFAULT_SERIAL_DRIVER);
-  strcpy(config.driver_mou,CONFIG_DEFAULT_MOUSE_DRIVER);
+  config.driver_ser=CONFIG_DEFAULT_SERIAL_DRIVER;
+  config.driver_mou=CONFIG_DEFAULT_MOUSE_DRIVER;
   config.color_foreground=TGI_COLOR_LIGHTBLUE;
   config.color_background=TGI_COLOR_BLUE;
   config.color_border=TGI_COLOR_LIGHTBLUE;
   config_save();
-}
-
-void config_init_hook(void)
-{
 }

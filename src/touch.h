@@ -43,6 +43,11 @@ void handle_mouse(void);
 void touch_hide(void);
 
 /**
+ * touch_driver_name() - Get the driver name for the given driver #
+ */
+const char* touch_driver_name(unsigned char driver);
+
+/**
  * touch_done() - Stop the mouse driver
  */
 void touch_done(void);

@@ -142,6 +142,12 @@ void prefs_clear(void);
 void prefs_update(void);
 
 /**
+ * prefs_check_for_change
+ */
+void prefs_check_for_change(void);
+
+
+/**
  * Clear the preferences menu from screen. 
  */
 void prefs_done(void);

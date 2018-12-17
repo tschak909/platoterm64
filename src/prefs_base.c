@@ -24,6 +24,7 @@
 #include "protocol.h"
 #include "terminal.h"
 #include "config.h"
+#include "touch.h"
 
 extern ConfigInfo config;
 
@@ -78,15 +79,7 @@ void prefs_run(void)
   prefs_clear();
   while (prefs_running)
     {
-      switch (config.io_mode)
-	{
-	case IO_MODE_SERIAL:
-	  prefs_serial();
-	  break;
-	/* case IO_MODE_ETHERNET: */
-	/*   prefs_ethernet(); */
-	/*   break; */
-	}
+      prefs_serial();
     }
 
   if (prefs_need_updating)
@@ -329,18 +322,6 @@ void prefs_interface(void)
 
   switch(ch)
     {
-    /* case 'e': */
-    /*   prefs_select("ethernet"); */
-    /*   config.io_mode=IO_MODE_ETHERNET; */
-    /*   io_prefs_updated=true; */
-    /*   prefs_need_updating=true; */
-    /*   break; */
-    case 's':
-      prefs_select("serial");
-      config.io_mode=IO_MODE_SERIAL;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
-      break;
     case 'b':
       prefs_select("back");
       break;
@@ -647,32 +628,23 @@ void prefs_update(void)
       prefs_clear();
     }
 
-  if (io_prefs_updated==true && config.io_mode == IO_MODE_SERIAL)
+  if (io_prefs_updated==true)
     {
       prefs_display("loading serial driver...");
-      config_init_hook(); // Do any special re-initalization.
-      ser_load_driver(config.driver_ser);
+      ser_load_driver(io_ser_driver_name(config.driver_ser));
       
       io_init_funcptrs();
       io_open();
       prefs_clear();
     }  
-  /* else if (io_prefs_updated==true && config.io_mode == IO_MODE_ETHERNET) */
-  /*   { */
-  /*     // Come back here and implement ethernet specific stuff */
-  /*     prefs_display("ethernet not implemented, yet."); */
-  /*     prefs_select(""); */
-  /*     prefs_clear(); */
-  /*   } */
 
   prefs_clear();
   
-  if (touch_prefs_updated==true && strcpy(config.driver_mou,"NONE")!=0)
+  if (touch_prefs_updated==true)
     {
       prefs_clear();
       prefs_display("loading touch driver...");
-      config_init_hook();
-      retv = mouse_load_driver(&mouse_def_callbacks,config.driver_mou);
+      retv = mouse_load_driver(&mouse_def_callbacks,touch_driver_name(config.driver_mou));
       if (retv==MOUSE_ERR_OK)
 	{
 	  prefs_select("ok");
@@ -682,6 +654,18 @@ void prefs_update(void)
 	{
 	  prefs_select("error");
 	}
+    }
+}
+
+/**
+ * prefs_check_for_change
+ */
+void prefs_check_for_change(void)
+{
+  if (ch!='b')
+    {
+      touch_prefs_updated=true;
+      prefs_need_updating=true;
     }
 }
 

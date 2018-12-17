@@ -45,43 +45,32 @@ void prefs_touch(void)
     {
     case 'a':
       prefs_select("amiga");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRAMI);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_ATRAMI;
       break;
     case 'j':
       prefs_select("joy");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRJOY);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_ATRJOY;
       break;
     case 'k':
       prefs_select("koala");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTT);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_ATRTT;
       break;
     case 's':
       prefs_select("st");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRST);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_ATRST;
       break;
     case 't':
       prefs_select("trkball");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_ATRTRK);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_ATRTRK;
       break;
     case 'n':
       prefs_select("none");
-      strcpy(config.driver_mou,"NONE");
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_NONE;
     case 'b':
       prefs_select("back");
       break;
     }
+  prefs_check_for_change();
 }
 
 /**
@@ -98,13 +87,11 @@ void prefs_driver(void)
     {
     case 'r':
       prefs_select("rdevice");
-      strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_ATRRDEV);
-      io_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_ser=CONFIG_SERIAL_DRIVER_ATRRDEV;
       break;
     case 'b':
       prefs_select("back");
       break;
     }
+  prefs_check_for_change();
 }
-

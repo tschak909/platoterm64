@@ -45,32 +45,25 @@ void prefs_touch(void)
     {
     case '1':
       prefs_select("1351");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_1351);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_1351;
       break;
     case 'i':
       prefs_select("inkwell");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_INKWELL);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_INKWELL;
       break;
     case 'j':
       prefs_select("joystick");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_JOY);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_JOY;
       break;
     case 'k':
       prefs_select("koala");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_POT);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_POT;
       break;
     case 'b':
       prefs_select("back");
       break;
     }
+  prefs_check_for_change();
 }
 
 /**
@@ -87,19 +80,16 @@ void prefs_driver(void)
     {
     case 's':
       prefs_select("swiftlink232");
-      strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK);
-      io_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_ser=CONFIG_SERIAL_DRIVER_SWIFTLINK;
       break;
     case 'u':
       prefs_select("userport2400");
-      strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_UP2400);
-      io_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_ser=CONFIG_SERIAL_DRIVER_UP2400;
       break;
     case 'b':
       prefs_select("back");
       break;
     }
+  prefs_check_for_change();
 }
 

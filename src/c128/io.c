@@ -35,7 +35,7 @@ void io_init_funcptrs(void)
   if (io_load_successful==false)
     return;
   
-  if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_SWIFTLINK)==0)
+  if (config.driver_ser==CONFIG_SERIAL_DRIVER_SWIFTLINK)
     {
       io_serial_buffer_size=io_serial_buffer_size_swiftlink;
       io_recv_serial_flow_off=io_recv_serial_flow_off_swiftlink;
@@ -87,4 +87,16 @@ void io_recv_serial_flow_on_swiftlink(void)
 
   io_send_byte(0x11);
   xoff_enabled=false;
+}
+
+/**
+ * io_ser_driver_name() - return serial driver name given constant
+ */
+const char* io_ser_driver_name(unsigned char driver)
+{
+  switch (driver)
+    {
+    case CONFIG_SERIAL_DRIVER_SWIFTLINK:
+      return "ser-swlink";
+    }
 }

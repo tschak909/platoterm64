@@ -36,7 +36,7 @@ void io_init_funcptrs(void)
   if (io_load_successful==false)
     return;
 
-  if (strcmp(config.driver_ser,CONFIG_SERIAL_DRIVER_SSC)==0)
+  if (config.driver_ser==CONFIG_SERIAL_DRIVER_SSC)
     {
       io_serial_buffer_size=io_serial_buffer_size_ssc;
       io_recv_serial_flow_off=io_recv_serial_flow_off_ssc;
@@ -83,4 +83,16 @@ void io_recv_serial_flow_on_ssc(void)
 {
   if (io_load_successful==false)
     return;
+}
+
+/**
+ * io_ser_driver_name() - return serial driver name given constant
+ */
+const char* io_ser_driver_name(unsigned char driver)
+{
+  switch(driver)
+    {
+    case CONFIG_SERIAL_DRIVER_SSC:
+      return "a2.ssc.ser";
+    }
 }

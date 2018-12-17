@@ -36,10 +36,10 @@ extern uint16_t scalety[];
 void touch_init(void)
 {
 #ifndef __APPLE2__
-  if (strcmp(config.driver_mou,"NONE")==0)
+  if (config.driver_mou==CONFIG_MOUSE_DRIVER_NONE)
     return;
   
-  if (mouse_load_driver(&mouse_def_callbacks,config.driver_mou) == MOUSE_ERR_OK)
+  if (mouse_load_driver(&mouse_def_callbacks,touch_driver_name(config.driver_mou)) == MOUSE_ERR_OK)
     {
       mouse_present=true;
       mouse_show();

@@ -47,7 +47,7 @@ static struct ser_params params = {
 void io_init(void)
 {
   prefs_display("serial driver loaded.");
-  io_res=ser_load_driver(config.driver_ser);
+  io_res=ser_load_driver(io_ser_driver_name(config.driver_ser));
 
   if (io_res==SER_ERR_OK)
     io_load_successful=true;
@@ -73,24 +73,14 @@ void io_init(void)
  */
 void io_open(void)
 {
-  if (config.io_mode == IO_MODE_SERIAL)
+  params.baudrate = config.baud;
+  
+  io_res=ser_open(&params);
+  
+  if (io_res!=SER_ERR_OK)
     {
-      params.baudrate = config.baud;
-
-      io_res=ser_open(&params);
-      
-      if (io_res!=SER_ERR_OK)
-	{
-	  io_load_successful=false;
-	  prefs_display("error: could not open serial port.");
-	}
-
-      // Needed to enable up2400. Ignored with swlink.
-      ser_ioctl(1, NULL);
-    }
-  else if (config.io_mode == IO_MODE_ETHERNET)
-    {
-      // Not implemented, yet.
+      io_load_successful=false;
+      prefs_display("error: could not open serial port.");
     }
 }
 

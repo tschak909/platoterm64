@@ -45,14 +45,14 @@ void prefs_touch(void)
     {
     case 'm':
       prefs_select("mouse");
-      strcpy(config.driver_mou,CONFIG_MOUSE_DRIVER_STDMOU);
-      touch_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_mou=CONFIG_MOUSE_DRIVER_STDMOU;
       break;
     case 'b':
       prefs_select("back");
       break;
     }
+
+  prefs_check_for_change();
 }
 
 /**
@@ -69,13 +69,12 @@ void prefs_driver(void)
     {
     case 's':
       prefs_select("ssc");
-      strcpy(config.driver_ser,CONFIG_SERIAL_DRIVER_SSC);
-      io_prefs_updated=true;
-      prefs_need_updating=true;
+      config.driver_ser=CONFIG_SERIAL_DRIVER_SSC;
       break;
     case 'b':
       prefs_select("back");
       break;
     }
+  prefs_check_for_change();
 }
 

@@ -43,6 +43,10 @@ void io_main(void);
  */
 void io_recv_serial(void);
 
+/**
+ * io_ser_driver_name() - return serial driver name given constant
+ */
+const char* io_ser_driver_name(unsigned char driver);
 
 /**
  * io_done() - Called to close I/O

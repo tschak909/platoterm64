@@ -22,7 +22,6 @@ ConfigInfo config;
  */
 void config_init(void)
 {
-  config_init_hook();
   memset(&config,0,sizeof(config));
   config_load();
   screen_update_colors(); /* because the screen is already initialized. */

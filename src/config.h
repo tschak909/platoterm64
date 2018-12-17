@@ -33,6 +33,8 @@
 #define CONFIG_SERIAL_DRIVER_SSC 0
 #define CONFIG_MOUSE_DRIVER_STDMOU 0
 
+#define CONFIG_MOUSE_DRIVER_NONE 0xFF
+
 typedef struct configInfo
 {
   unsigned char baud;
@@ -51,12 +53,6 @@ typedef struct configInfo
  * Initialize configuration and load either config or defaults.
  */
 void config_init(void);
-
-/**
- * config_init_hook()
- * Special system specific initialization functions.
- */
-void config_init_hook(void);
 
 /**
  * config_load()
