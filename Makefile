@@ -27,7 +27,7 @@ CONFIG  :=
  
 # Additional C compiler flags and options.
 # Default: none
-CFLAGS  = -Oris --static-locals
+CFLAGS  = -Os --static-locals
  
 # Additional assembler flags and options.
 # Default: none
