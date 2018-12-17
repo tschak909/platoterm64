@@ -192,30 +192,6 @@ void prefs_other(void)
     }
 }
 
-/* /\** */
-/*  * prefs_fill() */
-/*  * Toggle fill on/off */
-/*  *\/ */
-/* void prefs_fill(void) */
-/* { */
-/*   prefs_clear(); */
-/*   prefs_display("FILL: Y)ES N)O: "); */
-/*   ch=prefs_get_key_matching("ynYN"); */
-/*   switch(ch) */
-/*     { */
-/*     case 'y': */
-/*       prefs_select(" YES"); */
-/*       config.fill=true; */
-/*       break; */
-/*     case 'n': */
-/*       prefs_select(" NO"); */
-/*       config.fill=false; */
-/*       break; */
-/*     } */
-/*   prefs_clear(); */
-/*   prefs_other(); */
-/* } */
-
 /**
  * prefs_xonoff()
  * Set xon/off buffers
@@ -271,42 +247,35 @@ void prefs_baud(void)
     case '3':
       prefs_select("300");
       config.baud=SER_BAUD_300;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
       break;
     case '1':
       prefs_select("1200");
       config.baud=SER_BAUD_1200;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
       break;
     case '2':
       prefs_select("2400");
       config.baud=SER_BAUD_2400;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
       break;
     case '9':
       prefs_select("9600");
       config.baud=SER_BAUD_9600;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
       break;
     case 'q':
       prefs_select("19200");
       config.baud=SER_BAUD_19200;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
       break;
     case 'w':
       prefs_select("38400");
       config.baud=SER_BAUD_38400;
-      io_prefs_updated=true;
-      prefs_need_updating=true;
       break;
     case 'b':
       prefs_select("back");
       break;
+    }
+  if (ch!='b')
+    {
+      io_prefs_updated=true;
+      prefs_need_updating=true;
     }
 }
 
@@ -327,173 +296,6 @@ void prefs_interface(void)
       break;
     }
 }
-
-/* /\** */
-/*  * prefs_dhcp(void) */
-/*  * Preferences menu to enable/disable dhcp */
-/*  *\/ */
-/* void prefs_dhcp(void) */
-/* { */
-/*   prefs_display("dhcp - y)es n)o b)ack: "); */
-
-/*   ch=prefs_get_key_matching("ynbYNB"); */
-
-/*   switch(ch) */
-/*     { */
-/*     case 'y': */
-/*       prefs_select("yes"); */
-/*       config.use_dhcp=true; */
-/*       io_prefs_updated=true; */
-/*       prefs_need_updating=true; */
-/*       break; */
-/*     case 'n': */
-/*       prefs_select("no"); */
-/*       config.use_dhcp=false; */
-/*       io_prefs_updated=true; */
-/*       prefs_need_updating=true; */
-/*       break; */
-/*     case 'b': */
-/*       prefs_select("back"); */
-/*       break; */
-/*     } */
-/* } */
-
-/* /\** */
-/*  * prefs_get_address() */
-/*  * get string with ip address numbers, terminated by return. */
-/*  *\/ */
-/* void prefs_get_address(void) */
-/* { */
-/*   unsigned char strp=0; */
-  
-/*   ch=0; */
-
-/*   while (ch != 0x0d) */
-/*     { */
-/*       ch=prefs_get_key_matching1("0123456789."); */
-/*       if (ch==0x08) /\* was translated from 0x14 to 0x08 *\/ */
-/*   	{ */
-/* 	  if (strp>0) */
-/* 	    { */
-/* 	      --strp; */
-/* 	      temp_ip_address[strp]=0; */
-/* 	      ShowPLATO(&ch,1); */
-/* 	    } */
-/*   	} */
-/*       else if (ch==0x0d) */
-/* 	{ */
-/* 	  // Don't append or show the CR */
-/* 	} */
-/*       else */
-/*   	{ */
-/*   	  temp_ip_address[strp]=ch; */
-/*   	  ShowPLATO(&ch,1); */
-/* 	  ++strp;	   */
-/*   	} */
-/*     } */
-/* } */
-
-/* /\** */
-/*  * prefs_ip(void) */
-/*  * Preferences menu for IP address */
-/*  *\/ */
-/* void prefs_ip(void) */
-/* { */
-/*   prefs_display("ip address (x.x.x.x) or return for none: "); */
-/*   prefs_get_address(); */
-/*   config.ip_address = parse_dotted_quad(temp_ip_address); */
-/*   prefs_select(" ok"); */
-/*   io_prefs_updated=true; */
-/*   prefs_need_updating=true; */
-/* } */
-
-/* /\** */
-/*  * prefs_dns(void) */
-/*  * Preferences menu for dns */
-/*  *\/ */
-/* void prefs_dns(void) */
-/* { */
-/*   prefs_display("dns (x.x.x.x) or return for none: "); */
-/*   prefs_get_address(); */
-/*   config.dns = parse_dotted_quad(temp_ip_address); */
-/*   prefs_select(" ok"); */
-/*   io_prefs_updated=true; */
-/*   prefs_need_updating=true; */
-/* } */
-
-/* /\** */
-/*  * prefs_netmask(void) */
-/*  * Preferences menu for netmask */
-/*  *\/ */
-/* void prefs_netmask(void) */
-/* { */
-/*   prefs_display("netmask (x.x.x.x) or return for none: "); */
-/*   prefs_get_address(); */
-/*   config.netmask = parse_dotted_quad(temp_ip_address); */
-/*   prefs_select(" ok"); */
-/*   io_prefs_updated=true; */
-/*   prefs_need_updating=true; */
-/* } */
-
-/* /\** */
-/*  * prefs_ip(void) */
-/*  * Preferences menu for IP address */
-/*  *\/ */
-/* void prefs_gateway(void) */
-/* { */
-/*   prefs_display("gateway (x.x.x.x) or return for none: "); */
-/*   prefs_get_address(); */
-/*   config.gateway = parse_dotted_quad(temp_ip_address); */
-/*   prefs_select(" ok"); */
-/*   io_prefs_updated=true; */
-/*   prefs_need_updating=true; */
-/* } */
-
-/* /\** */
-/*  * prefs_ethernet(void) */
-/*  * Preferences menu to show for ethernet devices. */
-/*  *\/ */
-/* void prefs_ethernet(void) */
-/* { */
-/*   prefs_display("i)nterface d)hcp p)ip n)etmask g)ateway w)dns s)save e)xit: "); */
-
-/*   ch=prefs_get_key_matching("idpngwseIDPNGWSE"); */
-
-/*   switch(ch) */
-/*     { */
-/*     case 'i': */
-/*       prefs_select("interface"); */
-/*       prefs_interface(); */
-/*       break; */
-/*     case 'd': */
-/*       prefs_select("dhcp"); */
-/*       prefs_dhcp(); */
-/*       break; */
-/*     case 'p': */
-/*       prefs_select("ip"); */
-/*       prefs_ip(); */
-/*       break; */
-/*     case 'n': */
-/*       prefs_select("netmask"); */
-/*       prefs_netmask(); */
-/*       break; */
-/*     case 'g': */
-/*       prefs_select("gateway"); */
-/*       prefs_gateway(); */
-/*       break; */
-/*     case 'w': */
-/*       prefs_select("dns"); */
-/*       prefs_dns(); */
-/*       break; */
-/*     case 's': */
-/*       prefs_select("save"); */
-/*       prefs_save(); */
-/*       break; */
-/*     case 'e': */
-/*       prefs_running=false; */
-/*       break; */
-/*     } */
-/* } */
 
 /**
  * prefs_display(text)
@@ -658,13 +460,25 @@ void prefs_update(void)
 }
 
 /**
- * prefs_check_for_change
+ * prefs_check_for_touch_change
  */
-void prefs_check_for_change(void)
+void prefs_check_for_touch_change(void)
 {
   if (ch!='b')
     {
       touch_prefs_updated=true;
+      prefs_need_updating=true;
+    }
+}
+
+/**
+ * prefs_check_for_io_change
+ */
+void prefs_check_for_io_change(void)
+{
+  if (ch!='b')
+    {
+      io_prefs_updated=true;
       prefs_need_updating=true;
     }
 }

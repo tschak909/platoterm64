@@ -52,7 +52,7 @@ void prefs_touch(void)
       break;
     }
 
-  prefs_check_for_change();
+  prefs_check_for_touch_change();
 }
 
 /**
@@ -75,6 +75,6 @@ void prefs_driver(void)
       prefs_select("back");
       break;
     }
-  prefs_check_for_change();
+  prefs_check_for_io_change();
 }
 

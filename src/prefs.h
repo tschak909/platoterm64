@@ -142,10 +142,14 @@ void prefs_clear(void);
 void prefs_update(void);
 
 /**
- * prefs_check_for_change
+ * prefs_check_for_touch_change
  */
-void prefs_check_for_change(void);
+void prefs_check_for_touch_change(void);
 
+/**
+ * prefs_check_for_io_change
+ */
+void prefs_check_for_io_change(void);
 
 /**
  * Clear the preferences menu from screen. 
