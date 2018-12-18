@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include "screen.h"
 #include "protocol.h"
-#include "config.h"
 #include "io.h"
 
 uint8_t CharWide=8;
@@ -25,14 +24,16 @@ uint8_t pal[2];
 unsigned char current_foreground=COLOR_WHITE;
 unsigned char current_background=COLOR_BLACK;
 
+#define RECV_BUFFER_SIZE 384
+#define FONTM23_SIZE 768
+
 extern uint8_t xoff_enabled; /* io.c */
 extern padBool FastText; /* protocol.c */
-extern ConfigInfo config; /* config.c */
-extern uint8_t recv_buffer[384];
+extern uint8_t* recv_buffer;
 extern uint8_t font[];
-extern uint8_t fontm23[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
+extern uint8_t* fontm23;
 
 /**
  * screen_init() - Set up the screen
@@ -43,6 +44,8 @@ void screen_init(void)
   tgi_init();
   screen_init_hook();
   tgi_clear();
+  recv_buffer=malloc(RECV_BUFFER_SIZE);
+  fontm23=malloc(FONTM23_SIZE);
 }
 
 /**
@@ -50,17 +53,17 @@ void screen_init(void)
  */
 void screen_splash(void)
 {
-  FILE *fp;
-  short len=0;
+  TTYLoc.x = 0;
+  TTYLoc.y = 496;
+  ShowPLATO("PLATOTerm Cartridge Version",27);
 
-  fp=fopen("splash.bin","r");
-
-  while (len=fread(recv_buffer,sizeof(unsigned char),384,fp))
-    ShowPLATO((padByte *)recv_buffer,len);
-
-  memset(recv_buffer,0,sizeof(recv_buffer));
+  TTYLoc.x = 0;
+  TTYLoc.y-=16;
+  ShowPLATO("(\xC0) 2018 IRATA.ONLINE",22);
   
-  fclose(fp);
+  TTYLoc.x = 0;
+  TTYLoc.y-=16;
+  ShowPLATO("1200 Baud. Terminal Ready.",26);
 }
 
 /**
@@ -69,145 +72,6 @@ void screen_splash(void)
 void screen_clear(void)
 {
   tgi_clear();
-  screen_update_colors();
-}
-
-/**
- * match_color - quantize to nearest system palette color.
- * will eventually do a full hsv match to nearest possible color,
- * but for now, it's a straight match of system colors only.
- */
-unsigned char screen_match_color(padRGB* theColor)
-{
-#ifdef __C64__
-  if (theColor->red==0 && theColor->green==0 && theColor->blue==0)
-    {
-      return COLOR_BLACK;
-    }
-  else if (theColor->red==0 && theColor->green==0 && theColor->blue==255)
-    {
-      return COLOR_BLUE;
-    }
-  else if (theColor->red==0 && theColor->green==255 && theColor->blue==0)
-    {
-      return COLOR_GREEN;
-    }
-  else if (theColor->red==255 && theColor->green==0 && theColor->blue==0)
-    {
-      return COLOR_RED;
-    }
-  else if (theColor->red==0 && theColor->green==255 && theColor->blue==255)
-    {
-      return COLOR_CYAN;
-    }
-  else if (theColor->red==255 && theColor->green==0 && theColor->blue==255)
-    {
-      return COLOR_LIGHTRED;
-    }
-  else if (theColor->red==255 && theColor->green==255 && theColor->blue==0)
-    {
-      return COLOR_YELLOW;
-    }
-#endif
-  // For any other color, return white.
-  return COLOR_WHITE;
-}
-
-/**
- * screen_foreground - set foreground color
- */
-void screen_foreground(padRGB* theColor)
-{
-  current_foreground=screen_match_color(theColor);
-}
-
-/**
- * screen_background - set background_color
- */
-void screen_background(padRGB* theColor)
-{
-  current_background=screen_match_color(theColor);
-}
-
-/**
- * screen_paint - Paint screen scanline_fill
- */
-void _screen_paint(unsigned short x, unsigned short y)
-{
-/* #ifndef __APPLE2__ */
-/*   // Currently we run out of memory on apple2, so this is temporarily disabled. */
-/*   static unsigned short xStack[64]; */
-/*   static unsigned char yStack[64]; */
-/*   unsigned char stackentry = 1; */
-/*   unsigned char spanAbove, spanBelow; */
-  
-/*   unsigned char oldColor = tgi_getpixel(x,y); */
-  
-/*   if (oldColor == 1) */
-/*     return; */
-  
-/*   do */
-/*     { */
-/*       while (x > 0 && tgi_getpixel(x-1,y) == oldColor) */
-/* 	--x; */
-      
-/*       spanAbove = spanBelow = false; */
-/*       while(tgi_getpixel(x,y) == oldColor) */
-/* 	{ */
-/* 	  tgi_setpixel(x,y); */
-	  
-/* 	  if (y < (191)) */
-/* 	    { */
-/* 	      unsigned char belowColor = tgi_getpixel(x, y+1); */
-/* 	      if (!spanBelow  && belowColor == oldColor) */
-/* 		{ */
-/* 		  xStack[stackentry]  = x; */
-/* 		  yStack[stackentry]  = y+1;					 */
-/* 		  ++stackentry; */
-/* 		  spanBelow = true; */
-/* 		} */
-/* 	      else if (spanBelow && belowColor != oldColor) */
-/* 		spanBelow = false; */
-/* 	    } */
-	  
-/* 	  if (y > 0) */
-/* 	    { */
-/* 	      unsigned char aboveColor = tgi_getpixel(x, y-1); */
-/* 	      if (!spanAbove  && aboveColor == oldColor) */
-/* 		{ */
-/* 		  xStack[stackentry]  = x; */
-/* 		  yStack[stackentry]  = y-1; */
-/* 		  ++stackentry; */
-/* 		  spanAbove = true; */
-/* 		} */
-/* 	      else if (spanAbove && aboveColor != oldColor) */
-/* 		spanAbove = false; */
-/* 	    } */
-	  
-/* 	  ++x; */
-/* 	} */
-/*       --stackentry; */
-/*       x = xStack[stackentry]; */
-/*       y = yStack[stackentry]; */
-/*     } */
-/*   while (stackentry); */
-/* #endif */
-}
-
-/**
- * screen_paint - Paint the screen
- * Calling convention is different due to this needing to be recursive.
- */
-void screen_paint(padPt* Coord)
-{
-/*   if (config.fill==true) */
-/*     { */
-/* #ifdef __ATARI__ */
-/*       _screen_paint(mul0625(Coord->x),mul0375(Coord->y^0x1FF)); */
-/* #else */
-/*       _screen_paint(scalex[Coord->x],scaley[Coord->y]); */
-/* #endif */
-/*     } */
 }
 
 /**
@@ -218,4 +82,6 @@ void screen_done(void)
 {
   tgi_done();
   tgi_uninstall();
+  free(recv_buffer);
+  free(fontm23);
 }

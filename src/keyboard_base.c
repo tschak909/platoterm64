@@ -13,7 +13,6 @@
 #include "keyboard.h"
 #include "screen.h"
 #include "protocol.h"
-#include "prefs.h"
 #include "io.h"
 #include "plato_key.h"
 

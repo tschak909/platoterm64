@@ -1,6 +1,6 @@
 #include "../protocol.h"
 
-padByte splash[] = {
+padByte splash[1777] = {
   0x1b,
   0x02,
   0x1B,
@@ -1779,5 +1779,3 @@ padByte splash[] = {
   0x1b,
   0x03
 };
-
-short splash_size=1777;

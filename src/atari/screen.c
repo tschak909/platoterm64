@@ -11,12 +11,11 @@
 #include <tgi.h>
 #include <stdint.h>
 #include <conio.h>
-#include "../config.h"
 #include "../protocol.h"
 #include "../screen.h"
+#include "../io.h"
 
 extern uint8_t pal[2];
-extern ConfigInfo config; 
 extern short FONT_SIZE_X;
 extern short FONT_SIZE_Y;
 extern uint8_t CharWide;
@@ -35,11 +34,9 @@ unsigned char Flags;
 unsigned char* GlyphData;
 
 extern unsigned char font[];
-extern unsigned char fontm23[];
+extern unsigned char* fontm23;
 extern uint16_t mul0625(uint16_t val);
 extern uint16_t mul0375(uint16_t val);
-extern void (*io_recv_serial_flow_on)(void);
-extern void (*io_recv_serial_flow_off)(void);
 extern padPt TTYLoc;
 
 extern void RenderGlyph(void);
@@ -140,74 +137,9 @@ void screen_tty_char(padByte theChar)
   
   if (TTYLoc.y < 0) {
     tgi_clear();
-    TTYLoc.y=495;
+    TTYLoc.y=496;
   }
 
-}
-
-/**
- * screen_cycle_foreground()
- * Go to the next foreground color in palette
- */
-void screen_cycle_foreground(void)
-{
-  ++config.color_foreground;
-}
-
-/**
- * screen_cycle_background()
- * Go to the next background color in palette
- */
-void screen_cycle_background(void)
-{
-  ++config.color_background;
-}
-
-/**
- * screen_cycle_border()
- * Go to the next border color in palette
- */
-void screen_cycle_border(void)
-{
-  ++config.color_border;
-}
-
-/**
- * screen_cycle_foreground_back()
- * Go to the previous foreground color in palette
- */
-void screen_cycle_foreground_back(void)
-{
-  --config.color_foreground;
-}
-
-/**
- * screen_cycle_background_back()
- * Go to the previous background color in palette
- */
-void screen_cycle_background_back(void)
-{
-  --config.color_background;
-}
-
-/**
- * screen_cycle_border_back()
- * Go to the previous border color in palette
- */
-void screen_cycle_border_back(void)
-{
-  --config.color_border;
-}
-
-/**
- * Set the terminal colors
- */
-void screen_update_colors(void)
-{
-  pal[0]=config.color_background;
-  pal[1]=config.color_foreground;
-  tgi_setpalette(pal);
-  POKE(712,config.color_border);
 }
 
 /**

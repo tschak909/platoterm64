@@ -13,8 +13,6 @@
 #include "touch.h"
 #include "keyboard.h"
 #include "io.h"
-#include "config.h"
-#include "prefs.h"
 
 uint8_t already_started=false;
 
@@ -24,14 +22,12 @@ uint8_t already_started=false;
 void greeting(void)
 {
   screen_splash();
-  prefs_show_greeting();
   terminal_initial_position();
 }
 
 void main(void)
 {
   screen_init();
-  config_init();
   touch_init();
   terminal_init();
   greeting();

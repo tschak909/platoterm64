@@ -47,7 +47,7 @@ static unsigned char pix_cnt;     // total # of pixels
 static unsigned char curr_word;   // current word
 static unsigned char u,v;       // loop counters
 
-extern unsigned char fontm23[768];
+extern unsigned char* fontm23;
 
 /**
  * terminal_char_load - Store a character into the user definable

@@ -13,28 +13,22 @@
 #include <stdlib.h>
 #include <peekpoke.h>
 #include <stdio.h>
+#include <atari.h>
 #include "io.h"
 #include "protocol.h"
-#include "config.h"
-#include "prefs.h"
 
 #define NULL 0
 
 uint8_t xoff_enabled;
 uint8_t io_load_successful=false;
 
-uint8_t (*io_serial_buffer_size)(void);
-void (*io_recv_serial_flow_off)(void);
-void (*io_recv_serial_flow_on)(void);
-
 static uint8_t ch=0;
 static uint8_t io_res;
 uint8_t recv_buffer[384];
 static uint16_t recv_buffer_size=0;
-extern ConfigInfo config;
 
 static struct ser_params params = {
-  SER_BAUD_38400,
+  SER_BAUD_1200,
   SER_BITS_8,
   SER_STOP_1,
   SER_PAR_NONE,
@@ -46,8 +40,7 @@ static struct ser_params params = {
  */
 void io_init(void)
 {
-  prefs_display("serial driver loaded.");
-  io_res=ser_load_driver(io_ser_driver_name(config.driver_ser));
+  io_res=ser_install(atrrdev_ser);
 
   if (io_res==SER_ERR_OK)
     io_load_successful=true;
@@ -56,14 +49,10 @@ void io_init(void)
 
   if (io_load_successful)
     {
-      io_init_funcptrs();
       io_open();
-      prefs_display("serial driver opened.");
     }
   else
     {
-      sprintf(recv_buffer,"open err: %d",io_res);
-      prefs_display(recv_buffer);
     }
   
 }
@@ -73,14 +62,12 @@ void io_init(void)
  */
 void io_open(void)
 {
-  params.baudrate = config.baud;
   
   io_res=ser_open(&params);
   
   if (io_res!=SER_ERR_OK)
     {
       io_load_successful=false;
-      prefs_display("error: could not open serial port.");
     }
 }
 
@@ -100,14 +87,14 @@ void io_main(void)
   
   if (xoff_enabled==false)
     {
-      if (recv_buffer_size>config.xoff_threshold)
+      if (recv_buffer_size>127)
   	{
   	  io_recv_serial_flow_off();
   	}
     }
   else /* xoff_enabled==true */
     {
-      if (xoff_enabled==true && recv_buffer_size<config.xon_threshold)
+      if (xoff_enabled==true && recv_buffer_size<46)
   	{
   	  io_recv_serial_flow_on();
   	}
@@ -118,10 +105,13 @@ void io_main(void)
 }
 
 /**
- * io_recv_serial() - Receive and interpret serial data.
+ * io_change_baud() - Change baud rate.
  */
-void io_recv_serial(void)
+void io_change_baud(unsigned char baud)
 {
+  ser_close();
+  params.baudrate=baud;
+  ser_open(&params);
 }
 
 /**

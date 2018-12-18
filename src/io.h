@@ -19,11 +19,6 @@
 void io_init(void);
 
 /**
- * io_init_funcptrs() - Set up I/O function pointers
- */
-void io_init_funcptrs(void);
-
-/**
  * io_open() - Open the device
  */
 void io_open(void);
@@ -39,14 +34,12 @@ void io_send_byte(uint8_t b);
 void io_main(void);
 
 /**
- * io_recv_serial() - Receive and interpret serial data.
+ * io_change_baud() - Change baud rate.
  */
-void io_recv_serial(void);
+void io_change_baud(unsigned char baud);
 
-/**
- * io_ser_driver_name() - return serial driver name given constant
- */
-const char* io_ser_driver_name(unsigned char driver);
+void io_recv_serial_flow_off(void);
+void io_recv_serial_flow_on(void);
 
 /**
  * io_done() - Called to close I/O

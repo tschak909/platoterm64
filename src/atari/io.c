@@ -13,34 +13,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <serial.h>
-#include "../config.h"
 
 extern uint8_t io_load_successful;
 extern uint8_t xoff_enabled;
-extern ConfigInfo config;
-extern uint8_t (*io_serial_buffer_size)(void);
-extern void (*io_recv_serial_flow_off)(void);
-extern void (*io_recv_serial_flow_on)(void);
-
-void io_recv_serial_flow_off_atari(void);
-void io_recv_serial_flow_on_atari(void);
-uint8_t io_serial_buffer_size_atari(void);
-
-/**
- * io_init_funcptrs() - Set up I/O function pointers
- */
-void io_init_funcptrs(void)
-{
-  if (io_load_successful==false)
-    return;
-
-  if (config.driver_ser==CONFIG_SERIAL_DRIVER_ATRRDEV)
-    {
-      io_serial_buffer_size=io_serial_buffer_size_atari;
-      io_recv_serial_flow_off=io_recv_serial_flow_off_atari;
-      io_recv_serial_flow_on=io_recv_serial_flow_on_atari;
-    }
-}
 
 /**
  * io_send_byte(b) - Send specified byte out
@@ -56,7 +31,7 @@ void io_send_byte(uint8_t b)
 /**
  * Return the serial buffer size
  */
-uint8_t io_serial_buffer_size_atari(void)
+uint8_t io_serial_buffer_size(void)
 {
   return 0; // Not implemented.
 }
@@ -64,7 +39,7 @@ uint8_t io_serial_buffer_size_atari(void)
 /**
  * io_recv_serial_flow_off() - Tell modem to stop receiving.
  */
-void io_recv_serial_flow_off_atari(void)
+void io_recv_serial_flow_off(void)
 {
   if (io_load_successful==false)
     return;
@@ -75,7 +50,7 @@ void io_recv_serial_flow_off_atari(void)
 /**
  * io_recv_serial_flow_on() - Tell modem to stop receiving.
  */
-void io_recv_serial_flow_on_atari(void)
+void io_recv_serial_flow_on(void)
 {
   if (io_load_successful==false)
     return;
@@ -83,14 +58,3 @@ void io_recv_serial_flow_on_atari(void)
   ser_put(0x11);
 }
 
-/**
- * io_ser_driver_name() - return serial driver name given constant
- */
-const char* io_ser_driver_name(unsigned char driver)
-{
-  switch(driver)
-    {
-    case CONFIG_SERIAL_DRIVER_ATRRDEV:
-      return "atrrdev.ser";
-    }
-}

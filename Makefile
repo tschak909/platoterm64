@@ -9,7 +9,7 @@
  
 # Space or comma separated list of cc65 supported target platforms to build for.
 # Default: c64 (lowercase!)
-TARGETS := c64,c128,atari,apple2
+TARGETS := atari
  
 # Name of the final, single-file executable.
 # Default: name of the current dir with target name appended
@@ -36,7 +36,7 @@ ASFLAGS =
 # Additional linker flags and options.
 # Default: none
 LDFLAGS = $(LDFLAGS.$(TARGETS))
-LDFLAGS.atari = --start-addr 0x2420 -Wl -D__RESERVED_MEMORY__=0x2000 -D__STACKSIZE__=0x200
+LDFLAGS.atari = --start-addr 0x2420 -Wl -D__RESERVED_MEMORY__=0x2000 -D__STACKSIZE__=0x200 --mapfile plato.map
  
 # Path to the directory containing C and ASM sources.
 # Default: src
