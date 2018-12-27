@@ -28,7 +28,7 @@ static padWord theWord;		/* Data received for various data types */
 static padByte theChar;
 static padByte rawChar;
 static padByte lastChar;
-static padRGB theColor;
+/* static padRGB theColor; */
 static uint16_t LowX,		/* Previous coordinates received */
   HiX, LowY, HiY;
 static padPt CurCoord;		/* Current coordinate */
@@ -645,15 +645,15 @@ GoMode (void)
     case mMode7:
       terminal_mode_7 (theWord);
       break;
-    /* case mFore: */
-    /*   screen_foreground(&theColor); */
-    /*   break; */
-    /* case mBack: */
-    /*   screen_background(&theColor); */
-    /*   break; */
-    /* case mPaint: */
-    /*   screen_paint(&CurCoord); */
-    /*   break; */
+    case mFore:
+      /*   screen_foreground(&theColor); */
+      break;
+    case mBack:
+      /*   screen_background(&theColor); */
+      break;
+    case mPaint:
+      /*   screen_paint(&CurCoord); */
+      break;
     }
   CMode = PMode;
   CType = PType;
@@ -761,9 +761,9 @@ DataChar (void)
     case tCoord:
       GoCoord ();
       break;
-    /* case tColor: */
-    /*   GoColor (); */
-    /*   break; */
+    case tColor:
+      GoColor ();
+      break;
     /* case tPaint: */
     /*   GoPaint (); */
     /*   break; */

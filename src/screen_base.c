@@ -24,12 +24,11 @@ uint8_t pal[2];
 unsigned char current_foreground=COLOR_WHITE;
 unsigned char current_background=COLOR_BLACK;
 
-#define RECV_BUFFER_SIZE 384
 #define FONTM23_SIZE 768
 
 extern uint8_t xoff_enabled; /* io.c */
 extern padBool FastText; /* protocol.c */
-extern uint8_t* recv_buffer;
+extern uint8_t recv_buffer[256];
 extern uint8_t font[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
@@ -44,7 +43,6 @@ void screen_init(void)
   tgi_init();
   screen_init_hook();
   tgi_clear();
-  recv_buffer=malloc(RECV_BUFFER_SIZE);
   fontm23=malloc(FONTM23_SIZE);
 }
 
@@ -82,6 +80,5 @@ void screen_done(void)
 {
   tgi_done();
   tgi_uninstall();
-  free(recv_buffer);
   free(fontm23);
 }

@@ -20,12 +20,7 @@
 #include "../screen.h"
 #include "key.h"
 
-static uint16_t delay;
 static uint8_t lastkey,key;
-static uint8_t keyboard_start_pressed;
-static uint8_t keyboard_select_pressed;
-static uint8_t keyboard_option_pressed;
-extern uint8_t xoff_enabled;
 extern void click();
 extern padBool TTY;
 extern padPt TTYLoc;

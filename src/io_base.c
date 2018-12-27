@@ -24,7 +24,7 @@ uint8_t io_load_successful=false;
 
 static uint8_t ch=0;
 static uint8_t io_res;
-uint8_t recv_buffer[384];
+uint8_t recv_buffer[256];
 static uint16_t recv_buffer_size=0;
 
 static struct ser_params params = {

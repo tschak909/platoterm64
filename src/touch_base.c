@@ -17,16 +17,9 @@
 #include <atari.h>
 #endif
 
-static padBool TouchActive;
 
 static struct mouse_info mouse_data;
-static uint16_t screen_w;
-static uint16_t screen_h;
 static uint8_t mouse_present=false;
-static uint8_t mou_res=0;
-
-extern uint16_t scaletx[];
-extern uint16_t scalety[];
 
 /**
  * touch_init() - Set up touch screen
