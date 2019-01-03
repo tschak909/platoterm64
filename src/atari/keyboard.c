@@ -51,7 +51,16 @@ void keyboard_main(void)
 	  keyboard_out_tty(0x0D);
 	  keyboard_out_tty(0x0A);
 	}
-      
+      else if (key==22)
+	{
+	  POKE(82,2);
+	  POKE(559,34);
+	  POKE(764,255);
+	  io_done();
+	  touch_done();
+	  screen_done();
+	  exit(0);
+	}
       TTYLoc.y-=16;
       POKE(764,255);
     }

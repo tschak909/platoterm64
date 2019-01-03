@@ -8,8 +8,8 @@ const unsigned char key_to_pkey[]={
     PKEY_l, /* 0x00 */
     PKEY_j, /* 0x01 */
     PKEY_SEMICOLON, /* 0x02 */
-    PKEY_NOKEY, /* 0x03 */
-    PKEY_NOKEY, /* 0x04 */
+    PKEY_BACK, /* 0x03 */
+    PKEY_LAB, /* 0x04 */
     PKEY_k, /* 0x05 */
     PKEY_PLUS, /* 0x06 */
     PKEY_ASTERISK, /* 0x07 */
@@ -24,8 +24,8 @@ const unsigned char key_to_pkey[]={
     PKEY_v, /* 0x10 */
     PKEY_HELP, /* 0x11 */
     PKEY_c, /* 0x12 */
-    PKEY_NOKEY, /* 0x13 */
-    PKEY_NOKEY, /* 0x14 */
+    PKEY_TERM, /* 0x13 */
+    PKEY_MICRO, /* 0x14 */
     PKEY_b, /* 0x15 */
     PKEY_x, /* 0x16 */
     PKEY_z, /* 0x17 */
@@ -72,8 +72,8 @@ const unsigned char key_to_pkey[]={
     PKEY_L, /* 0x40 */
     PKEY_J, /* 0x41 */
     PKEY_COLON, /* 0x42 */
-    PKEY_NOKEY, /* 0x43 */
-    PKEY_NOKEY, /* 0x44 */
+    PKEY_BACK1, /* 0x43 */
+    PKEY_LAB1, /* 0x44 */
     PKEY_K, /* 0x45 */
     PKEY_BACKSLASH, /* 0x46 */
     PKEY_CIRCUMFLEX, /* 0x47 */
@@ -86,7 +86,7 @@ const unsigned char key_to_pkey[]={
     PKEY_UNDERSCORE, /* 0x4e */
     PKEY_BAR, /* 0x4f */
     PKEY_V, /* 0x50 */
-    PKEY_NOKEY, /* 0x51 */
+    PKEY_HELP1, /* 0x51 */
     PKEY_C, /* 0x52 */
     PKEY_NOKEY, /* 0x53 */
     PKEY_NOKEY, /* 0x54 */

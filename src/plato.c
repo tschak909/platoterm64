@@ -42,8 +42,5 @@ void main(void)
       io_main();
       keyboard_main();
       touch_main();
-    }
-  
-  screen_done();
-  touch_done();
+    }  
 }
