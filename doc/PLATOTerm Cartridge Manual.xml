@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.1" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:xila="http://www.w3.org/2001/XInclude/local-attributes"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:trans="http://docbook.org/ns/transclusion"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:m="http://www.w3.org/1998/Math/MathML"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <title>PLATOTERM</title>
+
+    <author>
+      <personname><firstname>Thomas</firstname><surname>Cherryhomes</surname></personname>
+
+      <affiliation>
+        <orgname>IRATA.ONLINE</orgname>
+      </affiliation>
+    </author>
+
+    <pubdate>2019-01-04</pubdate>
+  </info>
+
+  <preface>
+    <title>HOW TO USE THIS MANUAL</title>
+
+    <para>The PLATOTERM Manual has been structured for two levels of users.
+    The new user will find PLATOTERM explained in well-defined terminology and
+    step by step instruction, while the experienced user will find what they
+    need to use PLATOTERM to access PLATO on-line services quickly and
+    efficiently.</para>
+
+    <para>For both levels, explanations are followed by graphics wherever
+    possible. The intention is to present the material in the clearest, most
+    concise way possible for users at each level.</para>
+  </preface>
+
+  <chapter>
+    <title>GENERAL DESCRIPTION</title>
+
+    <para>PLATOTERM is a cartridge which provides the software necessary to
+    send and receive data to PLATO services located on remote computers,
+    connected via the Internet. To connect the ATARI® computer to the
+    Internet, an Internet MODEM is required, which simultaneously connects the
+    ATARI® to the Internet, and appears to the ATARI® like a MODEM. A wide
+    variety of devices can be used to perform this function, and the chapter
+    on MODEM set-up will provide examples of what can be used, and how to
+    connect it all together.</para>
+
+    <para>PLATO services provide not only textual information, but also
+    graphical information, and the ability to point and click on textual and
+    graphical elements on-screen. PLATOTERM interprets the information
+    received from the MODEM and presents it on your ATARI® screen, while
+    simultaneously gathering any and all input from your ATARI® keyboard and
+    pointing device; sending it back to the PLATO system for further
+    processing and interaction. </para>
+
+    <para>In addition to the ATARI® keyboard, you may also use a joystick,
+    touch tablet, TRAK-Ball, or mouse to act as a pointer device. When you
+    receive a copy of PLATOTERM, the desired touch device is preprogrammed
+    into the ROM inside your cartridge. </para>
+
+    <para>PLATOTERM supports any serial device that provides an "R:" to the
+    operating system. This includes the ATARI® 850(TM), ICD® P:R:
+    Connection(TM), and R-Verter interface. To facilitate this, the cartridge
+    will load any disk operating system from the first disk drive, allowing
+    any "R:" handler desired to be loaded.</para>
+
+    <annotation>
+      <para>NOTE: ADD OVERALL DIAGRAM OF COMPUTER, WIFI MODEM, AND
+      INTERFACE.</para>
+    </annotation>
+  </chapter>
+
+  <chapter>
+    <title>OPERATION</title>
+
+    <para>This cartridge runs on any ATARI® 400(TM), ATARI® 800(TM), ATARI®
+    600XL(TM), ATARI® 800XL(TM), ATARI® 1200XL(TM), ATARI® 1400XL(TM), ATARI®
+    1450XLD(TM), ATARI® 65XE(TM), ATARI® 130XE(TM), ATARI® 800XE(TM), or
+    compatible system.</para>
+
+    <para>To use, insert the cartridge into your computer. For ATARI® 800(TM)
+    systems, use the <emphasis role="bold">LEFT CARTRIDGE</emphasis> slot. Be
+    sure the POWER ON/OFF switch on the console is turned on. The ATARI®
+    400(TM) and ATARI® 800(TM) consoles automatically shut off whenever the
+    cartridge door is lifted. This prevents damage to the computer and the
+    cartridge.</para>
+
+    <para>This version of PLATOTERM is set to the following terminal
+    parameters:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>1200 baud</para>
+      </listitem>
+
+      <listitem>
+        <para>no parity</para>
+      </listitem>
+
+      <listitem>
+        <para>8 data bits</para>
+      </listitem>
+
+      <listitem>
+        <para>1 stop bit</para>
+      </listitem>
+    </itemizedlist>
+
+    <important>
+      <para>If your MODEM is set to different communication parameters, be
+      sure to set your MODEM configuration parameters in the appropriate setup
+      program, before launching PLATOTERM.</para>
+    </important>
+
+    <para>Use the following procedure to connect to a PLATO(TM)
+    service:</para>
+
+    <orderedlist>
+      <listitem>
+        <para>If an ATARI® 810(TM), ATARI® 1050(TM), ATARI® XF-551, or
+        compatible drive is attached, insert a DOS diskette with an
+        appropriate "R:" handler in the drive. The ATARI® <emphasis
+        role="bold">MASTER DISKETTE II</emphasis> contains such a handler,
+        which will automatically load, when booted.</para>
+
+        <figure>
+          <title>Inserting a Diskette</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="manual_images/Inserting_Disk.PNG"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </listitem>
+
+      <listitem>
+        <para>Switch the ATARI® 850(TM) Interface Module (or compatible
+        device) power to <emphasis role="bold">ON</emphasis>.</para>
+
+        <figure>
+          <title>The ATARI® 850 INTERFACE MODULE</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="manual_images/Atari_850_diagram.PNG"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </listitem>
+
+      <listitem>
+        <para>Switch your MODEM power to <emphasis
+        role="bold">ON</emphasis>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Switch the ATARI® computer power to <emphasis
+        role="bold">ON</emphasis>. Wait for <emphasis role="bold">1200 Baud.
+        Terminal Ready.</emphasis> to appear.</para>
+
+        <figure>
+          <title>PLATOTERM READY</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="manual_images/title_screen.png"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </listitem>
+
+      <listitem>
+        <para>Enter any commands you need, before you dial, such as
+        <emphasis>ATB2</emphasis>, if running APE, or
+        <emphasis>AT&amp;K0&amp;C1</emphasis> if using TCPSER.</para>
+      </listitem>
+
+      <listitem>
+        <para>Enter your MODEM's command to dial, such as <emphasis
+        role="bold">ATDTIRATA.ONLINE:8005</emphasis>. Wait for the connect
+        message.</para>
+      </listitem>
+
+      <listitem>
+        <para>Follow the prompts to log on to the system.</para>
+      </listitem>
+
+      <listitem>
+        <para>Use the system.</para>
+      </listitem>
+
+      <listitem>
+        <para>When done. Press <keycap>SHIFT-CONTROL-S</keycap>, twice, to log
+        off.</para>
+      </listitem>
+
+      <listitem>
+        <para>Send any commands to your modem, to hang up, such as +++ATH
+        <keycap>RETURN</keycap></para>
+      </listitem>
+
+      <listitem>
+        <para>If desired, press SELECT-X to exit the cartridge, to DOS.</para>
+      </listitem>
+    </orderedlist>
+  </chapter>
+
+  <chapter>
+    <title>USER CONTROLS</title>
+
+    <para>PLATOTERM's controls are very simple to use. There are three main
+    keys which alter the operation of the program:</para>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colwidth="109*"/>
+
+        <colspec colwidth="891*"/>
+
+        <thead>
+          <row>
+            <entry align="center">Keys</entry>
+
+            <entry align="center">Function</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>SELECT T</entry>
+
+            <entry>Selects TTY mode. All incoming data is simply displayed as
+            ASCII text, with no parsing of incoming information, All keys are
+            also sent as ASCII keys. The program, by default starts in this
+            mode. This can be used if you are in PLATO mode, and need to send
+            a command to your MODEM.</entry>
+          </row>
+
+          <row>
+            <entry>SELECT P</entry>
+
+            <entry>Selects PLATO mode. All incoming data is interpreted as
+            PLATO data. This can be used if you are already connected to the
+            PLATO service when PLATOTERM starts.</entry>
+          </row>
+
+          <row>
+            <entry>SELECT X</entry>
+
+            <entry>Exits PLATOTERM. If the computer was booted from the disk
+            drive, it will return to DOS. Otherwise, the computer will default
+            to either the MEMO PAD mode for the ATARI® 400(TM) and ATARI®
+            800(TM) systems, to the ATARI® logo display for the ATARI®
+            1200XL(TM) system, or to the SELF TEST for all other compatible
+            computers.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>PLATOTERM maps the keys from the PLATO system into appropriate keys
+    on the ATARI® console keyboard, as shown in the following diagram:</para>
+
+    <figure>
+      <title>PLATO KEYBOARD</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="manual_images/atari-plato-keyboard.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>The <keycap>CTRL</keycap> key is used to press the special PLATO
+    keys, described below:</para>
+
+    <table>
+      <title>MAPPING OF KEYS</title>
+
+      <tgroup cols="2">
+        <colspec colwidth="159*"/>
+
+        <colspec colwidth="841*"/>
+
+        <thead>
+          <row>
+            <entry align="center">PLATO Key</entry>
+
+            <entry align="center">ATARI® KEY</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>ANS</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">A</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>BACK</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">B</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-BACK</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">+</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>COPY</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">C</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-COPY</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">-</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>DATA</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">D</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-DATA</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">*</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>EDIT</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">E</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-EDIT</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">E</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>FONT</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">F</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>DIVIDE</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">G</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>HELP</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">H</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-HELP</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">H</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>LAB</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">L</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-LAB</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">=</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SUPER</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">P</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-SUPER</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">P</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SQUARE</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">Q</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>ACCESS</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">Q</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>STOP</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">S</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT STOP</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">S</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>TERM</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">T</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>MULTIPLY</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">X</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SUB</entry>
+
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">Y</emphasis></entry>
+          </row>
+
+          <row>
+            <entry>SHIFT-SUB</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">Y</emphasis></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+
+  <chapter>
+    <title>AN EXAMPLE SESSION</title>
+
+    <para>The following procedure shows an example session with IRATA.ONLINE,
+    a PLATO service for retro-computing users. It assumes that:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Your ATARI® computer is set up.</para>
+      </listitem>
+
+      <listitem>
+        <para>Your ATARI® 850(TM) Interface Module (or compatible) is
+        connected to your ATARI® computer.</para>
+      </listitem>
+
+      <listitem>
+        <para>Your WIFI modem is connected to SERIAL INTERFACE PORT 1 (or
+        other appropriate port) on your ATARI® 850(TM) Interface Module (or
+        compatible)</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Your WIFI MODEM must also be configured with the following
+    connection parameters:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>1200 baud</para>
+      </listitem>
+
+      <listitem>
+        <para>8 data bits</para>
+      </listitem>
+
+      <listitem>
+        <para>1 stop bit</para>
+      </listitem>
+
+      <listitem>
+        <para>no parity</para>
+      </listitem>
+    </itemizedlist>
+
+    <important>
+      <para>PLATOTERM always runs with the aforementioned parameters. You must
+      change your MODEM parameters to match the above using its configuration
+      tools, before running PLATOTERM.</para>
+    </important>
+
+    <orderedlist>
+      <listitem>
+        <para>Turn on your ATARI® 850(TM) Interface Module, or
+        compatible.</para>
+      </listitem>
+
+      <listitem>
+        <para>Turn on your WIFI MODEM, if needed.</para>
+      </listitem>
+
+      <listitem>
+        <para>Insert the PLATOTERM cartridge into the appropriate cartridge
+        slot in your ATARI® computer console, and close the cartridge door, if
+        needed.</para>
+      </listitem>
+
+      <listitem>
+        <para>If you need to use a "R:" handler loaded from a DOS disk:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Power on your disk drive.</para>
+          </listitem>
+
+          <listitem>
+            <para>Insert your DOS disk into the drive, and close the
+            door.</para>
+          </listitem>
+        </orderedlist>
+      </listitem>
+
+      <listitem>
+        <para>Power on your ATARI® computer console. Wait for the <emphasis
+        role="bold">PLATOTERM READY</emphasis> prompt.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/title_screen.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Type the following to dial IRATA.ONLINE:<screen>ATDTIRATA.ONLINE:8005
+</screen></para>
+      </listitem>
+
+      <listitem>
+        <para>After a short moment, you should see something similar to the
+        following:<screen>Connecting to host - please wait ...
+
+Connected
+
+WELCOME TO THE NOS SOFTWARE SYSTEM
+COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
+91/01/04. 21.42.16. TE22
+ NOS CYBIS SYSTEM - CYBDEV.  1.      NOS 2.8.7 871/871</screen></para>
+      </listitem>
+
+      <listitem>
+        <para>After a few short moments, you should see the IRATA.ONLINE
+        sign-on screen:</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/login1.PNG"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Type <emphasis role="bold">guest</emphasis> and press RETURN in
+        response to the prompt for user name.</para>
+      </listitem>
+
+      <listitem>
+        <para>Type <emphasis role="bold">guest</emphasis> and press RETURN in
+        response to the prompt for group.</para>
+      </listitem>
+
+      <listitem>
+        <para>Once the main menu has finished drawing, press
+        <keycap>C</keycap> to navigate to the Games menu. Alternately, you can
+        use your joystick, or other pointing device to move the pointer over
+        the menu entry for Games, and press a device button to select
+        it.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/mainmenu.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Once the games menu has finished drawing, press F to select the
+        Checkers game. The description for Checkers will appear.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/gamesmenu.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Press <keycap>CTRL</keycap> <emphasis role="bold">D</emphasis>.
+        This sends the DATA key to the PLATO host, and starts the game.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/checkerstart.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Press <keycap>RETURN</keycap>, which sends <emphasis
+        role="bold">NEXT</emphasis> to the PLATO host, to start the
+        game.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/checkerstitle.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Press <keycap>1</keycap> to start the game with you playing
+        first.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/checkersgame1.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Use your pointing device to move the pointer over a piece you
+        wish to move. Press the selection, or fire button. </para>
+      </listitem>
+
+      <listitem>
+        <para>Use your pointing device to move the pointer to an adjacent
+        empty square to move the piece. Press the selection, or fire button.
+        The piece should move to where you requested.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/checkersgame2.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Wait for the computer to play its turn and return to you.</para>
+      </listitem>
+
+      <listitem>
+        <para>Once you are ready to quit the game, press
+        <keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+        role="bold">S</emphasis> which sends <emphasis
+        role="bold">SHIFT-STOP</emphasis> to the PLATO host, and presents you
+        with a menu to either continue working in the menu, or to log
+        off.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/stop1.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Press SHIFT CTRL S once again, to log off the system.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/signoff.png"/>
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para>Hang up the modem by typing +++ ... waiting a few seconds until
+        you see OK, and type:<screen>ATH
+</screen></para>
+      </listitem>
+
+      <listitem>
+        <para>The modem should hang up. Followed by the message:<screen>NO CARRIER</screen>
+        </para>
+      </listitem>
+    </orderedlist>
+
+    <para>Congratulations, you've successfully communicated with a PLATO host
+    using PLATOTERM.</para>
+  </chapter>
+
+  <appendix>
+    <title>SET-UP EXAMPLE WITH ATARI® 850(TM) AND RS-232 WIFI MODEM</title>
+
+    <para>The following diagram shows an ATARI® 800(TM) connected to an RS-232
+    WIFI MODEM through an ATARI 850(TM) Interface Module.</para>
+
+    <annotation>
+      <para>NOTE: Please replace with actual diagram.</para>
+    </annotation>
+
+    <figure>
+      <title>SYSTEM DIAGRAM</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="manual_images/wifi-modem-diagram.PNG"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>As can be seen from the diagram:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The PLATOTERM cartridge is inserted into the ATARI®
+        computer.</para>
+      </listitem>
+
+      <listitem>
+        <para>The ATARI® 850(TM) Interface Module is attached via the
+        PERIPHERAL connector.</para>
+      </listitem>
+
+      <listitem>
+        <para>The WIFI MODEM is attached via a CX87 MODEM cable to SERIAL
+        INTERFACE PORT 1.</para>
+      </listitem>
+    </itemizedlist>
+  </appendix>
+</book>
