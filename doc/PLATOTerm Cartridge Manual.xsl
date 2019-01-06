@@ -35,5 +35,18 @@
   <xsl:template name="table.cell.properties">
     <xsl:attribute name="keep-together.within-column">always</xsl:attribute>
   </xsl:template>
+
+  <!-- Cover -->
+  <xsl:template name="front.cover">
+    <xsl:call-template name="page.sequence">
+      <xsl:with-param name="master-reference">titlepage</xsl:with-param>
+      <xsl:with-param name="content">
+	<fo:block xmlns:fo="http://www.w3.org/1999/XSL/Format" text-align="center">
+	  <fo:external-graphic src="url(manual_images/cover.jpg)"
+			       content-width="7cm"/>
+	</fo:block>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
   
 </xsl:stylesheet>  

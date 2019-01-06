@@ -9,6 +9,7 @@
       xmlns:html="http://www.w3.org/1999/xhtml"
       xmlns:db="http://docbook.org/ns/docbook">
   <info>
+
     <title>PLATOTERM</title>
 
     <author>
@@ -62,8 +63,8 @@
     into the ROM inside your cartridge.</para>
 
     <para>PLATOTERM supports any serial device that provides an "R:" to the
-    operating system. This includes the ATARI® 850(TM), ICD® P:R:
-    Connection(TM), and R-Verter interface. To facilitate this, the cartridge
+    operating system. This includes the ATARI® 850&#8482;, ICD® P:R:
+    Connection&#8482;, and R-Verter interface. To facilitate this, the cartridge
     will load any disk operating system from the first disk drive, allowing
     any "R:" handler desired to be loaded.</para>
 
@@ -76,15 +77,15 @@
   <chapter>
     <title>OPERATION</title>
 
-    <para>This cartridge runs on any ATARI® 400(TM), ATARI® 800(TM), ATARI®
-    600XL(TM), ATARI® 800XL(TM), ATARI® 1200XL(TM), ATARI® 1400XL(TM), ATARI®
-    1450XLD(TM), ATARI® 65XE(TM), ATARI® 130XE(TM), ATARI® 800XE(TM), or
+    <para>This cartridge runs on any ATARI® 400&#8482;, ATARI® 800&#8482;, ATARI®
+    600XL&#8482;, ATARI® 800XL&#8482;, ATARI® 1200XL&#8482;, ATARI® 1400XL&#8482;, ATARI®
+    1450XLD&#8482;, ATARI® 65XE&#8482;, ATARI® 130XE&#8482;, ATARI® 800XE&#8482;, or
     compatible system.</para>
 
-    <para>To use, insert the cartridge into your computer. For ATARI® 800(TM)
+    <para>To use, insert the cartridge into your computer. For ATARI® 800&#8482;
     systems, use the <emphasis role="bold">LEFT CARTRIDGE</emphasis> slot. Be
     sure the POWER ON/OFF switch on the console is turned on. The ATARI®
-    400(TM) and ATARI® 800(TM) consoles automatically shut off whenever the
+    400&#8482; and ATARI® 800&#8482; consoles automatically shut off whenever the
     cartridge door is lifted. This prevents damage to the computer and the
     cartridge. If you need a special disk handler (such as for R-Verter or
     another interface that provides an "R:" handler), then turn on the disk
@@ -118,12 +119,12 @@
       program, before launching PLATOTERM.</para>
     </important>
 
-    <para>Use the following procedure to connect to a PLATO(TM)
+    <para>Use the following procedure to connect to a PLATO&#8482;
     service:</para>
 
     <orderedlist>
       <listitem>
-        <para>If an ATARI® 810(TM), ATARI® 1050(TM), ATARI® XF-551, or
+        <para>If an ATARI® 810&#8482;, ATARI® 1050&#8482;, ATARI® XF-551, or
         compatible drive is attached, insert a DOS diskette with an
         appropriate "R:" handler in the drive. The ATARI® <emphasis
         role="bold">MASTER DISKETTE II</emphasis> contains such a handler,
@@ -137,7 +138,7 @@
       </listitem>
 
       <listitem>
-        <para>Switch the ATARI® 850(TM) Interface Module (or compatible
+        <para>Switch the ATARI® 850&#8482; Interface Module (or compatible
         device) power to <emphasis role="bold">ON</emphasis>.</para>
 
         <mediaobject>
@@ -245,9 +246,9 @@
 
             <entry>Exits PLATOTERM. If the computer was booted from the disk
             drive, it will return to DOS. Otherwise, the computer will default
-            to either the MEMO PAD mode for the ATARI® 400(TM) and ATARI®
-            800(TM) systems, to the ATARI® logo display for the ATARI®
-            1200XL(TM) system, or to the SELF TEST for all other compatible
+            to either the MEMO PAD mode for the ATARI® 400&#8482; and ATARI®
+            800&#8482; systems, to the ATARI® logo display for the ATARI®
+            1200XL&#8482; system, or to the SELF TEST for all other compatible
             computers.</entry>
           </row>
         </tbody>
@@ -287,176 +288,263 @@
           <row>
             <entry>ANS</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">A</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">A</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>BACK</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">B</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">B</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-BACK</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">+</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">+</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>COPY</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">C</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">C</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-COPY</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">-</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">-</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>DATA</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">D</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">D</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-DATA</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">*</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">*</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>EDIT</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">E</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">E</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-EDIT</entry>
 
-            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
-            role="bold">E</emphasis></entry>
+            <entry>
+              <keycap>SHIFT</keycap>
+
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">E</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>FONT</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">F</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">F</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>DIVIDE</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">G</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">G</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>HELP</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">H</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">H</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-HELP</entry>
 
-            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
-            role="bold">H</emphasis></entry>
+            <entry>
+              <keycap>SHIFT</keycap>
+
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">H</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>LAB</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">L</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">L</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-LAB</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">=</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">=</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SUPER</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">P</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">P</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-SUPER</entry>
 
-            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
-            role="bold">P</emphasis></entry>
+            <entry>
+              <keycap>SHIFT</keycap>
+
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">P</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SQUARE</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">Q</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">Q</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>ACCESS</entry>
 
-            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
-            role="bold">Q</emphasis></entry>
+            <entry>
+              <keycap>SHIFT</keycap>
+
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">Q</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>STOP</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">S</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">S</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT STOP</entry>
 
-            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
-            role="bold">S</emphasis></entry>
+            <entry>
+              <keycap>SHIFT</keycap>
+
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">S</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>TERM</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">T</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">T</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>MULTIPLY</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">X</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">X</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SUB</entry>
 
-            <entry><keycap>CTRL</keycap> <emphasis
-            role="bold">Y</emphasis></entry>
+            <entry>
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">Y</emphasis>
+            </entry>
           </row>
 
           <row>
             <entry>SHIFT-SUB</entry>
 
-            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
-            role="bold">Y</emphasis></entry>
+            <entry>
+              <keycap>SHIFT</keycap>
+
+              <keycap>CTRL</keycap>
+
+              <emphasis role="bold">Y</emphasis>
+            </entry>
           </row>
         </tbody>
       </tgroup>
@@ -475,13 +563,13 @@
       </listitem>
 
       <listitem>
-        <para>Your ATARI® 850(TM) Interface Module (or compatible) is
+        <para>Your ATARI® 850&#8482; Interface Module (or compatible) is
         connected to your ATARI® computer.</para>
       </listitem>
 
       <listitem>
         <para>Your WIFI modem is connected to SERIAL INTERFACE PORT 1 (or
-        other appropriate port) on your ATARI® 850(TM) Interface Module (or
+        other appropriate port) on your ATARI® 850&#8482; Interface Module (or
         compatible)</para>
       </listitem>
     </itemizedlist>
@@ -515,7 +603,7 @@
 
     <orderedlist>
       <listitem>
-        <para>Turn on your ATARI® 850(TM) Interface Module, or
+        <para>Turn on your ATARI® 850&#8482; Interface Module, or
         compatible.</para>
       </listitem>
 
@@ -725,10 +813,10 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
   <appendix>
     <title>EXAMPLE SETUP</title>
 
-    <para>The following diagram shows an ATARI® 800(TM) connected to an RS-232
-    WIFI MODEM through an ATARI 850(TM) Interface Module. A common WIFI modem
+    <para>The following diagram shows an ATARI® 800&#8482; connected to an RS-232
+    WIFI MODEM through an ATARI 850&#8482; Interface Module. A common WIFI modem
     is based on the ESP8266 micro-controller, and provides a connection to the
-    Internet, so that PLATO services can be accessed. </para>
+    Internet, so that PLATO services can be accessed.</para>
 
     <annotation>
       <para>NOTE: Please replace with actual diagram.</para>
@@ -750,7 +838,7 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
       </listitem>
 
       <listitem>
-        <para>The ATARI® 850(TM) Interface Module is attached via the
+        <para>The ATARI® 850&#8482; Interface Module is attached via the
         PERIPHERAL connector.</para>
       </listitem>
 
