@@ -54,12 +54,12 @@
     received from the MODEM and presents it on your ATARI® screen, while
     simultaneously gathering any and all input from your ATARI® keyboard and
     pointing device; sending it back to the PLATO system for further
-    processing and interaction. </para>
+    processing and interaction.</para>
 
     <para>In addition to the ATARI® keyboard, you may also use a joystick,
     touch tablet, TRAK-Ball, or mouse to act as a pointer device. When you
     receive a copy of PLATOTERM, the desired touch device is preprogrammed
-    into the ROM inside your cartridge. </para>
+    into the ROM inside your cartridge.</para>
 
     <para>PLATOTERM supports any serial device that provides an "R:" to the
     operating system. This includes the ATARI® 850(TM), ICD® P:R:
@@ -86,7 +86,10 @@
     sure the POWER ON/OFF switch on the console is turned on. The ATARI®
     400(TM) and ATARI® 800(TM) consoles automatically shut off whenever the
     cartridge door is lifted. This prevents damage to the computer and the
-    cartridge.</para>
+    cartridge. If you need a special disk handler (such as for R-Verter or
+    another interface that provides an "R:" handler), then turn on the disk
+    drive, and insert a bootable DOS disk containing the desired handler,
+    before powering on the computer.</para>
 
     <para>This version of PLATOTERM is set to the following terminal
     parameters:</para>
@@ -124,32 +127,25 @@
         compatible drive is attached, insert a DOS diskette with an
         appropriate "R:" handler in the drive. The ATARI® <emphasis
         role="bold">MASTER DISKETTE II</emphasis> contains such a handler,
-        which will automatically load, when booted.</para>
+        which will automatically load, when booted</para>
 
-        <figure>
-          <title>Inserting a Diskette</title>
-
-          <mediaobject>
-            <imageobject>
-              <imagedata fileref="manual_images/Inserting_Disk.PNG"/>
-            </imageobject>
-          </mediaobject>
-        </figure>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/Inserting_Disk.PNG" scale="80"/>
+          </imageobject>
+        </mediaobject>
       </listitem>
 
       <listitem>
         <para>Switch the ATARI® 850(TM) Interface Module (or compatible
         device) power to <emphasis role="bold">ON</emphasis>.</para>
 
-        <figure>
-          <title>The ATARI® 850 INTERFACE MODULE</title>
-
-          <mediaobject>
-            <imageobject>
-              <imagedata fileref="manual_images/Atari_850_diagram.PNG"/>
-            </imageobject>
-          </mediaobject>
-        </figure>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/Atari_850_diagram.PNG"
+                       scale="50" scalefit="0"/>
+          </imageobject>
+        </mediaobject>
       </listitem>
 
       <listitem>
@@ -162,15 +158,11 @@
         role="bold">ON</emphasis>. Wait for <emphasis role="bold">1200 Baud.
         Terminal Ready.</emphasis> to appear.</para>
 
-        <figure>
-          <title>PLATOTERM READY</title>
-
-          <mediaobject>
-            <imageobject>
-              <imagedata fileref="manual_images/title_screen.png"/>
-            </imageobject>
-          </mediaobject>
-        </figure>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="manual_images/title_screen.png" scalefit="1"/>
+          </imageobject>
+        </mediaobject>
       </listitem>
 
       <listitem>
@@ -215,11 +207,11 @@
     <para>PLATOTERM's controls are very simple to use. There are three main
     keys which alter the operation of the program:</para>
 
-    <informaltable>
+    <informaltable colsep="0" frame="none" rowsep="0">
       <tgroup cols="2">
-        <colspec colwidth="109*"/>
+        <colspec colwidth="1*"/>
 
-        <colspec colwidth="891*"/>
+        <colspec colwidth="3*"/>
 
         <thead>
           <row>
@@ -231,7 +223,7 @@
 
         <tbody>
           <row>
-            <entry>SELECT T</entry>
+            <entry><keycap>SELECT</keycap> T</entry>
 
             <entry>Selects TTY mode. All incoming data is simply displayed as
             ASCII text, with no parsing of incoming information, All keys are
@@ -241,7 +233,7 @@
           </row>
 
           <row>
-            <entry>SELECT P</entry>
+            <entry><keycap>SELECT</keycap> P</entry>
 
             <entry>Selects PLATO mode. All incoming data is interpreted as
             PLATO data. This can be used if you are already connected to the
@@ -249,7 +241,7 @@
           </row>
 
           <row>
-            <entry>SELECT X</entry>
+            <entry><keycap>SELECT</keycap> X</entry>
 
             <entry>Exits PLATOTERM. If the computer was booted from the disk
             drive, it will return to DOS. Otherwise, the computer will default
@@ -265,26 +257,23 @@
     <para>PLATOTERM maps the keys from the PLATO system into appropriate keys
     on the ATARI® console keyboard, as shown in the following diagram:</para>
 
-    <figure>
-      <title>PLATO KEYBOARD</title>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="manual_images/atari-plato-keyboard.png"/>
-        </imageobject>
-      </mediaobject>
-    </figure>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="manual_images/atari-plato-keyboard.png" scale="80"
+                   scalefit="1"/>
+      </imageobject>
+    </mediaobject>
 
     <para>The <keycap>CTRL</keycap> key is used to press the special PLATO
     keys, described below:</para>
 
-    <table>
+    <informaltable frame="none">
       <title>MAPPING OF KEYS</title>
 
-      <tgroup cols="2">
-        <colspec colwidth="159*"/>
+      <tgroup cols="2" colsep="0" rowsep="0">
+        <colspec colwidth="1*"/>
 
-        <colspec colwidth="841*"/>
+        <colspec colwidth="3*"/>
 
         <thead>
           <row>
@@ -471,7 +460,7 @@
           </row>
         </tbody>
       </tgroup>
-    </table>
+    </informaltable>
   </chapter>
 
   <chapter>
@@ -561,7 +550,7 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/title_screen.png"/>
+            <imagedata fileref="manual_images/title_screen.png" scalefit="1"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -580,7 +569,7 @@ Connected
 WELCOME TO THE NOS SOFTWARE SYSTEM
 COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 91/01/04. 21.42.16. TE22
- NOS CYBIS SYSTEM - CYBDEV.  1.      NOS 2.8.7 871/871</screen></para>
+ NOS CYBIS SYSTEM - CYBDEV. 1.  NOS 2.8.7...</screen></para>
       </listitem>
 
       <listitem>
@@ -589,7 +578,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/login1.PNG"/>
+            <imagedata fileref="manual_images/login1.PNG" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -613,7 +603,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/mainmenu.png"/>
+            <imagedata fileref="manual_images/mainmenu.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -624,7 +615,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/gamesmenu.png"/>
+            <imagedata fileref="manual_images/gamesmenu.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -635,7 +627,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/checkerstart.png"/>
+            <imagedata fileref="manual_images/checkerstart.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -647,7 +640,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/checkerstitle.png"/>
+            <imagedata fileref="manual_images/checkerstitle.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -658,14 +652,15 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/checkersgame1.png"/>
+            <imagedata fileref="manual_images/checkersgame1.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
 
       <listitem>
         <para>Use your pointing device to move the pointer over a piece you
-        wish to move. Press the selection, or fire button. </para>
+        wish to move. Press the selection, or fire button.</para>
       </listitem>
 
       <listitem>
@@ -675,7 +670,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/checkersgame2.png"/>
+            <imagedata fileref="manual_images/checkersgame2.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -694,7 +690,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/stop1.png"/>
+            <imagedata fileref="manual_images/stop1.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -704,20 +701,20 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/signoff.png"/>
+            <imagedata fileref="manual_images/signoff.png" scale="50"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
 
       <listitem>
-        <para>Hang up the modem by typing +++ ... waiting a few seconds until
+        <para>Hang up the modem by typing +++ ... Waiting a few seconds until
         you see OK, and type:<screen>ATH
 </screen></para>
       </listitem>
 
       <listitem>
-        <para>The modem should hang up. Followed by the message:<screen>NO CARRIER</screen>
-        </para>
+        <para>The modem should hang up. Followed by the message:<screen>NO CARRIER</screen></para>
       </listitem>
     </orderedlist>
 
@@ -726,24 +723,23 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
   </chapter>
 
   <appendix>
-    <title>SET-UP EXAMPLE WITH ATARI® 850(TM) AND RS-232 WIFI MODEM</title>
+    <title>EXAMPLE SETUP</title>
 
     <para>The following diagram shows an ATARI® 800(TM) connected to an RS-232
-    WIFI MODEM through an ATARI 850(TM) Interface Module.</para>
+    WIFI MODEM through an ATARI 850(TM) Interface Module. A common WIFI modem
+    is based on the ESP8266 micro-controller, and provides a connection to the
+    Internet, so that PLATO services can be accessed. </para>
 
     <annotation>
       <para>NOTE: Please replace with actual diagram.</para>
     </annotation>
 
-    <figure>
-      <title>SYSTEM DIAGRAM</title>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="manual_images/wifi-modem-diagram.PNG"/>
-        </imageobject>
-      </mediaobject>
-    </figure>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="manual_images/wifi-modem-diagram.PNG" scale="50"
+                   scalefit="0"/>
+      </imageobject>
+    </mediaobject>
 
     <para>As can be seen from the diagram:</para>
 

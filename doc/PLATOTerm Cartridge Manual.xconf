@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- Arial Unicode only -->
+<fop version="1.0">
+
+  <!-- Base URL for resolving relative URLs -->
+  <base>.</base>
+  
+  <renderers>
+    <renderer mime="application/pdf">
+      <fonts>
+        <font embed-url="./OptimaLTStd-Bold.otf">
+          <font-triplet name="Optima LT Std Bold" style="normal" weight="bold"/>
+        </font>
+	<font embed-url="./Optima-LT-Std-Roman.ttf">
+          <font-triplet name="Optima LT Std" style="normal" weight="normal"/>
+	</font>
+      </fonts>
+    </renderer>
+  </renderers>
+
+</fop>
