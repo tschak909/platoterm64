@@ -8,20 +8,25 @@
       xmlns:m="http://www.w3.org/1998/Math/MathML"
       xmlns:html="http://www.w3.org/1999/xhtml"
       xmlns:db="http://docbook.org/ns/docbook">
-  <info>
+  <!-- <info> -->
 
-    <title>PLATOTERM</title>
+  <!--   <title>PLATOTERM</title> -->
 
-    <author>
-      <personname><firstname>Thomas</firstname><surname>Cherryhomes</surname></personname>
+  <!--   <author> -->
 
-      <affiliation>
-        <orgname>IRATA.ONLINE</orgname>
-      </affiliation>
-    </author>
+  <!--     <personname><firstname>Thomas</firstname><surname>Cherryhomes</surname></personname> -->
 
-    <pubdate>2019-01-04</pubdate>
-  </info>
+  <!--     <affiliation> -->
+
+  <!--       <orgname>IRATA.ONLINE</orgname> -->
+
+  <!--     </affiliation> -->
+
+  <!--   </author> -->
+
+  <!--   <pubdate>2019-01-04</pubdate> -->
+
+  <!-- </info> -->
 
   <preface>
     <title>HOW TO USE THIS MANUAL</title>
@@ -63,10 +68,10 @@
     into the ROM inside your cartridge.</para>
 
     <para>PLATOTERM supports any serial device that provides an "R:" to the
-    operating system. This includes the ATARI® 850&#8482;, ICD® P:R:
-    Connection&#8482;, and R-Verter interface. To facilitate this, the cartridge
-    will load any disk operating system from the first disk drive, allowing
-    any "R:" handler desired to be loaded.</para>
+    operating system. This includes the ATARI® 850™, ICD® P:R: Connection™,
+    and R-Verter interface. To facilitate this, the cartridge will load any
+    disk operating system from the first disk drive, allowing any "R:" handler
+    desired to be loaded.</para>
 
     <annotation>
       <para>NOTE: ADD OVERALL DIAGRAM OF COMPUTER, WIFI MODEM, AND
@@ -77,20 +82,20 @@
   <chapter>
     <title>OPERATION</title>
 
-    <para>This cartridge runs on any ATARI® 400&#8482;, ATARI® 800&#8482;, ATARI®
-    600XL&#8482;, ATARI® 800XL&#8482;, ATARI® 1200XL&#8482;, ATARI® 1400XL&#8482;, ATARI®
-    1450XLD&#8482;, ATARI® 65XE&#8482;, ATARI® 130XE&#8482;, ATARI® 800XE&#8482;, or
-    compatible system.</para>
+    <para>This cartridge runs on any ATARI® 400™, ATARI® 800™, ATARI® 600XL™,
+    ATARI® 800XL™, ATARI® 1200XL™, ATARI® 1400XL™, ATARI® 1450XLD™, ATARI®
+    65XE™, ATARI® 130XE™, ATARI® 800XE™, ATARI® XE Game System™, or compatible
+    system.</para>
 
-    <para>To use, insert the cartridge into your computer. For ATARI® 800&#8482;
+    <para>To use, insert the cartridge into your computer. For ATARI® 800™
     systems, use the <emphasis role="bold">LEFT CARTRIDGE</emphasis> slot. Be
-    sure the POWER ON/OFF switch on the console is turned on. The ATARI®
-    400&#8482; and ATARI® 800&#8482; consoles automatically shut off whenever the
-    cartridge door is lifted. This prevents damage to the computer and the
-    cartridge. If you need a special disk handler (such as for R-Verter or
-    another interface that provides an "R:" handler), then turn on the disk
-    drive, and insert a bootable DOS disk containing the desired handler,
-    before powering on the computer.</para>
+    sure the POWER ON/OFF switch on the console is turned on. The ATARI® 400™
+    and ATARI® 800™ consoles automatically shut off whenever the cartridge
+    door is lifted. This prevents damage to the computer and the cartridge. If
+    you need a special disk handler (such as for R-Verter or another interface
+    that provides an "R:" handler), then turn on the disk drive, and insert a
+    bootable DOS disk containing the desired handler, before powering on the
+    computer.</para>
 
     <para>This version of PLATOTERM is set to the following terminal
     parameters:</para>
@@ -119,27 +124,26 @@
       program, before launching PLATOTERM.</para>
     </important>
 
-    <para>Use the following procedure to connect to a PLATO&#8482;
-    service:</para>
+    <para>Use the following procedure to connect to a PLATO™ service:</para>
 
     <orderedlist>
       <listitem>
-        <para>If an ATARI® 810&#8482;, ATARI® 1050&#8482;, ATARI® XF-551, or
-        compatible drive is attached, insert a DOS diskette with an
-        appropriate "R:" handler in the drive. The ATARI® <emphasis
-        role="bold">MASTER DISKETTE II</emphasis> contains such a handler,
-        which will automatically load, when booted</para>
+        <para>If an ATARI® 810™, ATARI® 1050™, ATARI® XF-551, or compatible
+        drive is attached, insert a DOS diskette with an appropriate "R:"
+        handler in the drive. The ATARI® <emphasis role="bold">MASTER DISKETTE
+        II</emphasis> contains such a handler, which will automatically load,
+        when booted</para>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/Inserting_Disk.PNG" scale="80"/>
+            <imagedata fileref="manual_images/Inserting_Disk.PNG" scale="75"/>
           </imageobject>
         </mediaobject>
       </listitem>
 
       <listitem>
-        <para>Switch the ATARI® 850&#8482; Interface Module (or compatible
-        device) power to <emphasis role="bold">ON</emphasis>.</para>
+        <para>Switch the ATARI® 850™ Interface Module (or compatible device)
+        power to <emphasis role="bold">ON</emphasis>.</para>
 
         <mediaobject>
           <imageobject>
@@ -161,7 +165,8 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/title_screen.png" scalefit="1"/>
+            <imagedata fileref="manual_images/title_screen.png" scale="75"
+                       scalefit="0"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -216,9 +221,9 @@
 
         <thead>
           <row>
-            <entry align="center">Keys</entry>
+            <entry align="center">KEYS</entry>
 
-            <entry align="center">Function</entry>
+            <entry align="center">FUNCTION</entry>
           </row>
         </thead>
 
@@ -246,10 +251,9 @@
 
             <entry>Exits PLATOTERM. If the computer was booted from the disk
             drive, it will return to DOS. Otherwise, the computer will default
-            to either the MEMO PAD mode for the ATARI® 400&#8482; and ATARI®
-            800&#8482; systems, to the ATARI® logo display for the ATARI®
-            1200XL&#8482; system, or to the SELF TEST for all other compatible
-            computers.</entry>
+            to either the MEMO PAD mode for the ATARI® 400™ and ATARI® 800™
+            systems, to the ATARI® logo display for the ATARI® 1200XL™ system,
+            or to the SELF TEST for all other compatible computers.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -269,12 +273,10 @@
     keys, described below:</para>
 
     <informaltable frame="none">
-      <title>MAPPING OF KEYS</title>
-
       <tgroup cols="2" colsep="0" rowsep="0">
         <colspec colwidth="1*"/>
 
-        <colspec colwidth="3*"/>
+        <colspec colwidth="1*"/>
 
         <thead>
           <row>
@@ -288,263 +290,461 @@
           <row>
             <entry>ANS</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">A</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">A</emphasis></entry>
           </row>
 
           <row>
             <entry>BACK</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">B</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">B</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-BACK</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">+</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">+</emphasis></entry>
           </row>
 
           <row>
             <entry>COPY</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">C</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">C</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-COPY</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">-</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">-</emphasis></entry>
           </row>
 
           <row>
             <entry>DATA</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">D</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">D</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-DATA</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">*</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">*</emphasis></entry>
           </row>
 
           <row>
             <entry>EDIT</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">E</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">E</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-EDIT</entry>
 
-            <entry>
-              <keycap>SHIFT</keycap>
-
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">E</emphasis>
-            </entry>
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">E</emphasis></entry>
           </row>
 
           <row>
             <entry>FONT</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">F</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">F</emphasis></entry>
           </row>
 
           <row>
             <entry>DIVIDE</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">G</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">G</emphasis></entry>
           </row>
 
           <row>
             <entry>HELP</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">H</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">H</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-HELP</entry>
 
-            <entry>
-              <keycap>SHIFT</keycap>
-
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">H</emphasis>
-            </entry>
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">H</emphasis></entry>
           </row>
 
           <row>
             <entry>LAB</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">L</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">L</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-LAB</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">=</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">=</emphasis></entry>
           </row>
 
           <row>
             <entry>SUPER</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">P</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">P</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-SUPER</entry>
 
-            <entry>
-              <keycap>SHIFT</keycap>
-
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">P</emphasis>
-            </entry>
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">P</emphasis></entry>
           </row>
 
           <row>
             <entry>SQUARE</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">Q</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">Q</emphasis></entry>
           </row>
 
           <row>
             <entry>ACCESS</entry>
 
-            <entry>
-              <keycap>SHIFT</keycap>
-
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">Q</emphasis>
-            </entry>
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">Q</emphasis></entry>
           </row>
 
           <row>
             <entry>STOP</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">S</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">S</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT STOP</entry>
 
-            <entry>
-              <keycap>SHIFT</keycap>
-
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">S</emphasis>
-            </entry>
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">S</emphasis></entry>
           </row>
 
           <row>
             <entry>TERM</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">T</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">T</emphasis></entry>
           </row>
 
           <row>
             <entry>MULTIPLY</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">X</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">X</emphasis></entry>
           </row>
 
           <row>
             <entry>SUB</entry>
 
-            <entry>
-              <keycap>CTRL</keycap>
-
-              <emphasis role="bold">Y</emphasis>
-            </entry>
+            <entry><keycap>CTRL</keycap> <emphasis
+            role="bold">Y</emphasis></entry>
           </row>
 
           <row>
             <entry>SHIFT-SUB</entry>
 
-            <entry>
-              <keycap>SHIFT</keycap>
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap> <emphasis
+            role="bold">Y</emphasis></entry>
+          </row>
 
-              <keycap>CTRL</keycap>
+          <row>
+            <entry>∩</entry>
 
-              <emphasis role="bold">Y</emphasis>
-            </entry>
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap>
+            <keycap>G</keycap></entry>
+          </row>
+
+          <row>
+            <entry>∪</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>CTRL</keycap>
+            <keycap>9</keycap></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>In addition to the PLATO control keys above, you can type the
+    following additional characters by pressing <keycap>SHIFT</keycap>
+    <keycap>CTRL</keycap> <keycap>Q</keycap>, which sends the
+    <keycap>ACCESS</keycap> key, followed by the desired key below.</para>
+
+    <informaltable colsep="0" frame="none" rowsep="0">
+      <tgroup cols="4">
+        <colspec colwidth="1*"/>
+
+        <colspec colwidth="1*"/>
+
+        <colspec colwidth="1*"/>
+
+        <colspec colwidth="1*"/>
+
+        <thead>
+          <row>
+            <entry align="center">SYMBOL</entry>
+
+            <entry align="center">ACCESS</entry>
+
+            <entry align="center">SYMBOL</entry>
+
+            <entry align="center">ACCESS</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>α</entry>
+
+            <entry><keycap>A</keycap></entry>
+
+            <entry>low tilde</entry>
+
+            <entry><keycap>:</keycap></entry>
+          </row>
+
+          <row>
+            <entry>β</entry>
+
+            <entry><keycap>B</keycap></entry>
+
+            <entry>↕</entry>
+
+            <entry><keycap>,</keycap></entry>
+          </row>
+
+          <row>
+            <entry>¸</entry>
+
+            <entry><keycap>C</keycap></entry>
+
+            <entry>≠</entry>
+
+            <entry><keycap>=</keycap></entry>
+          </row>
+
+          <row>
+            <entry>δ</entry>
+
+            <entry><keycap>D</keycap></entry>
+
+            <entry>ö</entry>
+
+            <entry><keycap>Y</keycap></entry>
+          </row>
+
+          <row>
+            <entry>´</entry>
+
+            <entry><keycap>E</keycap></entry>
+
+            <entry>←</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>A</keycap></entry>
+          </row>
+
+          <row>
+            <entry>æ</entry>
+
+            <entry><keycap>G</keycap></entry>
+
+            <entry>↓</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>X</keycap></entry>
+          </row>
+
+          <row>
+            <entry>ø</entry>
+
+            <entry><keycap>H</keycap></entry>
+
+            <entry>→</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>D</keycap></entry>
+          </row>
+
+          <row>
+            <entry>å</entry>
+
+            <entry><keycap>J</keycap></entry>
+
+            <entry>↑</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>W</keycap></entry>
+          </row>
+
+          <row>
+            <entry>ä</entry>
+
+            <entry><keycap>K</keycap></entry>
+
+            <entry>©</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>C</keycap></entry>
+          </row>
+
+          <row>
+            <entry>λ</entry>
+
+            <entry><keycap>L</keycap></entry>
+
+            <entry>◆</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>F</keycap></entry>
+          </row>
+
+          <row>
+            <entry>μ</entry>
+
+            <entry><keycap>M</keycap></entry>
+
+            <entry>Æ</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>G</keycap></entry>
+          </row>
+
+          <row>
+            <entry>~</entry>
+
+            <entry><keycap>N</keycap></entry>
+
+            <entry>Ø</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>H</keycap></entry>
+          </row>
+
+          <row>
+            <entry>˚</entry>
+
+            <entry><keycap>O</keycap></entry>
+
+            <entry>Å</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>J</keycap></entry>
+          </row>
+
+          <row>
+            <entry>π</entry>
+
+            <entry><keycap>P</keycap></entry>
+
+            <entry>Ä</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>K</keycap></entry>
+          </row>
+
+          <row>
+            <entry>`</entry>
+
+            <entry><keycap>Q</keycap></entry>
+
+            <entry>BOX</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>O</keycap></entry>
+          </row>
+
+          <row>
+            <entry>ρ</entry>
+
+            <entry><keycap>R</keycap></entry>
+
+            <entry>Ö</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>Y</keycap></entry>
+          </row>
+
+          <row>
+            <entry>σ</entry>
+
+            <entry><keycap>S</keycap></entry>
+
+            <entry>≤</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>&lt;</keycap></entry>
+          </row>
+
+          <row>
+            <entry>Θ</entry>
+
+            <entry><keycap>T</keycap></entry>
+
+            <entry>≥</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>&gt;</keycap></entry>
+          </row>
+
+          <row>
+            <entry>¨</entry>
+
+            <entry><keycap>U</keycap></entry>
+
+            <entry>{</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>[</keycap></entry>
+          </row>
+
+          <row>
+            <entry>ˇ</entry>
+
+            <entry><keycap>V</keycap></entry>
+
+            <entry>}</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>]</keycap></entry>
+          </row>
+
+          <row>
+            <entry>ω</entry>
+
+            <entry><keycap>W</keycap></entry>
+
+            <entry>CROSS</entry>
+
+            <entry><keycap>CTRL</keycap> <keycap>X</keycap></entry>
+          </row>
+
+          <row>
+            <entry>^</entry>
+
+            <entry><keycap>X</keycap></entry>
+
+            <entry>≡</entry>
+
+            <entry><keycap>SHIFT</keycap> <keycap>)</keycap></entry>
+          </row>
+
+          <row>
+            <entry>l-embed</entry>
+
+            <entry><keycap>0</keycap></entry>
+
+            <entry>ARROW (&gt;)</entry>
+
+            <entry><keycap>6</keycap></entry>
+          </row>
+
+          <row>
+            <entry>r-embed</entry>
+
+            <entry><keycap>1</keycap></entry>
+
+            <entry/>
+
+            <entry/>
           </row>
         </tbody>
       </tgroup>
@@ -563,13 +763,13 @@
       </listitem>
 
       <listitem>
-        <para>Your ATARI® 850&#8482; Interface Module (or compatible) is
-        connected to your ATARI® computer.</para>
+        <para>Your ATARI® 850™ Interface Module (or compatible) is connected
+        to your ATARI® computer.</para>
       </listitem>
 
       <listitem>
         <para>Your WIFI modem is connected to SERIAL INTERFACE PORT 1 (or
-        other appropriate port) on your ATARI® 850&#8482; Interface Module (or
+        other appropriate port) on your ATARI® 850™ Interface Module (or
         compatible)</para>
       </listitem>
     </itemizedlist>
@@ -603,8 +803,7 @@
 
     <orderedlist>
       <listitem>
-        <para>Turn on your ATARI® 850&#8482; Interface Module, or
-        compatible.</para>
+        <para>Turn on your ATARI® 850™ Interface Module, or compatible.</para>
       </listitem>
 
       <listitem>
@@ -638,7 +837,7 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="manual_images/title_screen.png" scalefit="1"/>
+            <imagedata fileref="manual_images/title_screen.png" scale="120"/>
           </imageobject>
         </mediaobject>
       </listitem>
@@ -813,9 +1012,9 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
   <appendix>
     <title>EXAMPLE SETUP</title>
 
-    <para>The following diagram shows an ATARI® 800&#8482; connected to an RS-232
-    WIFI MODEM through an ATARI 850&#8482; Interface Module. A common WIFI modem
-    is based on the ESP8266 micro-controller, and provides a connection to the
+    <para>The following diagram shows an ATARI® 800™ connected to an RS-232
+    WIFI MODEM through an ATARI 850™ Interface Module. A common WIFI modem is
+    based on the ESP8266 micro-controller, and provides a connection to the
     Internet, so that PLATO services can be accessed.</para>
 
     <annotation>
@@ -838,8 +1037,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
       </listitem>
 
       <listitem>
-        <para>The ATARI® 850&#8482; Interface Module is attached via the
-        PERIPHERAL connector.</para>
+        <para>The ATARI® 850™ Interface Module is attached via the PERIPHERAL
+        connector.</para>
       </listitem>
 
       <listitem>
