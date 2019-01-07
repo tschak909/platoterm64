@@ -245,7 +245,7 @@ const unsigned char key_to_pkey[]={
     PKEY_TERM, /* 0xed */
     PKEY_NOKEY, /* 0xee */
     PKEY_ACCESS, /* 0xef */
-    PKEY_NOKEY, /* 0xf0 */
+    PKEY_UNION, /* 0xf0 */
     PKEY_NOKEY, /* 0xf1 */
     PKEY_NOKEY, /* 0xf2 */
     PKEY_NOKEY, /* 0xf3 */
