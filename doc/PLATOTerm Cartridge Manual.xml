@@ -160,8 +160,9 @@
 
       <listitem>
         <para>Switch the ATARI® computer power to <emphasis
-        role="bold">ON</emphasis>. Wait for <emphasis role="bold">1200 Baud.
-        Terminal Ready.</emphasis> to appear.</para>
+        role="bold">ON</emphasis>. Wait for <screen>PLATOTerm Cartridge Version
+(@) 2018 IRATA.ONLINE
+1200 Baud. Terminal Ready</screen> to appear.</para>
 
         <mediaobject>
           <imageobject>
@@ -178,9 +179,9 @@
       </listitem>
 
       <listitem>
-        <para>Enter your MODEM's command to dial, such as <emphasis
-        role="bold">ATDTIRATA.ONLINE:8005</emphasis>. Wait for the connect
-        message.</para>
+        <para>Enter your MODEM's command to dial, such as <screen><emphasis
+              role="bold">ATDTIRATA.ONLINE:8005</emphasis></screen>and wait
+        for the connect message.</para>
       </listitem>
 
       <listitem>
@@ -197,8 +198,7 @@
       </listitem>
 
       <listitem>
-        <para>Send any commands to your modem, to hang up, such as +++ATH
-        <keycap>RETURN</keycap></para>
+        <para>Send any commands to your modem, to hang up, such as <screen>+++ATH</screen></para>
       </listitem>
 
       <listitem>

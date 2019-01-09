@@ -5,12 +5,12 @@
 
   <xsl:param name="body.font.family" select="'Optima LT Std'"/>
   <xsl:param name="title.font.family" select="'Optima LT Std'"/>
-
   <xsl:param name="page.width">5in</xsl:param>
   <xsl:param name="page.height">7in</xsl:param>
-  <xsl:param name="page.margin.inner">0.125in</xsl:param>
-  <xsl:param name="page.margin.outer">0.125in</xsl:param>
-
+  <xsl:param name="page.margin.inner">0.250in</xsl:param>
+  <xsl:param name="page.margin.outer">0.250in</xsl:param>
+  <xsl:param name="force.blank.pages" select="1"></xsl:param>
+  
   <!-- Set Chapter numbering to roman numerals -->
   <xsl:param name="chapter.autolabel" select="'I'"/>
 
@@ -26,6 +26,19 @@
     </l:l10n>
   </l:i18n>
 
+  <!-- The following sets the default color to blue, selectively overriden to black so that TOC will be the right color, urgh. -->
+  <xsl:attribute-set name="root.properties">
+    <xsl:attribute name="color">#0374B6</xsl:attribute>
+  </xsl:attribute-set>
+
+  <xsl:attribute-set name="toc.line.properties">
+    <xsl:attribute name="color">black</xsl:attribute>
+  </xsl:attribute-set>
+
+  <xsl:attribute-set name="para.properties">
+    <xsl:attribute name="color">black</xsl:attribute>
+  </xsl:attribute-set>
+  
   <!-- Set chapter title properties -->
   <xsl:attribute-set name="component.title.properties">
     <xsl:attribute name="color">#0374B6</xsl:attribute>
@@ -33,9 +46,16 @@
 
   <!-- Table properties -->
   <xsl:template name="table.cell.properties">
+    <xsl:attribute name="color">black</xsl:attribute>
     <xsl:attribute name="keep-together.within-column">always</xsl:attribute>
   </xsl:template>
 
+  <!-- List items -->
+  <xsl:param name="orderedlist.label.width">2.2em</xsl:param>
+  <xsl:attribute-set name="orderedlist.label.properties">
+    <xsl:attribute name="text-align">right</xsl:attribute>
+  </xsl:attribute-set>
+    
   <!-- Cover -->
   <xsl:template name="front.cover">
     <xsl:call-template name="page.sequence">
