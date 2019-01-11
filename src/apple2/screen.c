@@ -230,7 +230,11 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   tgi_setcolor(mainColor);
 
   x=mul05((Coord->x&0x1FF));
-  y=mul0375((Coord->y+15^0x1FF)&0x1FF);
+
+  if (ModeBold)
+    y=mul0375((Coord->y+30^0x1FF)&0x1FF);
+  else
+    y=mul0375((Coord->y+15^0x1FF)&0x1FF);
   
   if (FastText==padF)
     {

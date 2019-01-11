@@ -271,13 +271,12 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   tgi_setcolor(mainColor);
 
-#ifdef __ATARI__
-  x=mul0625((Coord->x&0x1FF));
-  y=mul0375((Coord->y+15^0x1FF)&0x1FF);
-#else
   x=scalex[(Coord->x&0x1FF)];
-  y=scaley[(Coord->y)+15&0x1FF];
-#endif
+
+  if (ModeBold)
+    y=scaley[(Coord->y)+30&0x1FF];
+  else
+    y=scaley[(Coord->y)+15&0x1FF];
   
   if (FastText==padF)
     {

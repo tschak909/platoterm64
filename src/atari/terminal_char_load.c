@@ -14,7 +14,8 @@
 #include "../terminal.h"
 #include "../protocol.h"
 
-#define FONTPTR(a) (((a << 1) + a) << 1)
+/* #define FONTPTR(a) (((a << 1) + a) << 1) */
+#define FONTPTR(a) (a*6)
 
 static unsigned char char_data[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
                   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
@@ -106,12 +107,11 @@ void terminal_char_load(padWord charnum, charData theChar)
 
       // Flip the bits back
       if (pix_cnt >= 85)
-	{
+      	{
 	  for (v=6; v-->0; )
-	    {
-	      fontm23[FONTPTR(charnum)+v]^=0xFF;
-	      fontm23[FONTPTR(charnum)+v]&=0xF8;
-	    }
+	    fontm23[FONTPTR(charnum)+v]^=0xFF&0xF8;
 	}
     }
+
+  // Copy shrunk char data into target charset
 }
