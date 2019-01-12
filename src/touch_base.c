@@ -27,7 +27,7 @@ static uint8_t mouse_present=false;
 void touch_init(void)
 {
 #ifndef __APPLE2__
-  if (mouse_install(&mouse_def_callbacks,atrjoy_mou) == MOUSE_ERR_OK)
+  if (mouse_install(&mouse_def_callbacks,atrtt_mou) == MOUSE_ERR_OK)
     {
       mouse_present=true;
       mouse_show();
