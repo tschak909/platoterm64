@@ -47,7 +47,7 @@ static unsigned char pix_cnt;     // total # of pixels
 static unsigned char curr_word;   // current word
 static unsigned char u,v;       // loop counters
 
-extern unsigned char fontm23[768];
+extern unsigned char* fontm23;
 
 /**
  * terminal_char_load - Store a character into the user definable
@@ -93,11 +93,13 @@ void terminal_char_load(padWord charnum, charData theChar)
   else if ((pix_cnt < 54) || (pix_cnt >= 85))
     {
       // Algorithm B - Sparsely or heavily populated bitmaps
-      if (pix_cnt >= 85)
-	char_data[u]^=0xFF;
-      
+
+      // If densely set pixels, flip the bits.      
       for (u=16; u-->0; )
 	{
+	  if (pix_cnt >= 85)
+	    char_data[u]^=0xFF;
+
 	  for (v=8; v-->0; )
 	    {
 	      if (char_data[u] & (1<<v))
@@ -106,12 +108,14 @@ void terminal_char_load(padWord charnum, charData theChar)
 		}
 	    }
 	}
-      
+
       if (pix_cnt >= 85)
-	{
-	  fontm23[FONTPTR(charnum)+TAB_0_5i[u]]^=0xFF;
-	  fontm23[FONTPTR(charnum)+TAB_0_5i[u]]&=0xF8;
-	}
+      	{
+      	  for (u=6; u-->0; )
+      	    {
+      	      fontm23[FONTPTR(charnum)+u]^=0xFF;
+      	      fontm23[FONTPTR(charnum)+u]&=0xF8;
+      	    }
+      	}
     }
-  
 }
