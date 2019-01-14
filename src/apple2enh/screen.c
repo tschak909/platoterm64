@@ -85,8 +85,10 @@ void screen_set_pen_mode(void)
 {
   if (CurMode==ModeErase || CurMode==ModeInverse)
     hue(0x00);
+    //tgi_setcolor(TGI_COLOR_BLACK);
   else
-    hue(0x80);
+    hue(0xFF);
+    //tgi_setcolor(TGI_COLOR_WHITE);
 }
 
 /**
@@ -98,7 +100,6 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   io_recv_serial_flow_off(); 
   
   screen_set_pen_mode();
-  /*tgi_bar(mul05(Coord1->x+24),mul0375(Coord1->y^0x1FF),mul05(Coord2->x+24),mul0375(Coord2->y^0x1FF));*/
   dg_bar(Coord1->x+24,mul0375(Coord1->y^0x1FF),Coord2->x+24,mul0375(Coord2->y^0x1FF));
 
   io_recv_serial_flow_on();
@@ -119,10 +120,12 @@ void screen_dot_draw(padPt* Coord)
  */
 void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
+  int x1 = Coord1->x+24;
+  int y1 = mul0375(Coord1->y^0x1FF);
   screen_set_pen_mode();
-  dot_at(Coord1->x+24,mul0375(Coord1->y^0x1FF));
+  dot_at(x1,y1);
   line_to(Coord2->x+24,mul0375(Coord2->y^0x1FF));
-  dot_at(Coord1->x+24,mul0375(Coord1->y^0x1FF));
+  //dot_at(x1,y1);
 }
 
 /**
@@ -143,8 +146,10 @@ void screen_tty_char(padByte theChar)
       TTYLoc.x -= CharWide;
 
       hue(0x00);
+      //tgi_setcolor(TGI_COLOR_BLACK);
       dg_bar(TTYLoc.x,mul0375(TTYLoc.y^0x1FF),TTYLoc.x+CharWide,mul0375((TTYLoc.y+CharHigh)^0x1FF));
-      hue(0x80);
+      hue(0xFF);
+      //tgi_setcolor(TGI_COLOR_WHITE);
     }
   else if (theChar == 0x0A)			/* line feed */
     TTYLoc.y -= CharHigh;
@@ -157,7 +162,6 @@ void screen_tty_char(padByte theChar)
   }
   
   if (TTYLoc.y < 0) {
-    /*tgi_clear();*/
     dhclr(); /* DHGR clear screen */
     TTYLoc.y=495;
   }
@@ -211,8 +215,10 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t height=FONT_SIZE_Y;
   uint16_t deltaX=1;
   uint16_t deltaY=1;
-  uint8_t mainColor=TGI_COLOR_WHITE;
-  uint8_t altColor=TGI_COLOR_BLACK;
+  uint8_t mainColor=0xFF;
+  uint8_t altColor=0x00;
+  //uint8_t mainColor=TGI_COLOR_WHITE;
+  //uint8_t altColor=TGI_COLOR_BLACK;
   uint8_t *p;
   uint8_t* curfont;
   
@@ -238,19 +244,24 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   if (CurMode==ModeRewrite)
     {
-      altColor=TGI_COLOR_BLACK;
+      altColor=0x00;
+      //altColor=TGI_COLOR_BLACK;
     }
   else if (CurMode==ModeInverse)
     {
-      altColor=TGI_COLOR_WHITE;
+      altColor=0xFF;
+      //altColor=TGI_COLOR_WHITE;
     }
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
     mainColor=0x00; /* black */
+    //mainColor=TGI_COLOR_BLACK;
   else
-    mainColor=0x80; /* white */
+    mainColor=0xFF; /* white */
+    //mainColor=TGI_COLOR_WHITE;
 
   hue(mainColor);
+  //tgi_setcolor(mainColor);
 
   x=(Coord->x&0x1FF)+24;
   y=mul0375((Coord->y+15^0x1FF)&0x1FF);
@@ -278,6 +289,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	      if (b<0) /* check sign bit. */
 		{
           hue(mainColor);
+		  //tgi_setcolor(mainColor);
           dot_at(x,y);
 		}
 
@@ -343,6 +355,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	      if (b<0) /* check sign bit. */
 		{
           hue(mainColor);
+		  //tgi_setcolor(mainColor);
 		  if (ModeBold)
 		    {
 		      dot_at(*px+1,*py);
@@ -350,13 +363,14 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		      dot_at(*px+1,*py+1);
 		    }
 		  dot_at(*px,*py);
+		  //tgi_setpixel(*px,*py);
 		}
 	      else
 		{
 		  if (CurMode==ModeInverse || CurMode==ModeRewrite)
 		    {
+              hue(altColor);
 		      //tgi_setcolor(altColor);
-              hue(0x00);
 		      if (ModeBold)
 			{
 			  dot_at(*px+1,*py);

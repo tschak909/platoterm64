@@ -449,10 +449,18 @@ DHPLT2:     LDY HNDX            ; Byte offset
             BVS DHXPL1          ; Go EOR it.
 
             LDA HCOLOR1
-            EOR (HBASL),Y
-            AND HMASK
-DHXPL1:     EOR (HBASL),Y       ; Set and
-            STA (HBASL),Y       ; store dot
+            BIT HCOLOR1
+            BVC :+
+            ORA (HBASL),Y
+            BVS :++
+:           EOR (HBASL),Y       ; EOR
+:           AND HMASK
+DHXPL1:     BIT HCOLOR1
+            BVC :+
+            ORA (HBASL),Y       ; Set and ; EOR
+            BVS :++
+:           EOR (HBASL),Y       ; Set and ; EOR
+:           STA (HBASL),Y       ; store dot
 
             BIT HWIDE           ; if wide mask,
             BMI DHPLT3          ; go plot more
@@ -477,11 +485,18 @@ DHPLT4:     LDA HMASKE
             LDA HCOLOR1
             ASL A               ; Shift color for
             ADC #0              ; next column right
-            EOR (HBASL),Y
-            AND HMASKE          ; extension mask
-DHXP2:      EOR (HBASL),Y       ; Set and
-            STA (HBASL),Y       ; store dot
-
+            BIT HCOLOR1
+            BVC :+
+            ORA (HBASL),Y
+            BVS :++
+:           EOR (HBASL),Y
+:           AND HMASKE          ; extension mask
+DHXP2:      BIT HCOLOR1
+            BVC :+
+            ORA (HBASL),Y       ; Set and
+            BVS :++
+:           EOR (HBASL),Y       ; Set and
+:           STA (HBASL),Y       ; store dot
             RTS
 
 ;*************************
