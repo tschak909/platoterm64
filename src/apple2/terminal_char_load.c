@@ -4,10 +4,8 @@
  * 
  * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
  *
- * terminal_char_load.c - Character set loading routine for 4x6 font.
+ * terminal_char_load.c - Character set loading routine for 5x6 font.
  */
-
-// TODO: change 5x6 constraints to fit 4x6, pix_thresh, etc.
 
 #include <string.h>
 #include <stdio.h>
@@ -61,6 +59,7 @@ void terminal_char_load(padWord charnum, charData theChar)
   memset(char_data,0,sizeof(char_data));
   memset(PIX_WEIGHTS,0,sizeof(PIX_WEIGHTS));
   memset(&fontm23[FONTPTR(charnum)],0,6);
+  pix_cnt=0;
   
   // Transpose character data.  
   for (curr_word=0;curr_word<8;curr_word++)
@@ -96,6 +95,9 @@ void terminal_char_load(padWord charnum, charData theChar)
       // Algorithm B - Sparsely or heavily populated bitmaps
       for (u=16; u-->0; )
 	{
+	  if (pix_cnt >= 85)
+	    char_data[u]^=0xFF;
+
 	  for (v=8; v-->0; )
 	    {
 	      if (char_data[u] & (1<<v))
@@ -104,6 +106,14 @@ void terminal_char_load(padWord charnum, charData theChar)
 		}
 	    }
 	}
+      if (pix_cnt >= 85)
+      	{
+      	  for (u=6; u-->0; )
+      	    {
+      	      fontm23[FONTPTR(charnum)+u]^=0xFF;
+      	      fontm23[FONTPTR(charnum)+u]&=0xF8;
+      	    }
+      	}
     }
-  
 }
+

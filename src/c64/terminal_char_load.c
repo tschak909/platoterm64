@@ -61,6 +61,7 @@ void terminal_char_load(padWord charnum, charData theChar)
   memset(char_data,0,sizeof(char_data));
   memset(PIX_WEIGHTS,0,sizeof(PIX_WEIGHTS));
   memset(&fontm23[FONTPTR(charnum)],0,6);
+  pix_cnt=0;
   
   // Transpose character data.  
   for (curr_word=0;curr_word<8;curr_word++)
@@ -96,6 +97,9 @@ void terminal_char_load(padWord charnum, charData theChar)
       // Algorithm B - Sparsely or heavily populated bitmaps
       for (u=16; u-->0; )
 	{
+	  if (pix_cnt >= 85)
+	    char_data[u]^=0xFF;
+
 	  for (v=8; v-->0; )
 	    {
 	      if (char_data[u] & (1<<v))
@@ -104,7 +108,14 @@ void terminal_char_load(padWord charnum, charData theChar)
 		}
 	    }
 	}
+      if (pix_cnt >= 85)
+      	{
+      	  for (u=6; u-->0; )
+      	    {
+      	      fontm23[FONTPTR(charnum)+u]^=0xFF;
+      	      fontm23[FONTPTR(charnum)+u]&=0xF8;
+      	    }
+      	}
     }
-  
 }
 
