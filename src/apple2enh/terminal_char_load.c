@@ -4,10 +4,8 @@
  * 
  * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
  *
- * terminal_char_load.c - Character set loading routine for 4x6 font.
+ * terminal_char_load.c - Character set loading routine for 8x6 font.
  */
-
-// TODO: change 5x6 constraints to fit 4x6, pix_thresh, etc.
 
 #include <string.h>
 #include <stdio.h>
@@ -15,50 +13,14 @@
 #include "../terminal.h"
 #include "../protocol.h"
 
-#define FONTPTR(a) (((a << 1) + a) << 1)
-
 // Temporary PLATO character data, 8x16 matrix
 static unsigned char char_data[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 				  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 
 static unsigned char BTAB[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01}; // flip one bit on (OR)
-//static unsigned char BTAB_5[]={0x08,0x10,0x10,0x20,0x20,0x40,0x80,0x80}; // flip one bit on for the 5x6 matrix (OR)
-  static unsigned char BTAB_5[]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80}; // flip one bit on for the 5x6 matrix (OR)
 
-//static unsigned char TAB_0_5[]={0x05,0x05,0x05,0x04,0x04,0x04,0x03,0x03,0x02,0x02,0x01,0x01,0x01,0x00,0x00,0x00};
-static unsigned char TAB_0_5[]={0x07,0x07,0x06,0x06,0x05,0x05,0x04,0x04,0x03,0x03,0x02,0x02,0x01,0x01,0x00,0x00};
-static unsigned char TAB_0_5i[]={0x00,0x00,0x00,0x01,0x01,0x01,0x02,0x02,0x03,0x03,0x04,0x04,0x04,0x05,0x05,0x05};
-//static unsigned char TAB_0_5i[]={0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F};
-
-//static unsigned char TAB_0_4[]={0x00,0x00,0x01,0x02,0x02,0x03,0x03,0x04}; // return 0..4 given index 0 to 7
-
-//static unsigned char PIX_THRESH[]={0x03,0x02,0x03,0x03,0x02, // Pixel threshold table.
-//				   0x03,0x02,0x03,0x03,0x02,
-//				   0x02,0x01,0x02,0x02,0x01,
-//				   0x02,0x01,0x02,0x02,0x01,
-//				   0x03,0x02,0x03,0x03,0x02,
-//				   0x03,0x02,0x03,0x03,0x02};
-
-static unsigned char PIX_THRESH[]={0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, // Pixel threshold table.
-				   0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,
-				   0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,
-				   0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,
-				   0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,
-				   0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01};
-
-static unsigned char PIX_WEIGHTS[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, // Pixel weights
-				    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-				    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-				    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-				    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-				    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-
-//static unsigned char TAB_0_25[]={0,5,10,15,20,25}; // Given index 0 of 5, return multiple of 8.
-static unsigned char TAB_0_25[]={0,8,16,24,32,40}; // Given index 0 of 5, return multiple of 8.
-
-static unsigned char pix_cnt;     // total # of pixels
-static unsigned char curr_word;   // current word
-static unsigned char u,v;       // loop counters
+static unsigned char curr_word;	    // current word
+static unsigned char u;		    // loop counter
 
 extern unsigned char fontm23[768];
 
@@ -66,55 +28,28 @@ extern unsigned char fontm23[768];
  * terminal_char_load - Store a character into the user definable
  * character set.
  */
-void terminal_char_load(padWord charnum, charData theChar)
+void terminal_char_load(padWord charNum, charData theChar)
 {
   // Clear char data. 
   memset(char_data,0,sizeof(char_data));
-  //memset(PIX_WEIGHTS,0,sizeof(PIX_WEIGHTS));
-  memset(&fontm23[FONTPTR(charnum)],0,6);
-  
-  // Transpose character data.  
-  for (curr_word=0;curr_word<8;curr_word++)
+
+  // load and transpose character data into 8x16 array
+  for (curr_word=0; curr_word<8; curr_word++)
     {
       for (u=16; u-->0; )
 	{
 	  if (theChar[curr_word] & 1<<u)
 	    {
-	      pix_cnt++;
-	      //PIX_WEIGHTS[TAB_0_25[TAB_0_5[u]]+TAB_0_4[curr_word]]++;
-	      PIX_WEIGHTS[TAB_0_25[TAB_0_5[u]]+curr_word]++;
 	      char_data[u^0x0F&0x0F]|=BTAB[curr_word];
 	    }
 	}
     }
 
-  // Determine algorithm to use for number of pixels.
-  // Algorithm A is used when roughly half of the # of pixels are set.
-  // Algorithm B is used either when the image is densely or sparsely populated (based on pix_cnt).
-  if ((54 <= pix_cnt) && (pix_cnt < 85))
-    {
-      // Algorithm A - approx Half of pixels are set
-      for (u=6; u-->0; )
-  	{
-  	  for (v=8; v-->0; )
-  	    {
-  	      if (PIX_WEIGHTS[TAB_0_25[u]+v] >= PIX_THRESH[TAB_0_25[u]+v])
-                fontm23[FONTPTR(charnum)+u]|=BTAB[v];
-  	    }
-  	}
-    }
-  else if ((pix_cnt < 54) || (pix_cnt >= 85))
-    {
-      // Algorithm B - Sparsely or heavily populated bitmaps
-      for (u=16; u-->0; )
-	{
-	  for (v=8; v-->0; )
-	    {
-	      if (char_data[u] & (1<<v))
-		{
-		  fontm23[FONTPTR(charnum)+TAB_0_5i[u]]|=BTAB_5[v];
-		}
-	    }
-	}
-    }
+  // OR pixel rows together from 16 to 6 rows
+  fontm23[(charNum*6)+0]=char_data[0]|char_data[1]|char_data[2]<<8;
+  fontm23[(charNum*6)+1]=char_data[3]|char_data[4]<<8;
+  fontm23[(charNum*6)+2]=char_data[5]|char_data[6]|char_data[7]<<8;
+  fontm23[(charNum*6)+3]=char_data[8]|char_data[9]<<8;
+  fontm23[(charNum*6)+4]=char_data[10]|char_data[11]|char_data[12]<<8;
+  fontm23[(charNum*6)+5]=char_data[13]|char_data[14]|char_data[15]<<8;
 }
