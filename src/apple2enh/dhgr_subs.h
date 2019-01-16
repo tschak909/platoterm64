@@ -6,3 +6,6 @@ extern void __fastcall__ hue(unsigned char c);
 extern void __fastcall__ brush(void); /* Set brush to 4-bit mask */
 extern void __fastcall__ dot_at (unsigned x, unsigned char y); /* Plot pixel at x, y */
 extern void __fastcall__ line_to (unsigned x, unsigned char y); /* Draw line */
+
+#define DHGR_COLOR_BLACK 0x00
+#define DHGR_COLOR_WHITE 0xFF
