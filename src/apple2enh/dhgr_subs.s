@@ -2,15 +2,23 @@
             .import     popa,popax
             .include    "apple2enh.inc"
             .setcpu     "6502"
-;********************************
-;*                              *
-;* Double Hi-res Subs           *
-;*                              *
-;* Version 1.4 7/25/83          *
-;*                              *
-;* Allen Watson III             *
-;*                              *
-;********************************
+;*******************************************************************************
+;* Double Hi-res Subs           
+;*******************************************************************************
+;* Version 1.4 7/25/83          
+;* Allen Watson III             
+;*******************************************************************************
+;* This code is derived from the listing in Apple Orchard Jan 1984 pp26
+;* https://archive.org/details/Apple-Orchard-v5n1-1984-Jan/page/n29
+;*  
+;* Changes to the original listing:
+;* 1) Syntax changes from Apple DOS Toolkit EdAsm to ca65
+;* 2) Applesoft ampersand support has been commented-out
+;* 3) Pixels are now ORed during Mode Write and XORed during Mode Overwrite
+;*    to support the PLATO terminal protocol. Original always XORed.
+;*
+;* Michael Sternberg (@16kRAM) 2019-01-17
+;*******************************************************************************
 ;*
 ;* Soft-switch Equates
 ;*
@@ -453,7 +461,7 @@ DHPLT2:     LDY HNDX            ; Byte offset
             BVC :+
             ORA (HBASL),Y
             BVS :++
-:           EOR (HBASL),Y       ; EOR
+:           EOR (HBASL),Y       ; 
 :           AND HMASK
 DHXPL1:     BIT HCOLOR1
             BVC :+
