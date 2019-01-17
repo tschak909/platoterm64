@@ -43,14 +43,14 @@ extern uint8_t FONT_SIZE_Y;
 void screen_init(void)
 {
   screen_load_driver();
-  #ifdef __APPLE2ENH__
+#ifdef __APPLE2ENH__
   screen_init_hook();
   dhclr();
-  #else  
+#else  
   tgi_init();
   screen_init_hook();
   tgi_clear();
-  #endif
+#endif
 }
 
 /**
@@ -76,11 +76,11 @@ void screen_splash(void)
  */
 void screen_clear(void)
 {
-  #ifdef __APPLE2ENH__
+#ifdef __APPLE2ENH__
   dhclr();
-  #else
+#else
   tgi_clear();
-  #endif
+#endif
   screen_update_colors();
 }
 
@@ -228,6 +228,8 @@ void screen_paint(padPt* Coord)
  */
 void screen_done(void)
 {
+#ifndef __APPLE2ENH__
   tgi_done();
   tgi_uninstall();
+#endif
 }

@@ -4,6 +4,7 @@
  * 
  * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
  * DHGR Extensions by Michael Sternberg <mhsternberg at gmail dot com>
+ * based on the work by Allen Watson III (Apple Orchard Jan 1984)
  *
  * screen.c - Display output functions
  */
@@ -74,7 +75,7 @@ void dg_bar(int x1, int y1, int x2, int y2)
         y2 = y1;
         y1 = i;
     }
-    for (i = y2; i>=y1; i--)
+    for (i=y1; i<=y2; i++)
     {
         dot_at(x1, i);
         line_to(x2, i);
@@ -255,6 +256,11 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   x=(Coord->x&0x1FF)+24;
   y=mul0375((Coord->y+15^0x1FF)&0x1FF);
+
+  if (ModeBold)
+    y=mul0375((Coord->y+30^0x1FF)&0x1FF);
+  else
+    y=mul0375((Coord->y+15^0x1FF)&0x1FF);
   
   if (FastText==padF)
     {
@@ -278,8 +284,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	    {
   	      if (b<0) /* check sign bit. */
 		{
-          hue(mainColor);
-          dot_at(x,y);
+		  hue(mainColor);
+		  dot_at(x,y);
 		}
 
 	      ++x;
@@ -343,7 +349,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	    {
   	      if (b<0) /* check sign bit. */
 		{
-          hue(mainColor);
+		  hue(mainColor);
 		  if (ModeBold)
 		    {
 		      dot_at(*px+1,*py);
@@ -356,7 +362,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 		{
 		  if (CurMode==ModeInverse || CurMode==ModeRewrite)
 		    {
-              hue(altColor);
+		      hue(altColor);
 		      if (ModeBold)
 			{
 			  dot_at(*px+1,*py);

@@ -46,10 +46,10 @@ void terminal_char_load(padWord charNum, charData theChar)
     }
 
   // OR pixel rows together from 16 to 6 rows
-  fontm23[(charNum*6)+0]=char_data[0]|char_data[1]|char_data[2]<<8;
-  fontm23[(charNum*6)+1]=char_data[3]|char_data[4]<<8;
-  fontm23[(charNum*6)+2]=char_data[5]|char_data[6]|char_data[7]<<8;
-  fontm23[(charNum*6)+3]=char_data[8]|char_data[9]<<8;
-  fontm23[(charNum*6)+4]=char_data[10]|char_data[11]|char_data[12]<<8;
-  fontm23[(charNum*6)+5]=char_data[13]|char_data[14]|char_data[15]<<8;
+  fontm23[(charNum*6)+0]=char_data[0]|char_data[1]|char_data[2];
+  fontm23[(charNum*6)+1]=char_data[3]|char_data[4];
+  fontm23[(charNum*6)+2]=char_data[5]|char_data[6]|char_data[7];
+  fontm23[(charNum*6)+3]=char_data[8]|char_data[9];
+  fontm23[(charNum*6)+4]=char_data[10]|char_data[11]|char_data[12];
+  fontm23[(charNum*6)+5]=char_data[13]|char_data[14]|char_data[15];
 }
