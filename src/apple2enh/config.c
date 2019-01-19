@@ -24,7 +24,7 @@ extern ConfigInfo config;
  */
 void config_set_defaults(void)
 {
-  config.baud = SER_BAUD_2400;;
+  config.baud = SER_BAUD_2400;
   config.xon_threshold=XON_THRESHOLD;
   config.xoff_threshold=XOFF_THRESHOLD;
   config.fill=false;
