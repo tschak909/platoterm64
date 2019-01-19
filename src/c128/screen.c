@@ -129,8 +129,8 @@ void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
   uint16_t x1=scalex[Coord1->x];
   uint16_t x2=scalex[Coord2->x];
-  uint16_t y1=scaley[Coord1->y^0x1FF];
-  uint16_t y2=scaley[Coord2->y^0x1FF];  
+  uint16_t y1=scaley[Coord1->y];
+  uint16_t y2=scaley[Coord2->y];  
 
   screen_set_pen_mode();
   tgi_line(x1,y1,x2,y2);
