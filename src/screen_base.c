@@ -45,7 +45,6 @@ void screen_init(void)
   screen_load_driver();
 #ifdef __APPLE2ENH__
   screen_init_hook();
-  dhclr();
 #else  
   tgi_init();
   screen_init_hook();
