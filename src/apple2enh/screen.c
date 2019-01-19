@@ -63,10 +63,10 @@ void screen_init_hook(void)
 }
 
 /**
- * dg_bar()
+ * dhbar()
  * DHGR replacement for tgi_bar()
  */
-void dg_bar(int x1, int y1, int x2, int y2)
+void dhbar(int x1, int y1, int x2, int y2)
 {
     int i;
     if (y2 < y1)
@@ -103,7 +103,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   io_recv_serial_flow_off(); 
   
   screen_set_pen_mode();
-  dg_bar(Coord1->x+24,mul0375(Coord1->y^0x1FF),Coord2->x+24,mul0375(Coord2->y^0x1FF));
+  dhbar(Coord1->x+24,mul0375(Coord1->y^0x1FF),Coord2->x+24,mul0375(Coord2->y^0x1FF));
 
   io_recv_serial_flow_on();
   
@@ -146,7 +146,7 @@ void screen_tty_char(padByte theChar)
       TTYLoc.x -= CharWide;
 
       hue(DHGR_COLOR_BLACK);
-      dg_bar(TTYLoc.x,mul0375(TTYLoc.y^0x1FF),TTYLoc.x+CharWide,mul0375((TTYLoc.y+CharHigh)^0x1FF));
+      dhbar(TTYLoc.x,mul0375(TTYLoc.y^0x1FF),TTYLoc.x+CharWide,mul0375((TTYLoc.y+CharHigh)^0x1FF));
       hue(DHGR_COLOR_WHITE);
     }
   else if (theChar == 0x0A)			/* line feed */
@@ -213,8 +213,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t height=FONT_SIZE_Y;
   uint16_t deltaX=1;
   uint16_t deltaY=1;
-  uint8_t mainColor=0xFF;
-  uint8_t altColor=0x00;
+  uint8_t mainColor=DHGR_COLOR_WHITE;
+  uint8_t altColor=DHGR_COLOR_BLACK;
   uint8_t *p;
   uint8_t* curfont;
   
@@ -248,9 +248,9 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     }
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    mainColor=DHGR_COLOR_BLACK; /* black */
+    mainColor=DHGR_COLOR_BLACK;
   else
-    mainColor=DHGR_COLOR_WHITE; /* white */
+    mainColor=DHGR_COLOR_WHITE;
 
   hue(mainColor);
 
@@ -261,11 +261,52 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
     y=mul0375((Coord->y+30^0x1FF)&0x1FF);
   else
     y=mul0375((Coord->y+15^0x1FF)&0x1FF);
-  
+
   if (FastText==padF)
     {
       goto chardraw_with_fries;
     }
+
+  if (CurMode==ModeRewrite)
+    {
+      goto chardraw_rewrite;
+    }
+
+  /* the diet chardraw routine - fast text output. */
+  
+  hue(mainColor);
+  for (i=0;i<count;++i)
+    {
+      a=*ch;
+      ++ch;
+      a+=offset;
+      p=&curfont[FONTPTR(a)];
+      
+      for (j=0;j<FONT_SIZE_Y;++j)
+  	{
+  	  b=*p;
+	  
+  	  for (k=0;k<FONT_SIZE_X;++k)
+  	    {
+  	      if (b<0) /* check sign bit. */
+		  dot_at(x,y);
+
+	      ++x;
+  	      b<<=1;
+  	    }
+
+	  ++y;
+	  x-=width;
+	  ++p;
+  	}
+
+      x+=width;
+      y-=height;
+    }
+
+  return;
+
+chardraw_rewrite:
 
   /* the diet chardraw routine - fast text output. */
   
@@ -283,11 +324,11 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	  for (k=0;k<FONT_SIZE_X;++k)
   	    {
   	      if (b<0) /* check sign bit. */
-		{
 		  hue(mainColor);
-		  dot_at(x,y);
-		}
+	      else
+		  hue(altColor);
 
+	      dot_at(x,y);
 	      ++x;
   	      b<<=1;
   	    }

@@ -241,6 +241,47 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
       goto chardraw_with_fries;
     }
 
+  if (CurMode==ModeRewrite)
+    {
+      goto chardraw_rewrite;
+    }
+
+  /* the diet chardraw routine - fast text output. */
+  
+  tgi_setcolor(mainColor);
+  for (i=0;i<count;++i)
+    {
+      a=*ch;
+      ++ch;
+      a+=offset;
+      p=&curfont[FONTPTR(a)];
+      
+      for (j=0;j<FONT_SIZE_Y;++j)
+  	{
+  	  b=*p;
+	  
+  	  for (k=0;k<FONT_SIZE_X;++k)
+  	    {
+  	      if (b<0) /* check sign bit. */
+		  tgi_setpixel(x,y);
+
+	      ++x;
+  	      b<<=1;
+  	    }
+
+	  ++y;
+	  x-=width;
+	  ++p;
+  	}
+
+      x+=width;
+      y-=height;
+    }
+
+  return;
+
+chardraw_rewrite:
+
   /* the diet chardraw routine - fast text output. */
   
   for (i=0;i<count;++i)
@@ -257,11 +298,11 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	  for (k=0;k<FONT_SIZE_X;++k)
   	    {
   	      if (b<0) /* check sign bit. */
-		{
 		  tgi_setcolor(mainColor);
-		  tgi_setpixel(x,y);
-		}
+	      else
+		  tgi_setcolor(altColor);
 
+	      dot_at(x,y);
 	      ++x;
   	      b<<=1;
   	    }
