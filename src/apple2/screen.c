@@ -302,7 +302,7 @@ chardraw_rewrite:
 	      else
 		  tgi_setcolor(altColor);
 
-	      dot_at(x,y);
+	      tgi_setpixel(x,y);
 	      ++x;
   	      b<<=1;
   	    }
