@@ -34,8 +34,13 @@ void main(void)
   config_init();
   touch_init();
   terminal_init();
+#if defined(__APPLE2__) || defined(__APPLE2ENH__)
+  io_init();
+  greeting();
+#else
   greeting();
   io_init();
+#endif
   screen_beep();
   
   already_started=true;

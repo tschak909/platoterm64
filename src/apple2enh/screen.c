@@ -3,6 +3,8 @@
  * Based on Steve Peltz's PAD
  * 
  * Author: Thomas Cherryhomes <thom.cherryhomes at gmail dot com>
+ * DHGR Extensions by Michael Sternberg <mhsternberg at gmail dot com>
+ * based on the work by Allen Watson III (Apple Orchard Jan 1984)
  *
  * screen.c - Display output functions
  */
@@ -15,6 +17,7 @@
 #include "../config.h"
 #include "../protocol.h"
 #include "../screen.h"
+#include "dhgr_subs.h"
 
 extern ConfigInfo config; 
 
@@ -47,7 +50,8 @@ extern void (*io_recv_serial_flow_off)(void);
  */
 void screen_load_driver(void)
 {
-  tgi_install(tgi_static_stddrv);
+    dg();   /* Initialize DHGR (Double Hi-Res Graphics) */
+    pen();  /* Set brush to monochrome */
 }
 
 /**
@@ -59,15 +63,35 @@ void screen_init_hook(void)
 }
 
 /**
+ * dhbar()
+ * DHGR replacement for tgi_bar()
+ */
+void dhbar(int x1, int y1, int x2, int y2)
+{
+    int i;
+    if (y2 < y1)
+    {
+        i = y2;
+        y2 = y1;
+        y1 = i;
+    }
+    for (i=y1; i<=y2; i++)
+    {
+        dot_at(x1, i);
+        line_to(x2, i);
+    }
+}
+
+/**
  * screen_set_pen_mode()
  * Set the pen mode based on CurMode.
  */
 void screen_set_pen_mode(void)
 {
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    tgi_setcolor(TGI_COLOR_BLACK);
+    hue(DHGR_COLOR_BLACK);
   else
-    tgi_setcolor(TGI_COLOR_WHITE);
+    hue(DHGR_COLOR_WHITE);
 }
 
 /**
@@ -79,7 +103,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   io_recv_serial_flow_off(); 
   
   screen_set_pen_mode();
-  tgi_bar(mul05(Coord1->x),mul0375(Coord1->y^0x1FF),mul05(Coord2->x),mul0375(Coord2->y^0x1FF));
+  dhbar(Coord1->x+24,mul0375(Coord1->y^0x1FF),Coord2->x+24,mul0375(Coord2->y^0x1FF));
 
   io_recv_serial_flow_on();
   
@@ -91,7 +115,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
 void screen_dot_draw(padPt* Coord)
 {
   screen_set_pen_mode();
-  tgi_setpixel(mul05(Coord->x),mul0375(Coord->y^0x1FF));
+  dot_at(Coord->x+24,mul0375(Coord->y^0x1FF));
 }
 
 /**
@@ -100,7 +124,8 @@ void screen_dot_draw(padPt* Coord)
 void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
   screen_set_pen_mode();
-  tgi_line(mul05(Coord1->x),mul0375(Coord1->y^0x1FF),mul05(Coord2->x),mul0375(Coord2->y^0x1FF));
+  dot_at(Coord1->x+24, mul0375(Coord1->y^0x01FF));
+  line_to(Coord2->x+24, mul0375(Coord2->y^0x01FF));
 }
 
 /**
@@ -120,9 +145,9 @@ void screen_tty_char(padByte theChar)
     {
       TTYLoc.x -= CharWide;
 
-      tgi_setcolor(TGI_COLOR_BLACK);
-      tgi_bar(mul05(TTYLoc.x),mul0375(TTYLoc.y^0x1FF),mul05(TTYLoc.x+CharWide),mul0375((TTYLoc.y+CharHigh)^0x1FF));
-      tgi_setcolor(TGI_COLOR_WHITE);
+      hue(DHGR_COLOR_BLACK);
+      dhbar(TTYLoc.x,mul0375(TTYLoc.y^0x1FF),TTYLoc.x+CharWide,mul0375((TTYLoc.y+CharHigh)^0x1FF));
+      hue(DHGR_COLOR_WHITE);
     }
   else if (theChar == 0x0A)			/* line feed */
     TTYLoc.y -= CharHigh;
@@ -135,7 +160,7 @@ void screen_tty_char(padByte theChar)
   }
   
   if (TTYLoc.y < 0) {
-    tgi_clear();
+    dhclr(); /* DHGR clear screen */
     TTYLoc.y=495;
   }
 
@@ -188,8 +213,8 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   uint8_t height=FONT_SIZE_Y;
   uint16_t deltaX=1;
   uint16_t deltaY=1;
-  uint8_t mainColor=TGI_COLOR_WHITE;
-  uint8_t altColor=TGI_COLOR_BLACK;
+  uint8_t mainColor=DHGR_COLOR_WHITE;
+  uint8_t altColor=DHGR_COLOR_BLACK;
   uint8_t *p;
   uint8_t* curfont;
   
@@ -215,27 +240,28 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   if (CurMode==ModeRewrite)
     {
-      altColor=TGI_COLOR_BLACK;
+      altColor=DHGR_COLOR_BLACK;
     }
   else if (CurMode==ModeInverse)
     {
-      altColor=TGI_COLOR_WHITE;
+      altColor=DHGR_COLOR_WHITE;
     }
   
   if (CurMode==ModeErase || CurMode==ModeInverse)
-    mainColor=TGI_COLOR_BLACK;
+    mainColor=DHGR_COLOR_BLACK;
   else
-    mainColor=TGI_COLOR_WHITE;
+    mainColor=DHGR_COLOR_WHITE;
 
-  tgi_setcolor(mainColor);
+  hue(mainColor);
 
-  x=mul05((Coord->x&0x1FF));
+  x=(Coord->x&0x1FF)+24;
+  y=mul0375((Coord->y+15^0x1FF)&0x1FF);
 
   if (ModeBold)
     y=mul0375((Coord->y+30^0x1FF)&0x1FF);
   else
     y=mul0375((Coord->y+15^0x1FF)&0x1FF);
-  
+
   if (FastText==padF)
     {
       goto chardraw_with_fries;
@@ -248,7 +274,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   /* the diet chardraw routine - fast text output. */
   
-  tgi_setcolor(mainColor);
+  hue(mainColor);
   for (i=0;i<count;++i)
     {
       a=*ch;
@@ -263,7 +289,7 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   	  for (k=0;k<FONT_SIZE_X;++k)
   	    {
   	      if (b<0) /* check sign bit. */
-		  tgi_setpixel(x,y);
+		  dot_at(x,y);
 
 	      ++x;
   	      b<<=1;
@@ -298,11 +324,11 @@ chardraw_rewrite:
   	  for (k=0;k<FONT_SIZE_X;++k)
   	    {
   	      if (b<0) /* check sign bit. */
-		  tgi_setcolor(mainColor);
+		  hue(mainColor);
 	      else
-		  tgi_setcolor(altColor);
+		  hue(altColor);
 
-	      tgi_setpixel(x,y);
+	      dot_at(x,y);
 	      ++x;
   	      b<<=1;
   	    }
@@ -364,27 +390,27 @@ chardraw_rewrite:
   	    {
   	      if (b<0) /* check sign bit. */
 		{
-		  tgi_setcolor(mainColor);
+		  hue(mainColor);
 		  if (ModeBold)
 		    {
-		      tgi_setpixel(*px+1,*py);
-		      tgi_setpixel(*px,*py+1);
-		      tgi_setpixel(*px+1,*py+1);
+		      dot_at(*px+1,*py);
+		      dot_at(*px,*py+1);
+		      dot_at(*px+1,*py+1);
 		    }
-		  tgi_setpixel(*px,*py);
+		  dot_at(*px,*py);
 		}
 	      else
 		{
 		  if (CurMode==ModeInverse || CurMode==ModeRewrite)
 		    {
-		      tgi_setcolor(altColor);
+		      hue(altColor);
 		      if (ModeBold)
 			{
-			  tgi_setpixel(*px+1,*py);
-			  tgi_setpixel(*px,*py+1);
-			  tgi_setpixel(*px+1,*py+1);
+			  dot_at(*px+1,*py);
+			  dot_at(*px,*py+1);
+			  dot_at(*px+1,*py+1);
 			}
-		      tgi_setpixel(*px,*py); 
+		      dot_at(*px,*py); 
 		    }
 		}
 

@@ -25,6 +25,9 @@
 #include "terminal.h"
 #include "config.h"
 #include "touch.h"
+#ifdef __APPLE2ENH__
+#include "./apple2enh/dhgr_subs.h"
+#endif
 
 extern ConfigInfo config;
 
@@ -373,11 +376,17 @@ unsigned char prefs_get_key_matching1(const char* matches)
 void prefs_clear(void)
 {
   uint8_t c;
+#ifdef __APPLE2ENH__
+  hue(DHGR_COLOR_BLACK);
+  dhbar(0,185,519,191);
+  hue(DHGR_COLOR_WHITE);
+#else
   c=tgi_getcolor();
   tgi_setcolor(TGI_COLOR_BLACK);
-  tgi_bar(0,185,319,192);
+  tgi_bar(0,185,319,191);
   tgi_setcolor(c);
   ShowPLATO("\n\v",2);
+#endif
 }
 
 /**
