@@ -7,8 +7,8 @@
   <xsl:param name="title.font.family" select="'Optima LT Std'"/>
   <xsl:param name="page.width">5in</xsl:param>
   <xsl:param name="page.height">7in</xsl:param>
-  <xsl:param name="page.margin.inner">0.250in</xsl:param>
-  <xsl:param name="page.margin.outer">0.250in</xsl:param>
+  <xsl:param name="page.margin.inner">0.350in</xsl:param>
+  <xsl:param name="page.margin.outer">0.350in</xsl:param>
   <xsl:param name="force.blank.pages" select="1"></xsl:param>
   
   <!-- Set Chapter numbering to roman numerals -->
@@ -23,6 +23,7 @@
 	<l:template name="appendix" text="%n.&#160;%t"/>
       </l:context>
       <l:gentext key="TableofContents" text="TABLE OF CONTENTS" />
+      <l:gentext key="Acknowledgements" text="ACKNOWLEDGEMENTS" />
     </l:l10n>
   </l:i18n>
 

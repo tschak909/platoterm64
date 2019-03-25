@@ -24,7 +24,7 @@
 
   <!--   </author> -->
 
-  <!--   <pubdate>2019-01-04</pubdate> -->
+  <!--   <pubdate>2019-03-24</pubdate> -->
 
   <!-- </info> -->
 
@@ -41,6 +41,40 @@
     possible. The intention is to present the material in the clearest, most
     concise way possible for users at each level.</para>
   </preface>
+
+  <acknowledgements>
+    <para>This software would not have been possible without help from:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">Steve Peltz</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">Christian Groessler</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">Jonathan Halliday</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">Sijmen Schouten</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">Chris Luckey</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">Ron Klein</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">Kevin Savetz</emphasis></para>
+      </listitem>
+    </itemizedlist>
+  </acknowledgements>
 
   <chapter>
     <title>GENERAL DESCRIPTION</title>
@@ -66,36 +100,31 @@
     touch tablet, TRAK-Ball, or mouse to act as a pointer device. When you
     receive a copy of PLATOTERM, the desired touch device is preprogrammed
     into the ROM inside your cartridge.</para>
-
-    <para>PLATOTERM supports any serial device that provides an "R:" to the
-    operating system. This includes the ATARI® 850™, ICD® P:R: Connection™,
-    and R-Verter interface. To facilitate this, the cartridge will load any
-    disk operating system from the first disk drive, allowing any "R:" handler
-    desired to be loaded.</para>
-
-    <annotation>
-      <para>NOTE: ADD OVERALL DIAGRAM OF COMPUTER, WIFI MODEM, AND
-      INTERFACE.</para>
-    </annotation>
   </chapter>
 
   <chapter>
-    <title>OPERATION</title>
+    <title>SUPPORTED HARDWARE</title>
 
     <para>This cartridge runs on any ATARI® 400™, ATARI® 800™, ATARI® 600XL™,
     ATARI® 800XL™, ATARI® 1200XL™, ATARI® 1400XL™, ATARI® 1450XLD™, ATARI®
     65XE™, ATARI® 130XE™, ATARI® 800XE™, ATARI® XE Game System™, or compatible
-    system.</para>
+    home computer.</para>
 
-    <para>To use, insert the cartridge into your computer. For ATARI® 800™
-    systems, use the <emphasis role="bold">LEFT CARTRIDGE</emphasis> slot. Be
-    sure the POWER ON/OFF switch on the console is turned on. The ATARI® 400™
-    and ATARI® 800™ consoles automatically shut off whenever the cartridge
-    door is lifted. This prevents damage to the computer and the cartridge. If
-    you need a special disk handler (such as for R-Verter or another interface
-    that provides an "R:" handler), then turn on the disk drive, and insert a
-    bootable DOS disk containing the desired handler, before powering on the
-    computer.</para>
+    <para>An ATARI® 850™, or compatible RS-232-C interface module, such as the
+    ICD® P:R: Connection™, an AtariMAX SIO2USB running APE, or an R-Verter is
+    required. Any device which provides a R: device handler is compatible with
+    PLATOTERM.</para>
+
+    <para>You will also need a compatible WIFI MODEM attached to your RS-232-C
+    port, which will connect your ATARI™ home computer to the Internet.</para>
+
+    <para>If you need to load your R: handler from disk, you must also provide
+    a suitable disk drive, and bootable DOS disk containing your R: handler,
+    in an automatically loadable form.</para>
+  </chapter>
+
+  <chapter>
+    <title>OPERATION</title>
 
     <para>This version of PLATOTERM is set to the following terminal
     parameters:</para>
@@ -132,7 +161,7 @@
         drive is attached, insert a DOS diskette with an appropriate "R:"
         handler in the drive. The ATARI® <emphasis role="bold">MASTER DISKETTE
         II</emphasis> contains such a handler, which will automatically load,
-        when booted</para>
+        when booted.</para>
 
         <mediaobject>
           <imageobject>
@@ -179,9 +208,8 @@
       </listitem>
 
       <listitem>
-        <para>Enter your MODEM's command to dial, such as <screen><emphasis
-              role="bold">ATDTIRATA.ONLINE:8005</emphasis></screen>and wait
-        for the connect message.</para>
+        <para>Enter your MODEM's command to dial, such as <screen>ATDTIRATA.ONLINE:8005</screen>and
+        wait for the connect message.</para>
       </listitem>
 
       <listitem>
@@ -202,7 +230,7 @@
       </listitem>
 
       <listitem>
-        <para>If desired, press SELECT-X to exit the cartridge, to DOS.</para>
+        <para>If desired, press SELECT-X to exit the cartridge.</para>
       </listitem>
     </orderedlist>
   </chapter>
@@ -210,8 +238,8 @@
   <chapter>
     <title>USER CONTROLS</title>
 
-    <para>PLATOTERM's controls are very simple to use. There are three main
-    keys which alter the operation of the program:</para>
+    <para>PLATOTERM's controls are simple to use. There are three main keys
+    which alter the operation of the program:</para>
 
     <informaltable colsep="0" frame="none" rowsep="0">
       <tgroup cols="2">
@@ -249,11 +277,7 @@
           <row>
             <entry><keycap>SELECT</keycap> X</entry>
 
-            <entry>Exits PLATOTERM. If the computer was booted from the disk
-            drive, it will return to DOS. Otherwise, the computer will default
-            to either the MEMO PAD mode for the ATARI® 400™ and ATARI® 800™
-            systems, to the ATARI® logo display for the ATARI® 1200XL™ system,
-            or to the SELF TEST for all other compatible computers.</entry>
+            <entry>Exits PLATOTERM.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -264,7 +288,7 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata fileref="manual_images/atari-plato-keyboard.png" scale="80"
+        <imagedata fileref="manual_images/atari-plato-keyboard.png" scale="65"
                    scalefit="1"/>
       </imageobject>
     </mediaobject>
@@ -848,7 +872,7 @@
       </listitem>
 
       <listitem>
-        <para>After a short moment, you should see something similar to the
+        <para>After a moment, you should see something similar to the
         following:<screen>Connecting to host - please wait ...
 
 Connected
@@ -946,7 +970,7 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
       </listitem>
 
       <listitem>
-        <para>Use your pointing device to move the pointer over a piece you
+        <para>Use your pointing device to move the pointer over the piece you
         wish to move. Press the selection, or fire button.</para>
       </listitem>
 
@@ -995,8 +1019,8 @@ COPYRIGHT CONTROL DATA SYSTEMS INC. 1994.
       </listitem>
 
       <listitem>
-        <para>Hang up the modem by typing +++ ... Waiting a few seconds until
-        you see OK, and type:<screen>ATH
+        <para>Hang up the modem by typing <screen>+++</screen> Wait a few
+        seconds until you see OK, and type:<screen>ATH
 </screen></para>
       </listitem>
 
