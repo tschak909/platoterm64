@@ -28,7 +28,6 @@ unsigned char current_background=COLOR_BLACK;
 
 extern uint8_t xoff_enabled; /* io.c */
 extern padBool FastText; /* protocol.c */
-extern uint8_t recv_buffer[256];
 extern uint8_t font[];
 extern uint8_t FONT_SIZE_X;
 extern uint8_t FONT_SIZE_Y;
@@ -53,11 +52,11 @@ void screen_splash(void)
 {
   TTYLoc.x = 0;
   TTYLoc.y = 496;
-  ShowPLATO("PLATOTerm Cartridge Version",27);
+  ShowPLATO("PLATOTERM 1.3 Cartridge Version - Tablet  ",42);
 
   TTYLoc.x = 0;
   TTYLoc.y-=16;
-  ShowPLATO("(\xC0) 2018 IRATA.ONLINE",22);
+  ShowPLATO("(\xC0) 2019 IRATA.ONLINE",22);
   
   TTYLoc.x = 0;
   TTYLoc.y-=16;

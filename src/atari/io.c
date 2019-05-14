@@ -25,7 +25,11 @@ void io_send_byte(uint8_t b)
   if (io_load_successful==false)
     return;
 
-  ser_put(b);
+  if (b==0x11)
+    xoff_enabled=false;
+  
+  if (xoff_enabled==false)
+    ser_put(b);
 }
 
 /**
@@ -57,4 +61,3 @@ void io_recv_serial_flow_on(void)
   xoff_enabled=false;
   ser_put(0x11);
 }
-

@@ -56,6 +56,10 @@ void keyboard_main(void)
 	  POKE(82,2);
 	  POKE(559,34);
 	  POKE(764,255);
+	  POKE(0xD000,0);
+	  POKE(0xD001,0);
+	  POKE(0xD002,0);
+	  POKE(0xD003,0);
 	  io_done();
 	  touch_done();
 	  screen_done();

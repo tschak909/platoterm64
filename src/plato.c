@@ -16,21 +16,13 @@
 
 uint8_t already_started=false;
 
-/**
- * greeting(void) - Show terminal greeting
- */
-void greeting(void)
-{
-  screen_splash();
-  terminal_initial_position();
-}
-
 void main(void)
 {
   screen_init();
   touch_init();
   terminal_init();
-  greeting();
+  screen_splash();
+  terminal_initial_position();
   io_init();
   screen_beep();
   

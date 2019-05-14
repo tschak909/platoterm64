@@ -186,14 +186,19 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
   else if (CurMode==ModeErase)
     Flags|=0x10;
   
+  cx=mul0625((Coord->x&0x1FF));
+
   if (ModeBold)
     {
       dx<<=1;
       Flags|=0x40;
+      cy=mul0375((Coord->y+30^0x1FF)&0x1FF);
     }
-  cx=mul0625((Coord->x&0x1FF));
-  cy=mul0375((Coord->y+15^0x1FF)&0x1FF);
-
+  else
+    {
+      cy=mul0375((Coord->y+15^0x1FF)&0x1FF);
+    }
+  
   for (i=0;i<count;++i)
     {
       CharCode=ch[i]+offset;

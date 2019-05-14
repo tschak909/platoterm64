@@ -57,6 +57,7 @@ extern void screen_dot_draw(padPt* Coord);
 extern void screen_line_draw(padPt* Coord1, padPt* Coord2);
 extern void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count);
 extern void screen_tty_char(padByte theChar);
+extern void touch_allow(padBool allow);
 extern void terminal_mem_load(padWord addr, padWord value);
 extern void terminal_char_load(padWord charnum, charData theChar);
 extern void terminal_mode_5(padWord value);
@@ -576,6 +577,7 @@ SSFx (void)
   if (device == 1)
     {
       terminal_ext_allow ((theWord >> 3) & 1);
+      touch_allow ((theWord >> 5) & 1);
     }
   else if ((theWord >> 9) & 1)
     {

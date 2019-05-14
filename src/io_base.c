@@ -24,7 +24,7 @@ uint8_t io_load_successful=false;
 
 static uint8_t ch=0;
 static uint8_t io_res;
-uint8_t recv_buffer[256];
+static uint8_t recv_buffer[128];
 static uint16_t recv_buffer_size=0;
 
 static struct ser_params params = {
@@ -41,7 +41,6 @@ static struct ser_params params = {
 void io_init(void)
 {
   io_res=ser_install(atrrdev_ser);
-
   if (io_res==SER_ERR_OK)
     io_load_successful=true;
   

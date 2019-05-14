@@ -20,6 +20,7 @@
 
 static struct mouse_info mouse_data;
 static uint8_t mouse_present=false;
+static padBool touch_allowed=false;
 
 /**
  * touch_init() - Set up touch screen
@@ -27,10 +28,10 @@ static uint8_t mouse_present=false;
 void touch_init(void)
 {
 #ifndef __APPLE2__
-  if (mouse_install(&mouse_def_callbacks,atrtt_mou) == MOUSE_ERR_OK)
+  if (mouse_install(&mouse_def_callbacks,atrjoy_mou) == MOUSE_ERR_OK)
     {
-      mouse_present=true;
-      mouse_show();
+      mouse_present=false;
+      /* mouse_show(); */
 #ifdef __ATARI__
       POKE(0xD000,0);
       POKE(0xD001,0);
@@ -39,7 +40,27 @@ void touch_init(void)
 #endif /* __ATARI__ */
     }
 #endif /* __APPLE2__ */
-  
+  /* mouse_present=false; */
+  /* touch_allowed=false; */
+  /* mouse_hide(); */
+}
+
+/**
+ * touch_allow
+ */
+void touch_allow(padBool allow)
+{
+  if (touch_allowed==false && allow==true)
+    {
+      touch_allowed=true;
+      mouse_show();
+    }
+  else if (touch_allowed==true && allow==false)
+    {
+      touch_allowed=false;
+      mouse_hide();
+    }
+    
 }
 
 /**
@@ -51,7 +72,7 @@ void touch_main(void)
   uint8_t lastbuttons;
   padPt coord;
 
-  if (mouse_present==false)
+  if (mouse_present==false || touch_allowed==false)
     return;
   
   mouse_info(&mouse_data);
