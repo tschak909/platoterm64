@@ -47,8 +47,10 @@ extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
  */
 void screen_init_hook(void)
 {
+  unsigned char pal[2]={0,1};
   install_nmi_trampoline();
   fast();
+  tgi_setpalette(pal);
 }
 
 /**
@@ -180,7 +182,7 @@ void screen_update_colors(void)
 {
   pal[0]=config.color_background;
   pal[1]=config.color_foreground;
-  tgi_setpalette(pal);
+  /* tgi_setpalette(pal); */
 }
 
 /**
