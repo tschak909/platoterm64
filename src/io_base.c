@@ -46,6 +46,7 @@ static struct ser_params params = {
  */
 void io_init(void)
 {
+  prefs_clear();
   prefs_display("serial driver loaded.");
   io_res=ser_load_driver(io_ser_driver_name(config.driver_ser));
 
@@ -58,10 +59,12 @@ void io_init(void)
     {
       io_init_funcptrs();
       io_open();
+      prefs_clear();
       prefs_display("serial driver opened.");
     }
   else
     {
+      prefs_clear();
       sprintf(recv_buffer,"open err: %d",io_res);
       prefs_display(recv_buffer);
     }
@@ -79,6 +82,7 @@ void io_open(void)
   
   if (io_res!=SER_ERR_OK)
     {
+      prefs_clear();
       io_load_successful=false;
       prefs_display("error: could not open serial port.");
     }

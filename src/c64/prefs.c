@@ -28,7 +28,7 @@ void prefs_show_greeting(void)
   if (io_load_successful==false)
     prefs_display("serial driver didn't load. check device.");
   else
-    prefs_display("platoterm ready - f3 for setup");
+    prefs_display("platoterm 1.3 ready - f3 for setup");
 }
 
 /**
