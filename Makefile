@@ -36,7 +36,6 @@ ASFLAGS =
 # Additional linker flags and options.
 # Default: none
 LDFLAGS = $(LDFLAGS.$(TARGETS))
-LDFLAGS.atari = --start-addr 0x2420 -Wl --mapfile plato.map
  
 # Path to the directory containing C and ASM sources.
 # Default: src
