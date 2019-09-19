@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#ifdef __C128_HIRES__
+
 /* X and Y tables used to scale 512x512 PLATO display to 640x480 */
 unsigned short scalex[]={
 64,65,66,67,68,69,70,71,
@@ -143,3 +145,5 @@ unsigned short scaley[]={
 14,13,12,11,10,9,8,7,
 6,5,4,3,2,1,0,0,
 };
+
+#endif

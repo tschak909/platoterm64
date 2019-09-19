@@ -20,8 +20,19 @@
 extern uint8_t pal[2];
 extern ConfigInfo config; 
 
+#ifdef __C128_HIRES__
 extern unsigned short scalex[];
 extern unsigned short scaley[];
+#define SCALEX(x) (scalex[x])
+#define SCALEY(y) (scaley[y])
+#define FONTPTR(a) (a<<4)
+#else
+extern uint16_t mul0375(uint16_t val);
+#define SCALEX(x) (x+24)
+#define SCALEY(y) (mul0375(y ^ 0x01ff))
+#define FONTPTR(a) (((a << 1) + a) << 1)
+#endif
+
 extern uint8_t font[];
 extern uint8_t fontm23[];
 extern uint8_t FONT_SIZE_X;
@@ -37,10 +48,6 @@ extern void (*io_recv_serial_flow_off)(void);
 #define outb(addr,val)        (*(addr)) = (val)
 #define outw(addr,val)        (*(addr)) = (val)
 
-#define FONTPTR(a) (a<<4)
-
-extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
-
 /**
  * screen_init_hook()
  * Called after tgi_init to set any special features, e.g. nmi trampolines.
@@ -48,7 +55,6 @@ extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 void screen_init_hook(void)
 {
   unsigned char pal[2]={0,1};
-  install_nmi_trampoline();
   fast();
   tgi_setpalette(pal);
 }
@@ -59,7 +65,11 @@ void screen_init_hook(void)
  */
 void screen_load_driver(void)
 {
+  #ifdef __C128_HIRES__
   tgi_install(&c128_vdc2_tgi);
+  #else
+  tgi_install(&c128_vdc_tgi);
+  #endif
 }
 
 /**
@@ -110,7 +120,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   io_recv_serial_flow_off(); 
   
   screen_set_pen_mode();
-  tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
+  tgi_bar(SCALEX(Coord1->x),SCALEY(Coord1->y),SCALEX(Coord2->x),SCALEY(Coord2->y));
 
   io_recv_serial_flow_on();
 }
@@ -121,7 +131,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
 void screen_dot_draw(padPt* Coord)
 {
   screen_set_pen_mode();
-  tgi_setpixel(scalex[Coord->x],scaley[Coord->y]);
+  tgi_setpixel(SCALEX(Coord->x),SCALEY(Coord->y));
 }
 
 /**
@@ -129,10 +139,10 @@ void screen_dot_draw(padPt* Coord)
  */
 void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
-  uint16_t x1=scalex[Coord1->x];
-  uint16_t x2=scalex[Coord2->x];
-  uint16_t y1=scaley[Coord1->y];
-  uint16_t y2=scaley[Coord2->y];  
+  uint16_t x1=SCALEX(Coord1->x);
+  uint16_t x2=SCALEX(Coord2->x);
+  uint16_t y1=SCALEY(Coord1->y);
+  uint16_t y2=SCALEY(Coord2->y);  
 
   screen_set_pen_mode();
   tgi_line(x1,y1,x2,y2);
@@ -155,7 +165,7 @@ void screen_tty_char(padByte theChar)
     {
       TTYLoc.x -= CharWide;
       tgi_setcolor(TGI_COLOR_BLACK);      
-      tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
+      tgi_bar(SCALEX(TTYLoc.x),SCALEY(TTYLoc.y),SCALEX(TTYLoc.x+CharWide),SCALEY(TTYLoc.y+CharHigh));
       tgi_setcolor(TGI_COLOR_WHITE);      
     }
   else if (theChar == 0x0A)			/* line feed */
@@ -273,12 +283,12 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   tgi_setcolor(mainColor);
 
-  x=scalex[(Coord->x&0x1FF)];
+  x=SCALEX((Coord->x&0x1FF));
 
   if (ModeBold)
-    y=scaley[(Coord->y)+30&0x1FF];
+    y=SCALEY((Coord->y)+30&0x1FF);
   else
-    y=scaley[(Coord->y)+15&0x1FF];
+    y=SCALEY((Coord->y)+15&0x1FF);
   
   if (FastText==padF)
     {
