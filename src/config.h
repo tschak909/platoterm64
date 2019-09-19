@@ -10,8 +10,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define XON_THRESHOLD 46
-#define XOFF_THRESHOLD 127
+#define XON_THRESHOLD 16
+#define XOFF_THRESHOLD 512
 
 /* C64/128 Driver defines */
 #define CONFIG_MOUSE_DRIVER_1351 0

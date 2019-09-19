@@ -33,7 +33,7 @@ static const unsigned char PIX_THRESH[]={0x03,0x02,0x03,0x03,0x02, // Pixel thre
 				   0x03,0x02,0x03,0x03,0x02,
 				   0x03,0x02,0x03,0x03,0x02};
 
-static unsigned char PIX_WEIGHTS[16];
+static unsigned char PIX_WEIGHTS[30];
 
 static const unsigned char TAB_0_25[]={0,5,10,15,20,25}; // Given index 0 of 5, return multiple of 5.
 

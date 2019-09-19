@@ -17,6 +17,7 @@
 #include "protocol.h"
 #include "config.h"
 #include "prefs.h"
+#include <atari.h>
 
 #define NULL 0
 
@@ -30,7 +31,7 @@ void (*io_recv_serial_flow_on)(void);
 static uint8_t ch=0;
 static uint8_t io_res;
 uint8_t recv_buffer[384];
-static uint16_t recv_buffer_size=0;
+static uint16_t recv_buffer_size;
 extern ConfigInfo config;
 
 static struct ser_params params = {
@@ -45,10 +46,9 @@ static struct ser_params params = {
  * io_init() - Set-up the I/O
  */
 void io_init(void)
-{
+{  
   prefs_clear();
-  prefs_display("serial driver loaded.");
-  io_res=ser_load_driver(io_ser_driver_name(config.driver_ser));
+  io_res=ser_install(atrrdev_ser);
 
   if (io_res==SER_ERR_OK)
     io_load_successful=true;
@@ -64,8 +64,8 @@ void io_init(void)
     }
   else
     {
+      prefs_display("serial driver error.");
       prefs_clear();
-      prefs_display(recv_buffer);
     }
   
 }
@@ -98,24 +98,19 @@ void io_main(void)
   // Drain primary serial FIFO as fast as possible.
   while (ser_get(&ch)!=SER_ERR_NO_DATA)
     {
+      if ((recv_buffer_size>config.xoff_threshold) && (xoff_enabled==false))
+	{
+	  io_recv_serial_flow_off();
+	  xoff_enabled=true;
+	}
+      else if ((recv_buffer_size<config.xon_threshold) && (xoff_enabled==true))
+	{
+	  io_recv_serial_flow_on();
+	  xoff_enabled=false;
+	}
       recv_buffer[recv_buffer_size++]=ch;
     }
   
-  if (xoff_enabled==false)
-    {
-      if (recv_buffer_size>config.xoff_threshold)
-  	{
-  	  io_recv_serial_flow_off();
-  	}
-    }
-  else /* xoff_enabled==true */
-    {
-      if (xoff_enabled==true && recv_buffer_size<config.xon_threshold)
-  	{
-  	  io_recv_serial_flow_on();
-  	}
-    }
-
   ShowPLATO(recv_buffer,recv_buffer_size);
   recv_buffer_size=0;
 }

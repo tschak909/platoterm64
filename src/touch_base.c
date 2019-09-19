@@ -13,6 +13,7 @@
 #include <peekpoke.h>
 #include "touch.h"
 #include "config.h"
+#include "prefs.h"
 
 #ifdef __ATARI__
 #include <atari.h>
@@ -35,22 +36,44 @@ extern uint16_t scalety[];
  */
 void touch_init(void)
 {
-#ifndef __APPLE2__
+  int res;
+
   if (config.driver_mou==CONFIG_MOUSE_DRIVER_NONE)
     return;
+
+  switch(config.driver_mou)
+    {
+    case CONFIG_MOUSE_DRIVER_ATRAMI:
+      res=mouse_install(&mouse_def_callbacks,atrami_mou);
+      break;
+    case CONFIG_MOUSE_DRIVER_ATRJOY:
+      res=mouse_install(&mouse_def_callbacks,atrjoy_mou);
+      break;
+    case CONFIG_MOUSE_DRIVER_ATRST:
+      res=mouse_install(&mouse_def_callbacks,atrst_mou);
+      break;
+    case CONFIG_MOUSE_DRIVER_ATRTRK:
+      res=mouse_install(&mouse_def_callbacks,atrtrk_mou);
+      break;
+    case CONFIG_MOUSE_DRIVER_ATRTT:
+      res=mouse_install(&mouse_def_callbacks,atrtt_mou);
+      break;
+    }
   
-  if (mouse_load_driver(&mouse_def_callbacks,touch_driver_name(config.driver_mou)) == MOUSE_ERR_OK)
+  if (res == MOUSE_ERR_OK)
     {
       mouse_present=true;
       mouse_show();
-#ifdef __ATARI__
-      POKE(0xD000,0);
-      POKE(0xD001,0);
-      /* POKE(0xD002,0); */
-      POKE(0xD003,0);
-#endif /* __ATARI__ */
+/* #ifdef __ATARI__ */
+/*       POKE(0xD000,0); */
+/*       POKE(0xD001,0); */
+/*       /\* POKE(0xD002,0); *\/ */
+/*       POKE(0xD003,0); */
+/* #endif /\* __ATARI__ *\/ */
     }
-#endif /* __APPLE2__ */
+  else
+    {
+    }
   
 }
 

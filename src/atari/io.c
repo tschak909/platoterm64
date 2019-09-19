@@ -9,7 +9,7 @@
 
 #include <atari.h>
 #include <stdbool.h>
-#include <peekpoke.h>
+#include <peekPOKE.h>
 #include <stdint.h>
 #include <string.h>
 #include <serial.h>
@@ -69,6 +69,7 @@ void io_recv_serial_flow_off_atari(void)
   if (io_load_successful==false)
     return;
   xoff_enabled=true;
+  POKE(712,35);
   ser_put(0x13);
 }
 
@@ -80,6 +81,7 @@ void io_recv_serial_flow_on_atari(void)
   if (io_load_successful==false)
     return;
   xoff_enabled=false;
+  POKE(712,0);
   ser_put(0x11);
 }
 
