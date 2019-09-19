@@ -52,6 +52,7 @@ void screen_init(void)
 #endif
 }
 
+#ifndef __ATARI__
 /**
  * screen_splash - Show splash screen
  */
@@ -69,6 +70,7 @@ void screen_splash(void)
   
   fclose(fp);
 }
+#endif /* ifndef __ATARI__ */
 
 /**
  * screen_clear - Clear the screen

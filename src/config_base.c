@@ -12,9 +12,14 @@
 #include "config.h"
 #include "screen.h"
 
+#ifndef __ATARI__
 #define CONFIG_FILE "config"
+#endif
 
 ConfigInfo config;
+
+/* This whole block of code is redefined on the atari to use nothing but cio calls. */
+#ifndef __ATARI__ 
 
 /**
  * config_init()
@@ -60,3 +65,4 @@ void config_save(void)
   fclose(fp);
 }
 
+#endif /* if __ATARI__ is not defined */

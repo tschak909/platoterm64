@@ -12,12 +12,65 @@
 #include <stdbool.h>
 #include <string.h>
 #include <peekpoke.h>
+#include <unistd.h>
+#include <fcntl.h>
+
 #include "../config.h"
+#include "../screen.h"
 
 #define CONFIG_DEFAULT_SERIAL_DRIVER CONFIG_SERIAL_DRIVER_ATRRDEV
 #define CONFIG_DEFAULT_MOUSE_DRIVER CONFIG_MOUSE_DRIVER_ATRJOY
 
+extern unsigned char recv_buffer; // recycling from io_base.c :)
 extern ConfigInfo config;
+
+#define CONFIG_FILE "D:CONFIG"
+
+/**
+ * config_init()
+ * Initialize configuration and load either config or defaults.
+ */
+void config_init(void)
+{
+  memset(&config,0,sizeof(config));
+  config_load();
+  screen_update_colors(); /* because the screen is already initialized. */
+}
+
+/**
+ * config_load()
+ * Load the configuration file, or if not found, set some defaults and save.
+ */
+void config_load(void)
+{
+  int fd=open(CONFIG_FILE,O_RDONLY);
+
+  if (fd < 0)
+    config_set_defaults();
+  else
+    {
+      read(fd, &config, sizeof(config));
+      close(fd);
+    }
+  close(fd);
+}
+
+/**
+ * config_save()
+ * Save the configuration file.
+ */
+void config_save(void)
+{
+  int fd=open(CONFIG_FILE,O_WRONLY|O_CREAT);
+  if (fd<0)
+    {
+    }
+  else
+    {
+      write(fd,&config,sizeof(config));
+    }
+  close(fd);
+}
 
 /**
  * config_set_defaults()

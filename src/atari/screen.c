@@ -11,6 +11,8 @@
 #include <tgi.h>
 #include <stdint.h>
 #include <conio.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "../config.h"
 #include "../protocol.h"
 #include "../screen.h"
@@ -34,6 +36,7 @@ unsigned char CharCode;
 unsigned char Flags;
 unsigned char* GlyphData;
 
+extern unsigned char recv_buffer[384];
 extern unsigned char font[];
 extern unsigned char fontm23[];
 extern uint16_t mul0625(uint16_t val);
@@ -61,6 +64,20 @@ void screen_init_hook(void)
 void screen_load_driver(void)
 {
   tgi_install(tgi_static_stddrv);
+}
+
+/**
+ * screen_splash - Show splash screen
+ */
+void screen_splash(void)
+{
+  int fd=open("D:SPLASH.BIN",O_RDONLY);
+  short len=0;
+
+  while (len=read(fd,recv_buffer,sizeof(recv_buffer)))
+    ShowPLATO((padByte *)recv_buffer,len);
+
+  close(fd);
 }
 
 /**
