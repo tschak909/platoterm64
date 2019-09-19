@@ -360,6 +360,8 @@ dist-c128: $(PROGRAM).c128
 	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-joy.mou mou-joy
 	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-pot.mou mou-pot
 	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-swlink.ser ser-swlink
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-vdc2.tgi tgi-vdchi
+	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/c128-vdc.tgi tgi-vdclo
 	c1541 -attach dist.c128/platoterm128-1_0.d64 -write dist.c128/splash.bin splash.bin
 
 dist-apple2: $(PROGRAM).apple2

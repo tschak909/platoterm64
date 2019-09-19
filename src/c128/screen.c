@@ -13,6 +13,7 @@
 #include <tgi.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "../config.h"
 #include "../protocol.h"
 #include "../screen.h"
@@ -20,27 +21,37 @@
 extern uint8_t pal[2];
 extern ConfigInfo config; 
 
-#ifdef __C128_HIRES__
 extern unsigned short scalex[];
 extern unsigned short scaley[];
-#define SCALEX(x) (scalex[x])
-#define SCALEY(y) (scaley[y])
-#define FONTPTR(a) (a<<4)
-#else
-extern uint16_t mul0375(uint16_t val);
-#define SCALEX(x) (x+24)
-#define SCALEY(y) (mul0375(y ^ 0x01ff))
-#define FONTPTR(a) (((a << 1) + a) << 1)
-#endif
 
-extern uint8_t font[];
+#define SCALEX(x) (x+64)
+#define SCALEY(y) scaley[y]
+
+extern uint16_t mul0375(uint16_t val);
+#define FONTPTR_200(a) (((a << 1) + a) << 1)
+#define FONTPTR_400(a) (a<<4)
+
+#define FONTPTR(a) ((vdcmode == VDC_LORES) ? FONTPTR_200(a) : FONTPTR_400(a))
+
+extern uint8_t font_200[];
+extern uint8_t font_400[];
 extern uint8_t fontm23[];
 extern uint8_t FONT_SIZE_X;
-extern uint8_t FONT_SIZE_Y;
-extern padBool FastText; /* protocol.c */
-extern padPt TTYLoc;
+extern uint8_t FONT_SIZE_Y_200;
+extern uint8_t FONT_SIZE_Y_400;
+
+uint8_t * font;
+uint8_t FONT_SIZE_Y;
+
+#define VDC_LORES 0
+#define VDC_HIRES 1
+uint8_t vdcmode;
+
 extern uint8_t CharWide;
 extern uint8_t CharHigh;
+
+extern padBool FastText; /* protocol.c */
+extern padPt TTYLoc;
 
 extern void (*io_recv_serial_flow_on)(void);
 extern void (*io_recv_serial_flow_off)(void);
@@ -65,11 +76,36 @@ void screen_init_hook(void)
  */
 void screen_load_driver(void)
 {
-  #ifdef __C128_HIRES__
-  tgi_install(&c128_vdc2_tgi);
-  #else
-  tgi_install(&c128_vdc_tgi);
-  #endif
+  uint16_t i;
+
+  tgi_load_driver("tgi-vdc*");
+  if (tgi_geterror()) {
+    puts("Unable to load a TGI driver; exiting...\r\n");
+    exit(1);
+  }
+
+  switch (tgi_getyres()) {
+    case 480:
+      vdcmode = VDC_HIRES;
+      font = font_400;
+      FONT_SIZE_Y = FONT_SIZE_Y_400;
+      break;
+    case 200:
+      vdcmode = VDC_LORES;
+      font = font_200;
+      FONT_SIZE_Y = FONT_SIZE_Y_200;
+
+      // Overwrite default hi-res Y scale table with low-res one
+      for (i = 0; i < 512; i++){
+        scaley[i] = mul0375(i ^ 0x01ff);
+      }
+      break;
+    default:
+      tgi_unload();
+      printf("Unknown Y resolution %d; exiting...\r\n", tgi_getyres());
+      exit(1);
+      break;
+  }
 }
 
 /**
