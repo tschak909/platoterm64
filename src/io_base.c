@@ -65,6 +65,7 @@ void io_init(void)
   else
     {
       prefs_clear();
+      prefs_display(recv_buffer);
     }
   
 }
