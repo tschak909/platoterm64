@@ -13,6 +13,7 @@
 #include <tgi.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "../config.h"
 #include "../protocol.h"
 #include "../screen.h"
@@ -22,24 +23,41 @@ extern ConfigInfo config;
 
 extern unsigned short scalex[];
 extern unsigned short scaley[];
-extern uint8_t font[];
+
+#define SCALEX(x) (x+64)
+#define SCALEY(y) scaley[y]
+
+extern uint16_t mul0375(uint16_t val);
+#define FONTPTR_200(a) (((a << 1) + a) << 1)
+#define FONTPTR_400(a) (a<<4)
+
+#define FONTPTR(a) ((vdcmode == VDC_LORES) ? FONTPTR_200(a) : FONTPTR_400(a))
+
+extern uint8_t font_200[];
+extern uint8_t font_400[];
 extern uint8_t fontm23[];
 extern uint8_t FONT_SIZE_X;
-extern uint8_t FONT_SIZE_Y;
-extern padBool FastText; /* protocol.c */
-extern padPt TTYLoc;
+extern uint8_t FONT_SIZE_Y_200;
+extern uint8_t FONT_SIZE_Y_400;
+
+uint8_t * font;
+uint8_t FONT_SIZE_Y;
+
+#define VDC_LORES 0
+#define VDC_HIRES 1
+uint8_t vdcmode;
+
 extern uint8_t CharWide;
 extern uint8_t CharHigh;
+
+extern padBool FastText; /* protocol.c */
+extern padPt TTYLoc;
 
 extern void (*io_recv_serial_flow_on)(void);
 extern void (*io_recv_serial_flow_off)(void);
 
 #define outb(addr,val)        (*(addr)) = (val)
 #define outw(addr,val)        (*(addr)) = (val)
-
-#define FONTPTR(a) (a<<4)
-
-extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 
 /**
  * screen_init_hook()
@@ -48,7 +66,6 @@ extern void install_nmi_trampoline(void); /* nmi_trampoline.s */
 void screen_init_hook(void)
 {
   unsigned char pal[2]={0,1};
-  install_nmi_trampoline();
   fast();
   tgi_setpalette(pal);
 }
@@ -59,7 +76,36 @@ void screen_init_hook(void)
  */
 void screen_load_driver(void)
 {
-  tgi_install(&c128_vdc2_tgi);
+  uint16_t i;
+
+  tgi_load_driver("tgi-vdc*");
+  if (tgi_geterror()) {
+    puts("Unable to load a TGI driver; exiting...\r\n");
+    exit(1);
+  }
+
+  switch (tgi_getyres()) {
+    case 480:
+      vdcmode = VDC_HIRES;
+      font = font_400;
+      FONT_SIZE_Y = FONT_SIZE_Y_400;
+      break;
+    case 200:
+      vdcmode = VDC_LORES;
+      font = font_200;
+      FONT_SIZE_Y = FONT_SIZE_Y_200;
+
+      // Overwrite default hi-res Y scale table with low-res one
+      for (i = 0; i < 512; i++){
+        scaley[i] = mul0375(i ^ 0x01ff);
+      }
+      break;
+    default:
+      tgi_unload();
+      printf("Unknown Y resolution %d; exiting...\r\n", tgi_getyres());
+      exit(1);
+      break;
+  }
 }
 
 /**
@@ -110,7 +156,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
   io_recv_serial_flow_off(); 
   
   screen_set_pen_mode();
-  tgi_bar(scalex[Coord1->x],scaley[Coord1->y],scalex[Coord2->x],scaley[Coord2->y]);
+  tgi_bar(SCALEX(Coord1->x),SCALEY(Coord1->y),SCALEX(Coord2->x),SCALEY(Coord2->y));
 
   io_recv_serial_flow_on();
 }
@@ -121,7 +167,7 @@ void screen_block_draw(padPt* Coord1, padPt* Coord2)
 void screen_dot_draw(padPt* Coord)
 {
   screen_set_pen_mode();
-  tgi_setpixel(scalex[Coord->x],scaley[Coord->y]);
+  tgi_setpixel(SCALEX(Coord->x),SCALEY(Coord->y));
 }
 
 /**
@@ -129,10 +175,10 @@ void screen_dot_draw(padPt* Coord)
  */
 void screen_line_draw(padPt* Coord1, padPt* Coord2)
 {
-  uint16_t x1=scalex[Coord1->x];
-  uint16_t x2=scalex[Coord2->x];
-  uint16_t y1=scaley[Coord1->y];
-  uint16_t y2=scaley[Coord2->y];  
+  uint16_t x1=SCALEX(Coord1->x);
+  uint16_t x2=SCALEX(Coord2->x);
+  uint16_t y1=SCALEY(Coord1->y);
+  uint16_t y2=SCALEY(Coord2->y);  
 
   screen_set_pen_mode();
   tgi_line(x1,y1,x2,y2);
@@ -155,7 +201,7 @@ void screen_tty_char(padByte theChar)
     {
       TTYLoc.x -= CharWide;
       tgi_setcolor(TGI_COLOR_BLACK);      
-      tgi_bar(scalex[TTYLoc.x],scaley[TTYLoc.y],scalex[TTYLoc.x+CharWide],scaley[TTYLoc.y+CharHigh]);
+      tgi_bar(SCALEX(TTYLoc.x),SCALEY(TTYLoc.y),SCALEX(TTYLoc.x+CharWide),SCALEY(TTYLoc.y+CharHigh));
       tgi_setcolor(TGI_COLOR_WHITE);      
     }
   else if (theChar == 0x0A)			/* line feed */
@@ -273,12 +319,12 @@ void screen_char_draw(padPt* Coord, unsigned char* ch, unsigned char count)
 
   tgi_setcolor(mainColor);
 
-  x=scalex[(Coord->x&0x1FF)];
+  x=SCALEX((Coord->x&0x1FF));
 
   if (ModeBold)
-    y=scaley[(Coord->y)+30&0x1FF];
+    y=SCALEY((Coord->y)+30&0x1FF);
   else
-    y=scaley[(Coord->y)+15&0x1FF];
+    y=SCALEY((Coord->y)+15&0x1FF);
   
   if (FastText==padF)
     {
