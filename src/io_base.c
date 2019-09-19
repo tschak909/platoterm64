@@ -65,7 +65,6 @@ void io_init(void)
   else
     {
       prefs_clear();
-      sprintf(recv_buffer,"open err: %d",io_res);
       prefs_display(recv_buffer);
     }
   
