@@ -12,6 +12,9 @@
 
 #include "protocol.h"
 
+// Size of scaled PLATO screen
+extern padPt actualSize;
+
 /**
  * screen_init() - Set up the screen
  */

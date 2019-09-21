@@ -50,6 +50,8 @@ extern padBool ModeBold;
 extern padBool Rotate;
 extern padBool Reverse;
 
+extern uint8_t FONT_SIZE_Y;
+
 uint8_t temp_val[8];
 uint8_t ch;
 uint8_t prefs_need_updating;
@@ -383,7 +385,7 @@ void prefs_clear(void)
 #else
   c=tgi_getcolor();
   tgi_setcolor(TGI_COLOR_BLACK);
-  tgi_bar(0,185,319,191);
+  tgi_bar(0,actualSize.y-1-FONT_SIZE_Y,tgi_getmaxx(),actualSize.y-1);
   tgi_setcolor(c);
   ShowPLATO("\n\v",2);
 #endif

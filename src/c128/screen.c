@@ -53,6 +53,10 @@ extern uint8_t CharHigh;
 extern padBool FastText; /* protocol.c */
 extern padPt TTYLoc;
 
+// size of scaled PLATO screen
+// we can't use a constant for this since it depends on which driver we load
+padPt actualSize;
+
 extern void (*io_recv_serial_flow_on)(void);
 extern void (*io_recv_serial_flow_off)(void);
 
@@ -106,6 +110,10 @@ void screen_load_driver(void)
       exit(1);
       break;
   }
+
+  // use scaling factors to set actual screen size
+  actualSize.x = SCALEX(PLATOSize.x);
+  actualSize.y = SCALEY(0);
 }
 
 /**

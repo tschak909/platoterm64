@@ -38,6 +38,9 @@ extern uint16_t mul0375(uint16_t val);
 extern void (*io_recv_serial_flow_on)(void);
 extern void (*io_recv_serial_flow_off)(void);
 
+// size of scaled PLATO screen
+padPt actualSize = {256, 192};
+
 #define FONTPTR(a) (((a << 1) + a) << 1)
 #define mul05(a) ((a>>1)+12)
 
