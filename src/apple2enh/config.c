@@ -30,5 +30,6 @@ void config_set_defaults(void)
   config.fill=false;
   config.driver_ser=CONFIG_DEFAULT_SERIAL_DRIVER;
   config.driver_mou=CONFIG_DEFAULT_MOUSE_DRIVER;
+  config.slot=2;
   config_save();
 }

@@ -27,6 +27,12 @@ void prefs_run(void);
 void prefs_interface(void);
 
 /**
+ * prefs_slot(void)
+ * Preferences menu to select card slot.
+ */
+void prefs_slot(void);
+
+/**
  * prefs_serial()
  * Preferences menu to show for serial devices.
  */
