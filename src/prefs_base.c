@@ -104,6 +104,7 @@ void prefs_run(void)
  */
 void prefs_serial(void)
 {
+  prefs_clear();  
   prefs_display("i)nterface d)river b)aud t)ouch o)ther s)ave e)xit: ");
 
   ch=prefs_get_key_matching("idbtoseIDBTOSE");
@@ -290,17 +291,46 @@ void prefs_baud(void)
  */
 void prefs_interface(void)
 {
+  prefs_clear();
   prefs_display("interface - e)thernet s)erial b)ack: ");
 
   ch=prefs_get_key_matching("sbSB");
 
   switch(ch)
     {
+#if defined(__APPLE2__) || defined(__APPLE2ENH__)
+    case 's':
+      prefs_slot();
+      break;    
+#endif
     case 'b':
       prefs_select("back");
       break;
     }
 }
+
+#if defined(__APPLE2__) || defined(__APPLE2ENH__)
+/**
+ * prefs_slot(void)
+ * Preferences menu to select card slot.
+ */
+void prefs_slot(void)
+{
+  prefs_clear();
+  prefs_display("serial slot - 1) thru 7) b)ack: ");
+
+  ch=prefs_get_key_matching("1234567bB");
+
+  if (ch >= '1' && ch <= '7')
+    {
+      config.slot=ch - '0';
+    }
+  else if (ch == 'b')
+    {
+      prefs_select("back");
+    }
+}
+#endif
 
 /**
  * prefs_display(text)

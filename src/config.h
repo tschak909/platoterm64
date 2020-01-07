@@ -46,6 +46,9 @@ typedef struct configInfo
   unsigned short xon_threshold;
   unsigned short xoff_threshold;
   unsigned char fill;
+#if defined(__APPLE2__) || defined (__APPLE2ENH__)
+  unsigned char slot;
+#endif
 } ConfigInfo;
 
 /**

@@ -17,6 +17,9 @@
 #include "protocol.h"
 #include "config.h"
 #include "prefs.h"
+#if defined(__APPLE2__) || defined(__APPLE2ENH__)
+#include <apple2.h>
+#endif
 
 #define NULL 0
 
@@ -76,7 +79,9 @@ void io_init(void)
 void io_open(void)
 {
   params.baudrate = config.baud;
-  
+#if defined(__APPLE2__) || defined(__APPLE2ENH__)
+  ser_apple2_slot(config.slot);
+#endif
   io_res=ser_open(&params);
   
   if (io_res!=SER_ERR_OK)
