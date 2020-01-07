@@ -26,11 +26,13 @@ void prefs_run(void);
  */
 void prefs_interface(void);
 
+#if defined(__APPLE2__) || defined(__APPLE2ENH__)
 /**
  * prefs_slot(void)
  * Preferences menu to select card slot.
  */
 void prefs_slot(void);
+#endif
 
 /**
  * prefs_serial()
