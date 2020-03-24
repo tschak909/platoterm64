@@ -26,9 +26,11 @@
 uint8_t xoff_enabled;
 uint8_t io_load_successful=false;
 
+static void io_recv_serial_flow_dummy(void);
+
 uint8_t (*io_serial_buffer_size)(void);
-void (*io_recv_serial_flow_off)(void);
-void (*io_recv_serial_flow_on)(void);
+void (*io_recv_serial_flow_off)(void) = io_recv_serial_flow_dummy;
+void (*io_recv_serial_flow_on)(void) = io_recv_serial_flow_dummy;
 
 static uint8_t ch=0;
 static uint8_t io_res;
@@ -44,6 +46,8 @@ static struct ser_params params = {
   SER_HS_HW
 };
 
+static void io_recv_serial_flow_dummy(void) {}
+
 /**
  * io_init() - Set-up the I/O
  */
@@ -55,7 +59,7 @@ void io_init(void)
 
   if (io_res==SER_ERR_OK)
     io_load_successful=true;
-  
+
   xoff_enabled=false;
 
   if (io_load_successful)
@@ -70,7 +74,6 @@ void io_init(void)
       prefs_clear();
       prefs_display(recv_buffer);
     }
-  
 }
 
 /**

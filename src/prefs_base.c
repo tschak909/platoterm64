@@ -50,8 +50,6 @@ extern padBool ModeBold;
 extern padBool Rotate;
 extern padBool Reverse;
 
-extern uint8_t FONT_SIZE_Y;
-
 uint8_t temp_val[8];
 uint8_t ch;
 uint8_t prefs_need_updating;
@@ -407,18 +405,13 @@ unsigned char prefs_get_key_matching1(const char* matches)
  */
 void prefs_clear(void)
 {
-  uint8_t c;
-#ifdef __APPLE2ENH__
-  hue(DHGR_COLOR_BLACK);
-  dhbar(0,185,519,191);
-  hue(DHGR_COLOR_WHITE);
-#else
-  c=tgi_getcolor();
-  tgi_setcolor(TGI_COLOR_BLACK);
-  tgi_bar(0,actualSize.y-1-FONT_SIZE_Y,tgi_getmaxx(),actualSize.y-1);
-  tgi_setcolor(c);
-  ShowPLATO("\n\v",2);
-#endif
+  padPt p1 = {0, 16};
+  padPt p2 = {511, 0};
+  CurModeSave = CurMode;
+  CurMode = ModeErase;
+  screen_block_draw(&p1, &p2);
+  CurMode = CurModeSave;
+  screen_set_pen_mode();
 }
 
 /**

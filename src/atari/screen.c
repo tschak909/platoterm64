@@ -45,9 +45,6 @@ extern void (*io_recv_serial_flow_on)(void);
 extern void (*io_recv_serial_flow_off)(void);
 extern padPt TTYLoc;
 
-// size of scaled PLATO screen
-padPt actualSize = {320, 192};
-
 extern void RenderGlyph(void);
 
 /**
